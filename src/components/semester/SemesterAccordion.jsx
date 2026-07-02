@@ -1,4 +1,4 @@
-import { memo, useState } from "react";
+import { memo } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import GlassCard from "../ui/GlassCard.jsx";
 import Collapse from "../ui/Collapse.jsx";
@@ -7,15 +7,18 @@ import { ACCENT, WEEK_COLORS } from "../../constants/theme.js";
 import { kb } from "../../utils/misc.js";
 import styles from "./semester.module.css";
 
-/** Ein Semester als Akkordeon mit allen Modulen. */
-const SemesterAccordion = memo(function SemesterAccordion({ semester }) {
-  const [open, setOpen] = useState(false);
-  const toggle = () => setOpen((v) => !v);
+/** Ein Semester als kontrolliertes Akkordeon mit allen Modulen. */
+const SemesterAccordion = memo(function SemesterAccordion({ semester, open, onToggle }) {
+  const toggle = () => onToggle(semester.nr);
   const isNext = semester.nr === 1;
   const color = isNext ? ACCENT.red : ACCENT.blue;
 
   return (
-    <GlassCard tint={color} style={{ "--c": color, marginBottom: "var(--s-2)", overflow: "hidden" }}>
+    <GlassCard
+      tint={color}
+      id={`semester-${semester.nr}`}
+      style={{ "--c": color, marginBottom: "var(--s-2)", overflow: "hidden", scrollMarginTop: "150px" }}
+    >
       <div className={`${styles.semHead} hover-pop`} onClick={toggle} {...kb(toggle)} aria-expanded={open}>
         <div className={styles.semNum}>{semester.nr}</div>
         <div style={{ flex: 1, minWidth: 0 }}>

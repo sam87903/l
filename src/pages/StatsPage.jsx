@@ -1,19 +1,45 @@
 import { useMemo } from "react";
 import PageTransition from "../components/layout/PageTransition.jsx";
 import GlassCard from "../components/ui/GlassCard.jsx";
+import ProgressRing from "../components/ui/ProgressRing.jsx";
 import ProgressBar from "../components/ui/ProgressBar.jsx";
-import StatGrid from "../components/dashboard/StatGrid.jsx";
+import Disclosure from "../components/ui/Disclosure.jsx";
+import KpiCard from "../components/dashboard/KpiCard.jsx";
 import AchievementsRow from "../components/dashboard/AchievementsRow.jsx";
 import Heatmap from "../components/charts/Heatmap.jsx";
 import BarChart from "../components/charts/BarChart.jsx";
 import { SEMESTERS } from "../data/semesters/index.js";
+import { GLOSSARY } from "../data/glossary.js";
 import { ACCENT, WEEK_COLORS } from "../constants/theme.js";
+import { ACHIEVEMENTS } from "../constants/achievements.js";
 import { useProgress } from "../context/ProgressContext.jsx";
+import dashStyles from "../components/dashboard/dashboard.module.css";
 import styles from "./pages.module.css";
 
-/** Statistik: Lernzeit, Heatmap, Modul-Fortschritt, Quiz-Bestscores, Erfolge. */
+const STREAK_GOAL_DAYS = 7;
+const TOTAL_FLASHCARDS =
+  SEMESTERS.flatMap((s) => s.modules).reduce((n, m) => n + (m.cards?.length || 0), 0) +
+  Object.keys(GLOSSARY).length;
+
+/**
+ * Statistik nach Dashboard-Best-Practice: eine Hero-Kennzahl (Ring),
+ * drei Kontext-KPIs, Streak-Kalender – Details per Progressive Disclosure.
+ */
 export default function StatsPage() {
-  const { stats, fcKnown, quizBest } = useProgress();
+  const { stats, fcKnown, quizBest, activity } = useProgress();
+  const pct = Math.round((stats.doneCount / stats.total) * 100);
+  const activeDays = useMemo(
+    () => Object.values(activity).filter((m) => m > 0).length,
+    [activity]
+  );
+
+  const quizAverage = useMemo(() => {
+    const results = Object.values(quizBest);
+    if (results.length === 0) return null;
+    const correct = results.reduce((n, b) => n + b.c, 0);
+    const total = results.reduce((n, b) => n + b.t, 0);
+    return total ? Math.round((correct / total) * 100) : null;
+  }, [quizBest]);
 
   const moduleProgress = useMemo(
     () =>
@@ -32,76 +58,123 @@ export default function StatsPage() {
   );
 
   const quizResults = useMemo(() => {
-    const byId = new Map(
-      SEMESTERS.flatMap((s) => s.modules).map((m) => [m.id, m.name])
-    );
+    const nameById = new Map(SEMESTERS.flatMap((s) => s.modules).map((m) => [m.id, m.name]));
     return Object.entries(quizBest)
-      .map(([id, best]) => ({ id, name: byId.get(id) ?? id, ...best }))
+      .map(([id, best]) => ({ id, name: nameById.get(id) ?? id, ...best }))
       .sort((a, b) => b.c / b.t - a.c / a.t);
   }, [quizBest]);
 
+  const unlockedCount = ACHIEVEMENTS.filter((a) => a.test(stats)).length;
+
   return (
     <PageTransition>
-      <GlassCard tint={ACCENT.teal} className={styles.banner} style={{ "--c": ACCENT.teal }}>
-        <div className={styles.bannerGlow} aria-hidden="true" />
-        <p className={styles.bannerKicker}>📊 Statistik</p>
-        <h2 className={styles.bannerTitle}>Dein Lernfortschritt im Überblick</h2>
-        <p className={styles.bannerText}>
-          Level {stats.level} · {stats.xp} XP gesamt · {stats.streak} Tage Streak 🔥
+      {/* Hero-KPI: die eine Zahl, die zählt */}
+      <GlassCard tint={ACCENT.teal} className={dashStyles.statsHero}>
+        <ProgressRing
+          value={stats.doneCount}
+          max={stats.total}
+          size={140}
+          stroke={11}
+          color="var(--teal)"
+          valueText={`${stats.doneCount} von ${stats.total} Tagen abgeschlossen`}
+        >
+          <span style={{ fontSize: "1.7rem", fontWeight: 800 }}>Tag {stats.doneCount}</span>
+          <span style={{ fontSize: "0.68rem", color: "var(--muted)", fontWeight: 700 }}>von {stats.total}</span>
+        </ProgressRing>
+        <div className={dashStyles.statsHeroBody}>
+          <p className={styles.bannerKicker} style={{ "--c": ACCENT.teal }}>📊 Dein Lernfortschritt im Überblick</p>
+          <div className={dashStyles.statsHeroLine}>
+            <span className={dashStyles.statsHeroValue}>{pct}%</span>
+            <span style={{ fontSize: "var(--fs-sm)", color: "var(--muted)", fontWeight: 600 }}>des 21-Tage-Plans</span>
+          </div>
+          <p className={dashStyles.statsHeroContext}>
+            {stats.doneCount >= stats.total
+              ? "Plan komplett – bereit für Semester 1! 🎉"
+              : `Noch ${stats.total - stats.doneCount} Tage bis zum Ziel · Level ${stats.level} · ${stats.xp} XP`}
+          </p>
+        </div>
+      </GlassCard>
+
+      {/* Sekundäre KPIs – jede Zahl mit Kontext */}
+      <div className={dashStyles.kpiGrid}>
+        <KpiCard
+          icon="🔥"
+          label="Streak"
+          value={`${stats.streak} Tg.`}
+          context={stats.streak >= STREAK_GOAL_DAYS
+            ? `Ziel ${STREAK_GOAL_DAYS}+ erreicht!`
+            : `Ziel: ${STREAK_GOAL_DAYS} · noch ${STREAK_GOAL_DAYS - stats.streak}`}
+          tint={ACCENT.red}
+        />
+        <KpiCard
+          icon="🧩"
+          label="Ø Quiz"
+          value={quizAverage != null ? `${quizAverage}%` : "–"}
+          context={quizAverage != null
+            ? `${stats.quizzesPerfect} von ${stats.quizCount} perfekt`
+            : "Noch kein Quiz gespielt"}
+          tint={ACCENT.blue}
+        />
+        <KpiCard
+          icon="🃏"
+          label="Karten"
+          value={stats.knownTotal}
+          context={`${Math.round((stats.knownTotal / TOTAL_FLASHCARDS) * 100)}% von ${TOTAL_FLASHCARDS} gewusst`}
+          tint={ACCENT.violet}
+        />
+      </div>
+
+      {/* Streak-Kalender */}
+      <div className={styles.sectionTitle}>🗓️ Streak-Kalender · letzte 16 Wochen</div>
+      <GlassCard style={{ padding: "var(--s-4)", marginBottom: "var(--s-4)" }}>
+        <Heatmap weeks={16} />
+        <p style={{ margin: "var(--s-2) 0 0", fontSize: "var(--fs-xs)", color: "var(--muted)" }}>
+          {activeDays} aktive Lerntage insgesamt · {stats.focusTotal} Fokus-Minuten
         </p>
       </GlassCard>
 
-      <StatGrid />
-
-      <div className={styles.sectionTitle}>⏱️ Lernminuten · letzte 7 Tage</div>
-      <GlassCard style={{ padding: "var(--s-4)" }}>
+      {/* Details per Progressive Disclosure */}
+      <Disclosure icon="⏱️" title="Lernminuten · letzte 7 Tage" meta={`${stats.focusTotal}′ gesamt`} defaultOpen>
         <BarChart days={7} />
-      </GlassCard>
-
-      <div className={styles.sectionTitle}>🗓️ Aktivitäts-Heatmap</div>
-      <GlassCard style={{ padding: "var(--s-4)" }}>
-        <Heatmap weeks={16} />
-      </GlassCard>
+      </Disclosure>
 
       {moduleProgress.length > 0 && (
-        <>
-          <div className={styles.sectionTitle}>🃏 Lernkarten pro Modul</div>
-          <GlassCard style={{ padding: "var(--s-4)" }}>
-            {moduleProgress.map((m) => (
-              <div key={m.id} className={styles.moduleProgress}>
-                <span className={styles.moduleProgressName}>{m.name}</span>
-                <div style={{ flex: 1 }}>
-                  <ProgressBar value={m.known} max={m.total} from={ACCENT.teal} to={m.color} height={5}
-                    label={`${m.name}: ${m.known} von ${m.total} Karten`} />
-                </div>
-                <span style={{ color: "var(--muted)", fontWeight: 700, width: 44, textAlign: "right" }}>
-                  {m.known}/{m.total}
-                </span>
+        <Disclosure icon="🃏" title="Lernkarten pro Modul" meta={`${moduleProgress.length} Module`}>
+          {moduleProgress.map((m) => (
+            <div key={m.id} className={styles.moduleProgress}>
+              <span className={styles.moduleProgressName}>{m.name}</span>
+              <div style={{ flex: 1 }}>
+                <ProgressBar
+                  value={m.known} max={m.total} from={ACCENT.teal} to={m.color} height={5}
+                  label={`${m.name}: Lernkarten-Fortschritt`}
+                  valueText={`${m.known} von ${m.total} Karten gewusst`}
+                />
               </div>
-            ))}
-          </GlassCard>
-        </>
+              <span style={{ color: "var(--muted)", fontWeight: 700, width: 44, textAlign: "right" }}>
+                {m.known}/{m.total}
+              </span>
+            </div>
+          ))}
+        </Disclosure>
       )}
 
       {quizResults.length > 0 && (
-        <>
-          <div className={styles.sectionTitle}>🏆 Quiz-Bestenliste</div>
-          <GlassCard style={{ padding: "var(--s-4)" }}>
-            {quizResults.map((q, i) => (
-              <div key={q.id} className={styles.moduleProgress}>
-                <span style={{ width: 20, fontWeight: 800, color: "var(--muted)" }}>{i + 1}.</span>
-                <span className={styles.moduleProgressName} style={{ flex: 1, width: "auto" }}>{q.name}</span>
-                <span style={{ fontWeight: 800, color: q.c === q.t ? ACCENT.teal : "var(--text)" }}>
-                  {q.c}/{q.t} {q.c === q.t && "🏆"}
-                </span>
-              </div>
-            ))}
-          </GlassCard>
-        </>
+        <Disclosure icon="🏆" title="Quiz-Bestenliste" meta={`${quizResults.length} Module`}>
+          {quizResults.map((q, i) => (
+            <div key={q.id} className={styles.moduleProgress}>
+              <span style={{ width: 20, fontWeight: 800, color: "var(--muted)" }}>{i + 1}.</span>
+              <span className={styles.moduleProgressName} style={{ flex: 1, width: "auto" }}>{q.name}</span>
+              <span style={{ fontWeight: 800, color: q.c === q.t ? ACCENT.teal : "var(--text)" }}>
+                {q.c}/{q.t} {q.c === q.t && "🏆"}
+              </span>
+            </div>
+          ))}
+        </Disclosure>
       )}
 
-      <div className={styles.sectionTitle}>🏅 Alle Erfolge</div>
-      <AchievementsRow grid />
+      <Disclosure icon="🏅" title="Alle Erfolge" meta={`${unlockedCount}/${ACHIEVEMENTS.length}`}>
+        <AchievementsRow grid />
+      </Disclosure>
     </PageTransition>
   );
 }

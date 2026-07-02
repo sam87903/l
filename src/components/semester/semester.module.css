@@ -109,7 +109,7 @@
 
 .examKicker {
   margin-bottom: 2px;
-  font-size: 0.56rem;
+  font-size: 0.62rem;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -159,7 +159,7 @@
 
 .sectionKicker {
   margin: var(--s-2) 0 var(--s-1);
-  font-size: 0.56rem;
+  font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -187,4 +187,69 @@
   gap: var(--s-1);
   font-size: 0.71rem;
   line-height: 1.5;
+}
+
+/* ═══ Semester-Pager (Segmented Control 1–7) ═══ */
+
+.pager {
+  display: flex;
+  gap: var(--s-2);
+  overflow-x: auto;
+  padding: var(--s-1) var(--s-1) var(--s-3);
+  scrollbar-width: none;
+}
+
+.pager::-webkit-scrollbar {
+  display: none;
+}
+
+.pagerBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  min-width: 52px;
+  min-height: 48px; /* ≥44px Touch-Target */
+  flex-shrink: 0;
+  border-radius: var(--r-md);
+  border: 1px solid var(--glass-border);
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+  position: relative;
+}
+
+.pagerBtnActive {
+  border-color: color-mix(in srgb, var(--blue) 60%, transparent);
+  background: color-mix(in srgb, var(--blue) 20%, transparent);
+  color: var(--text);
+}
+
+/* Auswahl zusätzlich über Form: Unterstreichungs-Balken (WCAG 1.4.1) */
+.pagerBtnActive::after {
+  content: "";
+  position: absolute;
+  left: 25%;
+  right: 25%;
+  bottom: 5px;
+  height: 3px;
+  border-radius: var(--r-full);
+  background: var(--blue);
+}
+
+.pagerNum {
+  font-size: 1.05rem;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.pagerBtnActive .pagerNum {
+  color: var(--blue);
+}
+
+.pagerLabel {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
 }

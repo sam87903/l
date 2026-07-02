@@ -21,7 +21,13 @@ export default function DashboardPage() {
   return (
     <PageTransition>
       <GlassCard tint={ACCENT.blue} className={dashStyles.hero}>
-        <ProgressRing value={stats.doneCount} max={stats.total} size={104} color="var(--blue)">
+        <ProgressRing
+          value={stats.doneCount}
+          max={stats.total}
+          size={104}
+          color="var(--blue)"
+          valueText={`${stats.doneCount} von ${stats.total} Tagen abgeschlossen`}
+        >
           <span style={{ fontSize: "1.35rem", fontWeight: 800 }}>{pct}%</span>
           <span style={{ fontSize: "0.55rem", color: "var(--muted)" }}>{stats.doneCount}/{stats.total} Tage</span>
         </ProgressRing>

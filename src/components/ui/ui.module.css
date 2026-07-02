@@ -243,3 +243,31 @@
   padding: var(--s-5);
   text-align: center;
 }
+
+/* ═══ Barrierefreiheits-Härtung der Glass-Flächen ═══ */
+
+/* Browser ohne backdrop-filter: solider Barrier-Layer statt Transparenz */
+@supports not ((backdrop-filter: blur(4px)) or (-webkit-backdrop-filter: blur(4px))) {
+  .glass {
+    background: var(--surface-solid);
+  }
+}
+
+/* Nutzerpräferenz: Transparenz reduzieren → solide Flächen */
+@media (prefers-reduced-transparency: reduce) {
+  .glass,
+  .chip,
+  .toast {
+    background: var(--surface-solid);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+/* Nutzerpräferenz: mehr Kontrast → solide Flächen + kräftige Ränder */
+@media (prefers-contrast: more) {
+  .glass {
+    background: var(--surface-solid);
+    border-color: color-mix(in srgb, var(--text) 45%, transparent);
+  }
+}

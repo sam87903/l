@@ -118,3 +118,23 @@ input[type="search"]::-webkit-search-cancel-button {
     scroll-behavior: auto !important;
   }
 }
+
+/* WCAG 2.4.11: fokussierte Elemente nie hinter Header/Nav verstecken */
+html {
+  scroll-padding-top: 96px;
+  scroll-padding-bottom: calc(var(--nav-size) + env(safe-area-inset-bottom, 0px) + 32px);
+}
+
+/* Nutzerpräferenz: mehr Kontrast → kräftigere Sekundärfarben und Ränder */
+@media (prefers-contrast: more) {
+  :root[data-theme="dark"] {
+    --muted: #c3cce4;
+    --glass-border: rgba(255, 255, 255, 0.4);
+    --border: rgba(255, 255, 255, 0.3);
+  }
+  :root[data-theme="light"] {
+    --muted: #39425c;
+    --glass-border: rgba(20, 25, 50, 0.4);
+    --border: rgba(20, 25, 50, 0.3);
+  }
+}

@@ -72,7 +72,7 @@
 
 .statLabel {
   margin-top: 2px;
-  font-size: 0.54rem;
+  font-size: 0.62rem;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--muted);
@@ -164,13 +164,90 @@
 
 .badgeTitle {
   margin-top: var(--s-1);
-  font-size: 0.6rem;
+  font-size: 0.64rem;
   font-weight: 800;
 }
 
 .badgeDesc {
   margin-top: 2px;
-  font-size: 0.53rem;
+  font-size: 0.62rem;
   color: var(--muted);
   line-height: 1.4;
+}
+
+/* ═══ KPI-Karten (Statistik) ═══ */
+
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--s-2);
+  margin-bottom: var(--s-4);
+}
+
+.kpi {
+  padding: var(--s-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+}
+
+.kpiTop {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.kpiLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.kpiValue {
+  font-size: 1.3rem;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.kpiContext {
+  font-size: 0.66rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.statsHero {
+  display: flex;
+  align-items: center;
+  gap: var(--s-5);
+  padding: var(--s-5);
+  margin-bottom: var(--s-4);
+}
+
+.statsHeroBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.statsHeroLine {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+  margin-bottom: var(--s-2);
+}
+
+.statsHeroValue {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.statsHeroContext {
+  font-size: var(--fs-sm);
+  color: var(--muted);
+  line-height: 1.55;
+  margin: 0;
 }

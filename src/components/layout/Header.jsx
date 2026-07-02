@@ -6,9 +6,9 @@ import { useProgress } from "../../context/ProgressContext.jsx";
 import styles from "./layout.module.css";
 
 const MODE_META = {
-  auto:  { icon: SunMoon, label: "Theme: automatisch (System)" },
-  light: { icon: Sun,     label: "Theme: hell" },
-  dark:  { icon: Moon,    label: "Theme: dunkel" },
+  auto:  { icon: SunMoon, state: "Automatisch (System)" },
+  light: { icon: Sun,     state: "Hell" },
+  dark:  { icon: Moon,    state: "Dunkel" },
 };
 
 /** Kopfzeile mit Branding, Streak, Level, Theme-Umschalter und Settings. */
@@ -16,7 +16,7 @@ const Header = memo(function Header() {
   const { mode, cycleMode } = useTheme();
   const { stats } = useProgress();
   const navigate = useNavigate();
-  const { icon: ModeIcon, label } = MODE_META[mode] ?? MODE_META.auto;
+  const { icon: ModeIcon, state } = MODE_META[mode] ?? MODE_META.auto;
 
   return (
     <header className={styles.header}>
@@ -34,8 +34,14 @@ const Header = memo(function Header() {
             {stats.streak}
           </span>
         )}
-        <button className={`${styles.iconBtn} hover-pop`} onClick={cycleMode} aria-label={label} title={label}>
-          <ModeIcon size={17} aria-hidden="true" />
+        {/* Stabiles aria-label (APG); aktueller Zustand via title + Icon */}
+        <button
+          className={`${styles.iconBtn} hover-pop`}
+          onClick={cycleMode}
+          aria-label="Design-Modus wechseln"
+          title={`Design-Modus wechseln – aktuell: ${state}`}
+        >
+          <ModeIcon size={17} aria-hidden="true" focusable="false" />
         </button>
         <button
           className={`${styles.iconBtn} hover-pop`}

@@ -31,7 +31,7 @@
   border: 1px solid color-mix(in srgb, var(--teal) 45%, transparent);
   background: color-mix(in srgb, var(--teal) 12%, transparent);
   color: var(--teal);
-  font-size: 0.6rem;
+  font-size: 0.64rem;
   font-weight: 700;
 }
 
@@ -120,7 +120,7 @@
   border: 1px solid color-mix(in srgb, var(--teal) 40%, transparent);
   background: color-mix(in srgb, var(--teal) 13%, transparent);
   color: var(--teal);
-  font-size: 0.56rem;
+  font-size: 0.62rem;
   font-weight: 800;
   flex-shrink: 0;
 }

@@ -24,7 +24,7 @@
 }
 
 .meta {
-  font-size: 0.58rem;
+  font-size: 0.62rem;
   font-weight: 400;
   color: var(--muted);
   text-transform: none;
@@ -78,7 +78,7 @@
 }
 
 .groupDesc {
-  font-size: 0.6rem;
+  font-size: 0.64rem;
   color: var(--muted);
 }
 
