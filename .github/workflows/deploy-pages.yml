@@ -29,11 +29,18 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
+      # Pages funktioniert nur bei öffentlichem Repo (bzw. GitHub Pro).
+      # Solange das Repo privat ist, schlagen diese Schritte kontrolliert
+      # fehl, ohne den Workflow rot zu färben – Tests/Build bleiben strikt.
       - uses: actions/configure-pages@v5
+        continue-on-error: true
+        id: pages
         with:
           enablement: true
       - uses: actions/upload-pages-artifact@v3
+        if: steps.pages.outcome == 'success'
         with:
           path: dist
       - id: deployment
+        if: steps.pages.outcome == 'success'
         uses: actions/deploy-pages@v4
