@@ -1,0 +1,72 @@
+/* ═══ Design Tokens – Single Source of Truth für Farben, Abstände, Radius ═══ */
+:root {
+  /* Marokko-Akzente (theme-unabhängig, gespiegelt in constants/theme.js) */
+  --red: #ff6b6b;
+  --teal: #2dd4a8;
+  --violet: #a78bfa;
+  --blue: #5b7cfa;
+
+  /* Typografie */
+  --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --fs-xs: 0.66rem;
+  --fs-sm: 0.74rem;
+  --fs-md: 0.84rem;
+  --fs-lg: 1rem;
+  --fs-xl: 1.35rem;
+  --fs-hero: 1.9rem;
+
+  /* Spacing-Skala */
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 0.75rem;
+  --s-4: 1rem;
+  --s-5: 1.5rem;
+  --s-6: 2.25rem;
+
+  /* Radius */
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 18px;
+  --r-xl: 24px;
+  --r-full: 9999px;
+
+  /* Effekte */
+  --blur: blur(20px) saturate(160%);
+  --dur: 0.22s;
+  --ease: cubic-bezier(0.32, 0.72, 0.33, 1);
+  --nav-size: 64px;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0a0e1a;
+  --bg-grad: radial-gradient(ellipse 120% 80% at 50% -10%, #16215c 0%, #0a0e1a 55%);
+  --text: #eef2fb;
+  --muted: #8a96b8;
+  --border: rgba(255, 255, 255, 0.1);
+  --surface: rgba(255, 255, 255, 0.03);
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.14);
+  --glass-hi: rgba(255, 255, 255, 0.09);
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  --shadow-float: 0 16px 48px rgba(0, 0, 0, 0.45);
+  --glow: rgba(91, 124, 250, 0.35);
+  --check-fg: #0a0e1a;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #efe9db;
+  --bg-grad: radial-gradient(ellipse 120% 80% at 50% -10%, #fbf8f0 0%, #efe9db 60%);
+  --text: #1a1d2e;
+  --muted: #5f6a86;
+  --border: rgba(20, 25, 50, 0.11);
+  --surface: rgba(255, 255, 255, 0.4);
+  --glass-bg: rgba(255, 255, 255, 0.45);
+  --glass-border: rgba(20, 25, 50, 0.1);
+  --glass-hi: rgba(255, 255, 255, 0.65);
+  --shadow: 0 8px 32px rgba(30, 35, 60, 0.12);
+  --shadow-float: 0 16px 48px rgba(30, 35, 60, 0.18);
+  --glow: rgba(91, 124, 250, 0.22);
+  --check-fg: #ffffff;
+}

@@ -1,0 +1,148 @@
+/* ═══ Lernkarten mit 3D-Flip ═══ */
+
+.deck {
+  padding: var(--s-4);
+  margin-bottom: var(--s-2);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-2);
+  flex-wrap: wrap;
+  margin-bottom: var(--s-2);
+}
+
+.kicker {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--fs-xs);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c);
+}
+
+.count {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.countDone {
+  color: var(--teal);
+}
+
+.tools {
+  display: flex;
+  gap: var(--s-1);
+}
+
+.tool {
+  min-height: 30px;
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--r-full);
+  border: 1px solid var(--glass-border);
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.62rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.toolActive {
+  border-color: color-mix(in srgb, var(--c) 60%, transparent);
+  background: color-mix(in srgb, var(--c) 16%, transparent);
+  color: var(--c);
+}
+
+.scene {
+  perspective: 1000px;
+  margin: var(--s-3) 0;
+}
+
+.cardInner {
+  position: relative;
+  min-height: 128px;
+  transform-style: preserve-3d;
+  cursor: pointer;
+}
+
+.face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--s-4);
+  text-align: center;
+  border-radius: var(--r-md);
+  border: 1px solid var(--glass-border);
+  background: var(--surface);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.faceBack {
+  transform: rotateY(180deg);
+  border-color: color-mix(in srgb, var(--c) 50%, transparent);
+  background: color-mix(in srgb, var(--c) 12%, transparent);
+}
+
+.faceLabel {
+  margin-bottom: var(--s-2);
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.faceTerm {
+  font-size: var(--fs-lg);
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.faceDef {
+  font-size: var(--fs-sm);
+  line-height: 1.55;
+}
+
+.pos {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.7rem;
+  font-size: 0.56rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.knownBadge {
+  position: absolute;
+  top: 0.45rem;
+  right: 0.6rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: var(--r-full);
+  border: 1px solid color-mix(in srgb, var(--teal) 45%, transparent);
+  background: color-mix(in srgb, var(--teal) 12%, transparent);
+  color: var(--teal);
+  font-size: 0.56rem;
+  font-weight: 800;
+}
+
+.controls {
+  display: flex;
+  gap: var(--s-2);
+}
+
+.doneBox {
+  padding: var(--s-4);
+  text-align: center;
+}

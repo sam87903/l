@@ -1,0 +1,211 @@
+/* ═══ Plan-Karten (Woche + Tag) & generische Akkordeon-Köpfe ═══ */
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  cursor: pointer;
+}
+
+.week {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  margin-bottom: var(--s-3);
+}
+
+.weekEmoji {
+  font-size: 1.3rem;
+}
+
+.weekKicker {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--c);
+}
+
+.weekTitle {
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
+.weekSub {
+  margin-top: 2px;
+  font-size: 0.62rem;
+  color: var(--muted);
+}
+
+.weekBadge {
+  flex-shrink: 0;
+  padding: 0.2rem 0.7rem;
+  border-radius: var(--r-full);
+  border: 1px solid color-mix(in srgb, var(--c) 50%, transparent);
+  background: color-mix(in srgb, var(--c) 16%, transparent);
+  color: var(--c);
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.day {
+  margin-bottom: var(--s-2);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  transition: border-color var(--dur), box-shadow var(--dur);
+}
+
+.dayToday {
+  border-color: color-mix(in srgb, var(--c) 70%, transparent) !important;
+  box-shadow: 0 8px 28px color-mix(in srgb, var(--c) 18%, transparent);
+}
+
+.dayNum {
+  width: 36px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.dayNumBig {
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: var(--c);
+  line-height: 1;
+}
+
+.dayNumDone {
+  opacity: 0.6;
+  text-decoration: line-through;
+}
+
+.dayDate {
+  font-size: 0.52rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.dayDivider {
+  width: 2px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 1px;
+  background: color-mix(in srgb, var(--c) 30%, transparent);
+}
+
+.dayBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.dayTitle {
+  font-size: var(--fs-md);
+  font-weight: 700;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dayTitleOpen {
+  white-space: normal;
+}
+
+.dayTitleDone {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.daySub {
+  margin-top: 2px;
+  font-size: 0.68rem;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.todayBadge {
+  margin-right: 0.35rem;
+  padding: 0.08rem 0.4rem;
+  border-radius: var(--r-full);
+  border: 1px solid color-mix(in srgb, var(--c) 45%, transparent);
+  background: color-mix(in srgb, var(--c) 15%, transparent);
+  color: var(--c);
+  font-size: 0.56rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  vertical-align: middle;
+}
+
+.check {
+  width: 27px;
+  height: 27px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-full);
+  border: 2px solid var(--glass-border);
+  background: var(--surface);
+  color: transparent;
+  font-size: 0.75rem;
+  font-weight: 900;
+  cursor: pointer;
+  transition: all var(--dur);
+}
+
+.checkDone {
+  border-color: var(--c);
+  background: var(--c);
+  color: var(--check-fg);
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--c) 45%, transparent);
+}
+
+.dayDetail {
+  padding: 0 var(--s-4) var(--s-4);
+  border-top: 1px solid var(--border);
+}
+
+.dayDesc {
+  margin: var(--s-3) 0;
+  font-size: var(--fs-sm);
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.taskBox {
+  padding: var(--s-3) var(--s-4);
+  border-radius: var(--r-sm);
+  margin-bottom: var(--s-3);
+}
+
+.boxKicker {
+  margin-bottom: var(--s-1);
+  font-size: var(--fs-xs);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--c);
+}
+
+.boxText {
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+}
+
+.linkKicker {
+  margin-bottom: var(--s-2);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.pillRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1);
+}

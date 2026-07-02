@@ -1,0 +1,114 @@
+import { memo, useCallback, useState } from "react";
+import { Coffee, Pause, Play, RotateCcw, Timer } from "lucide-react";
+import GlassCard from "../ui/GlassCard.jsx";
+import Button from "../ui/Button.jsx";
+import ProgressBar from "../ui/ProgressBar.jsx";
+import { useCountdownTimer } from "../../hooks/useCountdownTimer.js";
+import { useProgress } from "../../context/ProgressContext.jsx";
+import { useToast } from "../ui/Toast.jsx";
+import { playChime, vibrate } from "../../services/audio.js";
+import { notify } from "../../services/notifications.js";
+import { ACCENT } from "../../constants/theme.js";
+import { BREAK_MINUTES, TIMER_PRESETS } from "../../constants/config.js";
+import { cx } from "../../utils/misc.js";
+import styles from "./timer.module.css";
+
+const SECONDS_PER_MINUTE = 60;
+const fmt = (s) =>
+  `${String(Math.floor(s / SECONDS_PER_MINUTE)).padStart(2, "0")}:${String(s % SECONDS_PER_MINUTE).padStart(2, "0")}`;
+
+/** Pomodoro-Timer mit Presets (20/25/45), Pausenmodus, Sound & Vibration. */
+const FocusTimer = memo(function FocusTimer() {
+  const { addFocusMinutes, settings } = useProgress();
+  const { push } = useToast();
+  const [minutes, setMinutes] = useState(TIMER_PRESETS[0]);
+  const [isBreak, setIsBreak] = useState(false);
+
+  const handleComplete = useCallback(() => {
+    vibrate();
+    if (settings.sound) playChime();
+    if (isBreak) {
+      push("Pause vorbei – weiter geht's!", "🚀");
+      if (settings.notifications) notify("Pause vorbei", "Bereit für die nächste Fokus-Session?");
+    } else {
+      addFocusMinutes(minutes);
+      push(`${minutes} Fokus-Minuten gutgeschrieben!`, "🎉");
+      if (settings.notifications) notify("Session geschafft! 🎉", `${minutes} Minuten fokussiert gelernt.`);
+    }
+  }, [isBreak, minutes, addFocusMinutes, push, settings]);
+
+  const timer = useCountdownTimer(minutes * SECONDS_PER_MINUTE, handleComplete);
+  const total = (isBreak ? BREAK_MINUTES : minutes) * SECONDS_PER_MINUTE;
+  const done = timer.remaining === 0;
+  const pct = Math.round(((total - timer.remaining) / total) * 100);
+
+  const selectPreset = (m) => {
+    setIsBreak(false);
+    setMinutes(m);
+    timer.reset(m * SECONDS_PER_MINUTE);
+  };
+
+  const startBreak = () => {
+    setIsBreak(true);
+    timer.reset(BREAK_MINUTES * SECONDS_PER_MINUTE);
+    timer.start();
+  };
+
+  return (
+    <GlassCard tint={ACCENT.blue} className={styles.card}>
+      <div className={styles.head}>
+        <span className={styles.kicker}>
+          {isBreak ? <Coffee size={14} aria-hidden="true" /> : <Timer size={14} aria-hidden="true" />}
+          {isBreak ? `Pause · ${BREAK_MINUTES} Min` : "Fokus-Timer"}
+        </span>
+        <div className={styles.presets} role="group" aria-label="Timer-Dauer wählen">
+          {TIMER_PRESETS.map((m) => (
+            <button
+              key={m}
+              className={cx(styles.preset, !isBreak && minutes === m && styles.presetActive, "hover-pop")}
+              onClick={() => selectPreset(m)}
+              aria-pressed={!isBreak && minutes === m}
+            >
+              {m}′
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className={cx(styles.time, done && styles.timeDone)} aria-live="polite">
+        {done ? "Geschafft! 🎉" : fmt(timer.remaining)}
+      </div>
+      <ProgressBar value={pct} from={ACCENT.blue} to={ACCENT.teal} height={5} label="Timer-Fortschritt" />
+
+      <div className={styles.controls}>
+        {done && !isBreak ? (
+          <>
+            <Button tint={ACCENT.teal} style={{ flex: 2 }} onClick={startBreak}>
+              <Coffee size={15} aria-hidden="true" /> {BREAK_MINUTES} Min Pause
+            </Button>
+            <Button style={{ flex: 1 }} onClick={() => selectPreset(minutes)}>
+              <RotateCcw size={15} aria-hidden="true" /> Neu
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button
+              tint={ACCENT.blue}
+              style={{ flex: 2 }}
+              onClick={() => (timer.running ? timer.pause() : done ? (timer.reset(total), timer.start()) : timer.start())}
+            >
+              {timer.running ? <Pause size={15} aria-hidden="true" /> : <Play size={15} aria-hidden="true" />}
+              {timer.running ? "Pause" : "Start"}
+            </Button>
+            <Button style={{ flex: 1 }} onClick={() => { setIsBreak(false); timer.reset(minutes * SECONDS_PER_MINUTE); }}>
+              <RotateCcw size={15} aria-hidden="true" /> Reset
+            </Button>
+          </>
+        )}
+      </div>
+      <p className={styles.hint}>5 Min Anki · 10 Min Video/Lesen · 5 Min Takeaways notieren</p>
+    </GlassCard>
+  );
+});
+
+export default FocusTimer;

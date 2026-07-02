@@ -1,0 +1,73 @@
+/* ═══ Fokus-Timer ═══ */
+
+.card {
+  padding: var(--s-4) var(--s-5);
+  margin-bottom: var(--s-4);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--s-2);
+}
+
+.kicker {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--fs-xs);
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--blue);
+}
+
+.presets {
+  display: flex;
+  gap: var(--s-1);
+}
+
+.preset {
+  min-height: 30px;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--r-full);
+  border: 1px solid var(--glass-border);
+  background: transparent;
+  color: var(--muted);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.presetActive {
+  border-color: color-mix(in srgb, var(--blue) 55%, transparent);
+  background: color-mix(in srgb, var(--blue) 18%, transparent);
+  color: var(--blue);
+}
+
+.time {
+  margin: var(--s-2) 0 var(--s-3);
+  text-align: center;
+  font-size: var(--fs-hero);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+
+.timeDone {
+  color: var(--teal);
+}
+
+.controls {
+  display: flex;
+  gap: var(--s-2);
+  margin-top: var(--s-3);
+}
+
+.hint {
+  margin-top: var(--s-2);
+  text-align: center;
+  font-size: var(--fs-xs);
+  color: var(--muted);
+}

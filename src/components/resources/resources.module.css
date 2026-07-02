@@ -1,0 +1,89 @@
+/* ═══ Ressourcen-Bibliothek ═══ */
+
+.wrap {
+  padding: var(--s-4);
+  margin-bottom: var(--s-5);
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin-bottom: var(--s-3);
+  font-size: var(--fs-xs);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.bar {
+  width: 4px;
+  height: 20px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--blue), var(--violet));
+}
+
+.meta {
+  font-size: 0.58rem;
+  font-weight: 400;
+  color: var(--muted);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1);
+  margin-bottom: var(--s-3);
+}
+
+.tab {
+  min-height: 34px;
+  padding: 0.34rem 0.75rem;
+  border-radius: var(--r-full);
+  border: 1px solid var(--glass-border);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tabActive {
+  border-color: color-mix(in srgb, var(--blue) 55%, transparent);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--blue) 30%, transparent), color-mix(in srgb, var(--violet) 18%, transparent));
+  color: var(--text);
+}
+
+.group {
+  margin-bottom: var(--s-3);
+}
+
+.groupHead {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+  padding-bottom: var(--s-1);
+  margin-bottom: var(--s-2);
+  border-bottom: 1px solid color-mix(in srgb, var(--c) 25%, transparent);
+}
+
+.groupLabel {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--c);
+}
+
+.groupDesc {
+  font-size: 0.6rem;
+  color: var(--muted);
+}
+
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1);
+}

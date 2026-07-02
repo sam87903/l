@@ -1,0 +1,245 @@
+/* ═══ Gemeinsame UI-Bausteine (Liquid Glass) ═══ */
+
+.glass {
+  --tint: transparent;
+  position: relative;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--tint) 13%, transparent) 0%, transparent 100%),
+    var(--glass-bg);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid color-mix(in srgb, var(--tint) 22%, var(--glass-border));
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow), inset 0 1px 0 var(--glass-hi);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  min-height: 32px;
+  padding: 0.32rem 0.72rem;
+  border-radius: var(--r-full);
+  border: 1px solid color-mix(in srgb, var(--c) 32%, transparent);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--c) 15%, transparent), color-mix(in srgb, var(--c) 6%, transparent));
+  color: var(--c);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--c) 10%, transparent);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--r-full);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--text);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 44px;
+  padding: 0.5rem 1rem;
+  border-radius: var(--r-full);
+  border: 1px solid var(--glass-border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter var(--dur), border-color var(--dur), opacity var(--dur);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.btnTinted {
+  border-color: color-mix(in srgb, var(--c) 38%, transparent);
+  background: color-mix(in srgb, var(--c) 15%, transparent);
+  color: var(--c);
+}
+
+.btnGhost {
+  background: transparent;
+}
+
+.track {
+  height: 6px;
+  border-radius: var(--r-full);
+  border: 1px solid var(--glass-border);
+  background: color-mix(in srgb, var(--text) 7%, transparent);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  border-radius: var(--r-full);
+  background: linear-gradient(90deg, var(--from, var(--blue)), var(--to, var(--violet)));
+  transition: width 0.4s var(--ease);
+}
+
+.searchWrap {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 0.45rem 0.7rem;
+  border-radius: var(--r-md);
+}
+
+.searchInput {
+  flex: 1;
+  min-height: 32px;
+  padding: 0.35rem 0.1rem;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: var(--fs-md);
+  outline: none;
+}
+
+.searchClear {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: var(--r-full);
+  background: color-mix(in srgb, var(--text) 10%, transparent);
+  color: var(--muted);
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.skeleton {
+  border-radius: var(--r-md);
+  background: linear-gradient(
+    100deg,
+    color-mix(in srgb, var(--text) 5%, transparent) 40%,
+    color-mix(in srgb, var(--text) 11%, transparent) 50%,
+    color-mix(in srgb, var(--text) 5%, transparent) 60%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.empty {
+  padding: var(--s-6) var(--s-4);
+  text-align: center;
+  color: var(--muted);
+}
+
+.emptyIcon {
+  font-size: 1.8rem;
+  margin-bottom: var(--s-2);
+}
+
+.toastWrap {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--nav-size) + env(safe-area-inset-bottom, 0px) + var(--s-3));
+  transform: translateX(-50%);
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  align-items: center;
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 0.55rem 1rem;
+  border-radius: var(--r-full);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text);
+  box-shadow: var(--shadow-float);
+}
+
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--s-4);
+  background: rgba(6, 9, 20, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.modalCard {
+  width: min(420px, 100%);
+  padding: var(--s-5);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-float);
+}
+
+.modalTitle {
+  margin: 0 0 var(--s-2);
+  font-size: var(--fs-lg);
+  font-weight: 800;
+}
+
+.modalBody {
+  margin: 0 0 var(--s-4);
+  font-size: var(--fs-sm);
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.modalActions {
+  display: flex;
+  gap: var(--s-2);
+  justify-content: flex-end;
+}
+
+.loading {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-3);
+  color: var(--muted);
+  font-size: var(--fs-md);
+}
+
+.loadingFlag {
+  font-size: 2.5rem;
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    transform: scale(1.12);
+    opacity: 0.75;
+  }
+}
+
+.errorBox {
+  margin: var(--s-5);
+  padding: var(--s-5);
+  text-align: center;
+}
