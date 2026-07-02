@@ -1,26 +1,71 @@
 # 🇲🇦 Marokko-Lernplan · HRW E-Commerce B.Sc.
 
-Interaktive Lernapp zur Vorbereitung auf das E-Commerce-Studium an der Hochschule Ruhr West (BPO 02.06.2023).
+Professionelle, interaktive Lernplattform zur Vorbereitung auf das
+E-Commerce-Studium an der Hochschule Ruhr West (BPO 02.06.2023).
 
-## Dateien
+Gebaut mit **React 19, Vite, Framer Motion, Lucide, React Router, CSS Modules** –
+im Stil einer nativen Apple-App (Liquid Glass, Dark/Light/Auto-Theme).
 
-- **`index.html`** – Fertige, eigenständige App. Einfach im Browser öffnen (Handy oder Desktop), keine Installation nötig. Fortschritt wird lokal im Browser gespeichert (localStorage).
-- **`marokko-lernplan.jsx`** – React-Quellcode (eine Datei, default export `App`). Läuft auch als claude.ai-Artefakt (nutzt dort `window.storage`, sonst localStorage).
+## ✨ Features
 
-## Features (v2)
+| Bereich | Inhalt |
+| --- | --- |
+| 🏠 **Dashboard** | Fortschrittsring, Level & XP, Streak 🔥, Countdown (Abreise + Semesterstart), „Heute dran", Quick Actions, Aktivitäts-Heatmap, Erfolge |
+| 📋 **Plan** | 21-Tage-Lernplan mit Abhaken, Wochenblöcken, Quiz-Verzeichnis (🏆 Bestscores) und Ressourcen-Bibliothek |
+| 🔬 **Detail** | Tages-Kompendium: Lernziel, Prüfungsrelevanz, klickbare Kernbegriffe, Unterthemen mit kuratierten Links |
+| 🎓 **Semester** | Alle 7 Semester / 210 ECTS mit Themen (Definition + Beispiel), Lernkarten mit Flip-Animation & Gewusst-Tracking, Wahlmodul-Katalog |
+| 📖 **Glossar** | ~150 Fachbegriffe, Live-Suche (debounced), ⭐ Favoriten, „Zuletzt angesehen", Lernmodus, Alpha-Navigation, inkrementelles Rendering |
+| 📊 **Statistik** | Lernminuten-Chart, Heatmap, Lernkarten pro Modul, Quiz-Bestenliste, alle Erfolge |
+| ⏱️ **Timer** | Pomodoro mit 20/25/45 Min, 5-Min-Pausen, Sound, Vibration, Benachrichtigung |
+| ⚙️ **Einstellungen** | Theme (Auto/Hell/Dunkel), Backup-Export/-Import (JSON), CSV-Export, PDF/Druck, Reset |
+| 📱 **PWA** | Installierbar, Offline-Modus (Service Worker), Manifest, App-Icon |
 
-- 🏠 **Start**: 21-Tage-Lernplan mit Abhaken, "Heute dran"-Karte, ⏱ 20-Min-Fokus-Timer, Statistik, Quiz-Verzeichnis mit 🏆 Bestscores, Ressourcen-Bibliothek
-- 🔬 **Detail**: Tages-Kompendium mit Lernziel, Prüfungsrelevanz, klickbaren Kernbegriffen und kuratierten Links
-- 🎓 **Semester**: Alle 7 Semester / 210 ECTS mit Themen (Definition + Beispiel), 🃏 Lernkarten mit Gewusst-Tracking & Shuffle, Wahlmodul-Katalog
-- 📖 **Glossar**: ~150 Fachbegriffe mit Volltextsuche
-- 🌓 Dark/Light Theme, ✈️/🎓 Countdowns (Abreise & Semesterstart 01.09.2026)
+Fortschritt wird lokal gespeichert (`localStorage`, kompatibel zu den
+Speicherständen der v2-Einzeldatei).
 
-## Selbst bauen
+## 🚀 Loslegen
 
 ```bash
-npm i react@18 react-dom@18 esbuild
-# entry.jsx: importiert App aus marokko-lernplan.jsx und rendert in #root
-npx esbuild entry.jsx --bundle --minify --jsx=automatic \
-  --define:process.env.NODE_ENV='"production"' --outfile=bundle.js
-# bundle.js in ein HTML-Grundgerüst inlinen → index.html
+npm install
+npm run dev          # Entwicklungsserver
+npm test             # Vitest + React Testing Library
+npm run build        # PWA-Build → dist/
+npm run build:single # Eine einzelne HTML-Datei → dist-single/index.html
 ```
+
+**Fürs Handy ohne Server:** `release/marokko-lernplan-app.html` öffnen –
+die Datei ist komplett eigenständig (818 KB, alles inline).
+
+## 🗂️ Projektstruktur
+
+```
+src/
+├── App.jsx                 Router, Provider, Lazy Pages
+├── main.jsx                Einstieg, Service-Worker-Registrierung
+├── components/
+│   ├── layout/             Header, BottomNav (mobil) / Rail (Desktop), PageTransition
+│   ├── ui/                 GlassCard, Button, Pill, Chip, ProgressBar/-Ring, Search,
+│   │                       Modal, Toast, Collapse, Skeleton, EmptyState, ErrorBoundary
+│   ├── cards/              WeekBanner, DayCard (21-Tage-Plan)
+│   ├── quiz/               Quiz, QuizQuestion, QuizDirectory
+│   ├── flashcards/         FlashcardDeck (3D-Flip, Spaced-Repetition light)
+│   ├── timer/              FocusTimer (Pomodoro)
+│   ├── dashboard/          Hero-Bausteine, StatGrid, QuickActions, Achievements
+│   ├── semester/           SemesterAccordion, ModuleCard, TopicItem, Wahlmodule
+│   ├── glossary/           GlossaryList/-Entry, AlphaNav
+│   ├── detail/             DetailDayCard, TermPill
+│   ├── resources/          ResourceLibrary
+│   └── charts/             Heatmap, BarChart (reines SVG/CSS)
+├── context/                ThemeContext, ProgressContext
+├── hooks/                  useStoredState, useDebouncedValue, useMediaQuery,
+│                           useCountdownTimer, useIncrementalList
+├── services/               storage (localStorage/claude.ai), audio, notifications
+├── utils/                  dates, xp/streak/heatmap, export, links, misc
+├── constants/              config (Keys, XP-Regeln), theme, achievements
+├── data/                   Glossar, 7 Semester-Dateien, Plan, Detail, Ressourcen,
+│                           Wahlmodule (auto-extrahiert, Inhalte unverändert)
+└── styles/                 tokens.css (Design Tokens), global.css
+```
+
+Weitere Details: [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md).
+Die ursprüngliche Einzeldatei liegt referenzhalber in `legacy/`.

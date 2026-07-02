@@ -1,0 +1,127 @@
+/* ═══ Glossar ═══ */
+
+.filters {
+  display: flex;
+  gap: var(--s-1);
+  margin: var(--s-3) 0 var(--s-2);
+  flex-wrap: wrap;
+}
+
+.filter {
+  min-height: 32px;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--r-full);
+  border: 1px solid var(--glass-border);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.filterActive {
+  border-color: color-mix(in srgb, var(--violet) 55%, transparent);
+  background: color-mix(in srgb, var(--violet) 18%, transparent);
+  color: var(--violet);
+}
+
+.count {
+  margin: 0 0 var(--s-2);
+  padding-left: var(--s-1);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.alphaNav {
+  display: flex;
+  gap: var(--s-1);
+  overflow-x: auto;
+  padding: var(--s-1) 0 var(--s-2);
+}
+
+.alphaBtn {
+  min-width: 30px;
+  min-height: 30px;
+  flex-shrink: 0;
+  border-radius: 9px;
+  border: 1px solid var(--glass-border);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.groupHead {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin: var(--s-3) 0 var(--s-2);
+  scroll-margin-top: 90px;
+}
+
+.groupLetter {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--violet) 45%, transparent);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--violet) 22%, transparent), color-mix(in srgb, var(--violet) 9%, transparent));
+  color: var(--violet);
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.groupLine {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.entryRow {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-2) var(--s-3);
+  cursor: pointer;
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.entryOpen {
+  color: var(--violet);
+  font-weight: 800;
+}
+
+.entryDef {
+  padding: 0 var(--s-3) var(--s-2);
+  border-top: 1px solid var(--border);
+}
+
+.entryDefText {
+  margin: var(--s-2) 0 0;
+  font-size: var(--fs-sm);
+  line-height: 1.65;
+}
+
+.starBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: var(--r-full);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.starActive {
+  color: #f5c518;
+}
