@@ -24,8 +24,19 @@ const BottomNav = memo(function BottomNav() {
           end={end}
           className={({ isActive }) => cx(styles.navItem, isActive && styles.navItemActive)}
         >
-          <Icon size={19} aria-hidden="true" />
-          {label}
+          {({ isActive }) => (
+            <>
+              {/* Aktiv-Zustand über Form (gefülltes Icon) UND Farbe – WCAG 1.4.1 */}
+              <Icon
+                size={20}
+                aria-hidden="true"
+                fill={isActive ? "currentColor" : "none"}
+                fillOpacity={isActive ? 0.28 : 0}
+                strokeWidth={isActive ? 2.4 : 2}
+              />
+              {label}
+            </>
+          )}
         </NavLink>
       ))}
     </GlassCard>

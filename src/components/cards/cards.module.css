@@ -81,7 +81,7 @@
 }
 
 .dayDate {
-  font-size: 0.52rem;
+  font-size: 0.62rem;
   font-weight: 600;
   color: var(--muted);
 }
@@ -133,7 +133,7 @@
   border: 1px solid color-mix(in srgb, var(--c) 45%, transparent);
   background: color-mix(in srgb, var(--c) 15%, transparent);
   color: var(--c);
-  font-size: 0.56rem;
+  font-size: 0.62rem;
   font-weight: 800;
   letter-spacing: 0.06em;
   vertical-align: middle;

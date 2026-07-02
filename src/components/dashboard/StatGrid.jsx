@@ -7,13 +7,12 @@ import styles from "./dashboard.module.css";
 /** Kernkennzahlen als Kachel-Raster. */
 const StatGrid = memo(function StatGrid() {
   const { stats } = useProgress();
+  // Max. ~5 sichtbare Kennzahlen pro Screen: Ring zeigt Tage,
+  // Header zeigt Streak & Level – hier nur die drei übrigen Kern-KPIs.
   const items = [
-    { icon: "✅", value: `${stats.doneCount}/${stats.total}`, label: "Tage",           tint: ACCENT.teal },
-    { icon: "🃏", value: stats.knownTotal,                    label: "Karten gewusst", tint: ACCENT.violet },
-    { icon: "🏆", value: stats.quizzesPerfect,                label: "Quiz perfekt",   tint: ACCENT.red },
-    { icon: "⏱️", value: `${stats.focusTotal}′`,              label: "Fokus-Minuten",  tint: ACCENT.blue },
-    { icon: "🔥", value: stats.streak,                        label: "Tage Streak",    tint: ACCENT.red },
-    { icon: "⭐", value: stats.favCount,                      label: "Favoriten",      tint: ACCENT.violet },
+    { icon: "🃏", value: stats.knownTotal,       label: "Karten gewusst", tint: ACCENT.violet },
+    { icon: "🏆", value: stats.quizzesPerfect,   label: "Quiz perfekt",   tint: ACCENT.red },
+    { icon: "⏱️", value: `${stats.focusTotal}′`, label: "Fokus-Minuten",  tint: ACCENT.blue },
   ];
   return (
     <div className={styles.statGrid}>
