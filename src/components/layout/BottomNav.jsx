@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { NavLink } from "react-router-dom";
-import { BarChart3, BookOpen, GraduationCap, Home, ListChecks } from "lucide-react";
+import { BarChart3, BookOpen, FileSearch, GraduationCap, Home, ListChecks } from "lucide-react";
 import GlassCard from "../ui/GlassCard.jsx";
 import { cx } from "../../utils/misc.js";
 import styles from "./layout.module.css";
@@ -11,6 +11,7 @@ const NAV_ITEMS = [
   { to: "/semester",  icon: GraduationCap, label: "Semester" },
   { to: "/glossar",   icon: BookOpen,      label: "Glossar" },
   { to: "/statistik", icon: BarChart3,     label: "Statistik" },
+  { to: "/klausuren", icon: FileSearch,    label: "Klausuren" },
 ];
 
 /** Schwebende Navigation: unten auf Mobile, linke Rail auf Desktop. */

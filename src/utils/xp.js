@@ -2,13 +2,14 @@ import { XP_RULES } from "../constants/config.js";
 import { toLocalISO } from "./dates.js";
 
 /** Gesamt-XP aus den Kernstatistiken. */
-export function computeXp({ doneCount, knownTotal, quizzesPerfect, focusTotal, favCount }) {
+export function computeXp({ doneCount, knownTotal, quizzesPerfect, focusTotal, favCount, mastered = 0 }) {
   return (
     doneCount * XP_RULES.day +
     knownTotal * XP_RULES.card +
     quizzesPerfect * XP_RULES.perfectQuiz +
     Math.round(focusTotal) * XP_RULES.minute +
-    favCount * XP_RULES.favorite
+    favCount * XP_RULES.favorite +
+    mastered * XP_RULES.mastered
   );
 }
 

@@ -2,6 +2,9 @@ import PageTransition from "../components/layout/PageTransition.jsx";
 import GlassCard from "../components/ui/GlassCard.jsx";
 import ProgressRing from "../components/ui/ProgressRing.jsx";
 import ProgressBar from "../components/ui/ProgressBar.jsx";
+import { useNavigate } from "react-router-dom";
+import { Repeat2 } from "lucide-react";
+import Button from "../components/ui/Button.jsx";
 import TodayCard from "../components/dashboard/TodayCard.jsx";
 import CountdownChips from "../components/dashboard/CountdownChips.jsx";
 import QuickActions from "../components/dashboard/QuickActions.jsx";
@@ -16,6 +19,7 @@ import dashStyles from "../components/dashboard/dashboard.module.css";
 /** Startseite: Hero mit Fortschritt, Level, Countdown, Timer, Statistik. */
 export default function DashboardPage() {
   const { stats } = useProgress();
+  const navigate = useNavigate();
   const pct = Math.round((stats.doneCount / stats.total) * 100);
 
   return (
@@ -45,6 +49,22 @@ export default function DashboardPage() {
       </GlassCard>
 
       <TodayCard />
+
+      {stats.mistakesOpen > 0 && (
+        <GlassCard tint={ACCENT.red} className={dashStyles.today} style={{ "--c": ACCENT.red }}>
+          <Repeat2 size={22} color={ACCENT.red} aria-hidden="true" style={{ flexShrink: 0 }} />
+          <div className={dashStyles.todayBody}>
+            <div className={dashStyles.todayKicker}>Fehler-Training</div>
+            <div className={dashStyles.todayTitle}>
+              {stats.mistakesOpen} {stats.mistakesOpen === 1 ? "Frage wartet" : "Fragen warten"} auf Wiederholung
+            </div>
+          </div>
+          <Button tint={ACCENT.red} onClick={() => navigate("/plan", { state: { openTrainer: Date.now() } })}>
+            Üben →
+          </Button>
+        </GlassCard>
+      )}
+
       <QuickActions />
       <FocusTimer />
       <StatGrid />

@@ -25,7 +25,7 @@ export function toCSV(rows) {
 export const downloadCSV = (name, rows) =>
   downloadFile(name, "﻿" + toCSV(rows), "text/csv;charset=utf-8");
 
-const BACKUP_KEYS = ["doneDays", "quizBest", "fcKnown", "favorites", "recents", "activity", "settings"];
+const BACKUP_KEYS = ["doneDays", "quizBest", "fcKnown", "favorites", "recents", "activity", "settings", "wrongPool", "exams"];
 
 /** Backup-Text validieren; wirft bei ungültigem Format. */
 export function parseBackup(text) {
@@ -33,7 +33,10 @@ export function parseBackup(text) {
   if (!data || typeof data !== "object" || !("doneDays" in data)) {
     throw new Error("Ungültiges Backup-Format");
   }
-  const clean = { startDate: typeof data.startDate === "string" ? data.startDate : undefined };
+  const clean = {
+    startDate: typeof data.startDate === "string" ? data.startDate : undefined,
+    mastered: typeof data.mastered === "number" ? data.mastered : undefined,
+  };
   for (const key of BACKUP_KEYS) {
     if (key in data && typeof data[key] === "object" && data[key] !== null) clean[key] = data[key];
   }

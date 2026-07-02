@@ -12,7 +12,7 @@ import cardStyles from "../cards/cards.module.css";
 
 /** Alle Modul-Quizze, nach Semester gruppiert, mit Bestscores. */
 const QuizDirectory = memo(function QuizDirectory({ open, onToggle, openQuizIds, onToggleQuiz }) {
-  const { quizBest, saveQuizResult } = useProgress();
+  const { quizBest, saveQuizResult, recordAnswer } = useProgress();
   const [expandedSemesters, setExpandedSemesters] = useState(() => new Set(["1"]));
 
   const grouped = useMemo(
@@ -88,8 +88,10 @@ const QuizDirectory = memo(function QuizDirectory({ open, onToggle, openQuizIds,
                         <div style={{ padding: "0 var(--s-2) var(--s-2)" }}>
                           <Quiz
                             questions={mod.quiz}
+                            module={mod}
                             best={best}
                             onDone={(c, t) => saveQuizResult(mod.id, c, t)}
+                            onAnswer={(qi, ok) => recordAnswer(mod.id, qi, ok)}
                           />
                         </div>
                       </Collapse>

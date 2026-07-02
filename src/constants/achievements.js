@@ -15,4 +15,5 @@ export const ACHIEVEMENTS = [
   { id: "streak-7",    icon: "🚀", title: "Unaufhaltsam",     desc: "7 Tage Lern-Streak",                    test: (s) => s.streak >= 7 },
   { id: "focus-100",   icon: "⏱️", title: "Fokus-Profi",      desc: "100 Fokus-Minuten gesammelt",           test: (s) => s.focusTotal >= 100 },
   { id: "fav-10",      icon: "⭐", title: "Sammler",          desc: "10 Glossar-Favoriten markiert",         test: (s) => s.favCount >= 10 },
+  { id: "mistake-10",  icon: "🔁", title: "Aus Fehlern gelernt", desc: "10 Fehler-Fragen gemeistert",        test: (s) => s.mastered >= 10 },
 ];

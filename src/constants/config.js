@@ -16,7 +16,16 @@ export const STORAGE_KEYS = {
   recents: "mrk7-rec",
   activity: "mrk7-act",
   settings: "mrk7-set",
+  wrongPool: "mrk7-wq",
+  mastered: "mrk7-wm",
+  exams: "mrk7-ex",
 };
+
+/** Fehler-Training: so oft in Folge richtig = gemeistert. */
+export const MASTERY_STREAK = 2;
+
+/** Max. gespeicherte Zeichen pro Altklausur. */
+export const EXAM_TEXT_LIMIT = 120000;
 
 /** Timer-Voreinstellungen in Minuten. */
 export const TIMER_PRESETS = [20, 25, 45];
@@ -29,6 +38,7 @@ export const XP_RULES = {
   perfectQuiz: 100,  // fehlerfreies Quiz
   minute: 2,         // Fokus-Minute
   favorite: 5,       // Glossar-Favorit
+  mastered: 15,      // im Fehler-Training gemeisterte Frage
   minutesPerDay: 20, // Aktivitäts-Gutschrift beim Abhaken eines Tages
 };
 
