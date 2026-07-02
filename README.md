@@ -34,7 +34,18 @@ npm run build:single # Eine einzelne HTML-Datei → dist-single/index.html
 ```
 
 **Fürs Handy ohne Server:** `release/marokko-lernplan-app.html` öffnen –
-die Datei ist komplett eigenständig (818 KB, alles inline).
+komplett eigenständig, komprimiert auf ~354 KB (Self-Extracting).
+
+## 📱 iPhone / iPad (empfohlen: als App installieren)
+
+1. Diesen Branch nach `main` mergen – der Workflow
+   `.github/workflows/deploy-pages.yml` baut und veröffentlicht die App
+   automatisch auf **GitHub Pages** (inkl. Aktivierung der Pages-Site).
+2. In Safari öffnen: `https://sam87903.github.io/l/`
+3. Teilen-Symbol → **„Zum Home-Bildschirm"** → die App liegt mit eigenem
+   Icon auf dem Home-Bildschirm, startet im Vollbild und funktioniert
+   dank Service Worker auch **offline**. Fortschritt wird pro Gerät
+   gespeichert (Backup-Sync über Einstellungen → JSON-Export/-Import).
 
 ## 🗂️ Projektstruktur
 

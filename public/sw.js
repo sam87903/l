@@ -1,6 +1,6 @@
 /* Offline-Cache (App-Shell + Runtime, Cache-First für eigene Assets). */
 const CACHE = "marokko-lernplan-v3";
-const PRECACHE = ["./", "./index.html", "./manifest.webmanifest", "./icon.svg"];
+const PRECACHE = ["./", "./index.html", "./manifest.webmanifest", "./icon.svg", "./icon-180.png", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", (event) => {
   self.skipWaiting();
