@@ -28,6 +28,7 @@ for (const [label, marker] of [
   ["Semester", "Gesamtes Curriculum"],
   ["Glossar", "Fachbegriffe von A bis Z"],
   ["Statistik", "Lernfortschritt im Überblick"],
+  ["Klausuren", "Altklausuren analysieren"],
 ]) {
   await page.click(`nav >> text=${label}`);
   await page.waitForSelector(`text=${marker}`, { timeout: 8000 });
@@ -39,6 +40,36 @@ await page.click('[aria-label="Tag 1 als erledigt markieren"]');
 await page.click("nav >> text=Start");
 await page.waitForSelector("text=1/21", { timeout: 5000 });
 console.log("✅ Abhaken + Statistik funktioniert");
+
+// Fehler-Training: Quiz absichtlich falsch beantworten → Frage landet im Trainer
+await page.click("nav >> text=Plan");
+await page.click('#quiz-verzeichnis >> text=Quiz-Verzeichnis');
+await page.click('#quiz-verzeichnis >> text=Einführung in die BWL');
+await page.waitForSelector("text=Was besagt das Minimalprinzip?");
+// Frage 1 falsch, 2 & 3 richtig beantworten
+await page.click('button:has-text("Immer die billigste Option wählen")');
+await page.click('button:has-text("GbR")');
+await page.click('button:has-text("Soll")');
+await page.waitForSelector("text=Lernanalyse");
+await page.waitForSelector("text=Du hast Probleme mit");
+console.log("✅ Lernanalyse nach Quiz erscheint");
+await page.click('button:has-text("Fehler üben")');
+await page.waitForSelector("#fehler-training >> text=1 offen");
+await page.waitForSelector("#fehler-training >> text=Was besagt das Minimalprinzip?");
+// 2× richtig = gemeistert (nach der 2. Antwort verschwindet der Trainer-Inhalt sofort)
+await page.click('#fehler-training button:has-text("Ein festes Ziel mit minimalem Mitteleinsatz erreichen")');
+await page.click('#fehler-training button:has-text("Weiter")');
+await page.click('#fehler-training button:has-text("Ein festes Ziel mit minimalem Mitteleinsatz erreichen")');
+await page.waitForSelector("text=Alle Fehler gemeistert");
+console.log("✅ Fehler-Training: falsch → üben → gemeistert");
+
+// Altklausur-Analyse
+await page.click("nav >> text=Klausuren");
+await page.fill("#exam-text", "Aufgabe 1: Erläutern Sie das Minimalprinzip und nennen Sie die GoB. Aufgabe 2: Berechnen Sie die lineare Abschreibung eines Laptops (1.200 €, 3 Jahre). Aufgabe 3 (Fallstudie): Ein Online-Shop plant eine GmbH-Gründung – beurteilen Sie die Rechtsformwahl. Kreuzen Sie an: Welche Aussage zur Bilanz ist korrekt? a) ... b) ...");
+await page.click('button:has-text("Analysieren")');
+await page.waitForSelector("text=Prüfungswahrscheinlichkeit");
+await page.waitForSelector("text=Geprüfte Module");
+console.log("✅ Altklausur-Analyse liefert Report");
 
 if (errors.length) {
   console.error("⚠️ JS-Fehler:", errors.slice(0, 5));

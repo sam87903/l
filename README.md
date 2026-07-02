@@ -15,7 +15,10 @@ im Stil einer nativen Apple-App (Liquid Glass, Dark/Light/Auto-Theme).
 | 🔬 **Detail** | Tages-Kompendium: Lernziel, Prüfungsrelevanz, klickbare Kernbegriffe, Unterthemen mit kuratierten Links |
 | 🎓 **Semester** | Alle 7 Semester / 210 ECTS mit Themen (Definition + Beispiel), Lernkarten mit Flip-Animation & Gewusst-Tracking, Wahlmodul-Katalog |
 | 📖 **Glossar** | ~150 Fachbegriffe, Live-Suche (debounced), ⭐ Favoriten, „Zuletzt angesehen", Lernmodus, Alpha-Navigation, inkrementelles Rendering |
-| 📊 **Statistik** | Lernminuten-Chart, Heatmap, Lernkarten pro Modul, Quiz-Bestenliste, alle Erfolge |
+| 📊 **Statistik** | Hero-Fortschrittsring, Kontext-KPIs, Streak-Kalender, Details per Progressive Disclosure |
+| 🧠 **Lernanalyse** | Nach jedem Quiz: Stärken, Wissenslücken („Du hast Probleme mit …"), priorisierte Lernliste, nächste Lernaktivität – plus KI-Prompt-Export für ChatGPT/Claude |
+| 🔁 **Fehler-Training** | Falsch beantwortete Fragen werden wiederholt, bis sie 2× in Folge sitzen (Leitner-Prinzip) |
+| 📄 **Klausuren** | Altklausuren einfügen → Themencluster, Aufgabentypen, Schwierigkeitsniveau, wiederkehrende Muster über mehrere Klausuren, „Top 10 Prüfungswahrscheinlichkeit" – alles lokal |
 | ⏱️ **Timer** | Pomodoro mit 20/25/45 Min, 5-Min-Pausen, Sound, Vibration, Benachrichtigung |
 | ⚙️ **Einstellungen** | Theme (Auto/Hell/Dunkel), Backup-Export/-Import (JSON), CSV-Export, PDF/Druck, Reset |
 | 📱 **PWA** | Installierbar, Offline-Modus (Service Worker), Manifest, App-Icon |

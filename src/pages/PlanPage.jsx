@@ -5,6 +5,7 @@ import GlassCard from "../components/ui/GlassCard.jsx";
 import WeekBanner from "../components/cards/WeekBanner.jsx";
 import DayCard from "../components/cards/DayCard.jsx";
 import QuizDirectory from "../components/quiz/QuizDirectory.jsx";
+import MistakeTrainer from "../components/quiz/MistakeTrainer.jsx";
 import ResourceLibrary from "../components/resources/ResourceLibrary.jsx";
 import { PLAN, WOCHEN } from "../data/plan.js";
 import { WEEK_COLORS } from "../constants/theme.js";
@@ -46,6 +47,11 @@ export default function PlanPage() {
       setOpenDays((prev) => new Set(prev).add(state.scrollDay));
       setTimeout(() => {
         document.getElementById(`day-${state.scrollDay}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 250);
+    }
+    if (state.openTrainer) {
+      setTimeout(() => {
+        document.getElementById("fehler-training")?.scrollIntoView({ behavior: "smooth", block: "start" });
       }, 250);
     }
     if (state.openQuizSection) {
@@ -106,6 +112,8 @@ export default function PlanPage() {
           </section>
         );
       })}
+
+      <MistakeTrainer />
 
       <QuizDirectory
         open={quizSectionOpen}

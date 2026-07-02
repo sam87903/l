@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
 import PageTransition from "../components/layout/PageTransition.jsx";
 import GlassCard from "../components/ui/GlassCard.jsx";
 import SearchInput from "../components/ui/SearchInput.jsx";
@@ -26,7 +27,8 @@ const FILTERS = [
 /** Glossar: Live-Suche, Filter, Favoriten, Lernmodus, Alpha-Navigation. */
 export default function GlossaryPage() {
   const { favorites, toggleFavorite, recents, pushRecent, fcKnown, setKnownCard } = useProgress();
-  const [query, setQuery] = useState("");
+  const location = useLocation();
+  const [query, setQuery] = useState(() => location.state?.query ?? "");
   const [filter, setFilter] = useState("all");
   const [openTerms, setOpenTerms] = useState(() => new Set());
   const debouncedQuery = useDebouncedValue(query.trim().toLowerCase());

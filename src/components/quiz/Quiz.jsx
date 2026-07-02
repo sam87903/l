@@ -2,6 +2,7 @@ import { memo, useCallback, useState } from "react";
 import GlassCard from "../ui/GlassCard.jsx";
 import Button from "../ui/Button.jsx";
 import QuizQuestion from "./QuizQuestion.jsx";
+import QuizAnalysis from "./QuizAnalysis.jsx";
 import { ACCENT } from "../../constants/theme.js";
 import styles from "./quiz.module.css";
 
@@ -10,8 +11,8 @@ const isCorrectAnswer = (question, optionIndex) =>
     ? question.corrects.includes(optionIndex)
     : question.correct === optionIndex;
 
-/** Komplettes Modul-Quiz mit Sofort-Feedback, Bestscore und Retry. */
-const Quiz = memo(function Quiz({ questions, color = ACCENT.teal, best, onDone }) {
+/** Komplettes Modul-Quiz mit Sofort-Feedback, Bestscore, Retry und Lernanalyse. */
+const Quiz = memo(function Quiz({ questions, color = ACCENT.teal, best, onDone, onAnswer, module }) {
   const [answers, setAnswers] = useState({});
   const answeredCount = Object.keys(answers).length;
   const correctCount = Object.entries(answers).filter(
@@ -23,6 +24,7 @@ const Quiz = memo(function Quiz({ questions, color = ACCENT.teal, best, onDone }
     (qi, oi) => {
       setAnswers((prev) => {
         if (prev[qi] !== undefined) return prev;
+        onAnswer?.(qi, isCorrectAnswer(questions[qi], oi));
         const next = { ...prev, [qi]: oi };
         if (Object.keys(next).length === questions.length && onDone) {
           const correct = Object.entries(next).filter(
@@ -33,7 +35,7 @@ const Quiz = memo(function Quiz({ questions, color = ACCENT.teal, best, onDone }
         return next;
       });
     },
-    [questions, onDone]
+    [questions, onDone, onAnswer]
   );
 
   return (
@@ -51,9 +53,12 @@ const Quiz = memo(function Quiz({ questions, color = ACCENT.teal, best, onDone }
         <QuizQuestion key={qi} index={qi} question={q} picked={answers[qi]} onPick={(oi) => pick(qi, oi)} />
       ))}
       {finished && (
-        <Button tint={color} style={{ width: "100%" }} onClick={() => setAnswers({})}>
-          ↺ Nochmal versuchen
-        </Button>
+        <>
+          {module && <QuizAnalysis module={module} questions={questions} answers={answers} />}
+          <Button tint={color} style={{ width: "100%", marginTop: "var(--s-3)" }} onClick={() => setAnswers({})}>
+            ↺ Nochmal versuchen
+          </Button>
+        </>
       )}
     </GlassCard>
   );

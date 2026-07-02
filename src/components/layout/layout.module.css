@@ -108,7 +108,7 @@
   align-items: center;
   justify-content: center;
   gap: 2px;
-  min-width: 58px;
+  min-width: 50px;
   min-height: 48px; /* Apple HIG: ≥44pt Touch-Target */
   padding: 0.45rem 0.6rem;
   border-radius: var(--r-full);

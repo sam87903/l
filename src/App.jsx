@@ -14,6 +14,7 @@ const DetailPage = lazy(() => import("./pages/DetailPage.jsx"));
 const SemesterPage = lazy(() => import("./pages/SemesterPage.jsx"));
 const GlossaryPage = lazy(() => import("./pages/GlossaryPage.jsx"));
 const StatsPage = lazy(() => import("./pages/StatsPage.jsx"));
+const ExamsPage = lazy(() => import("./pages/ExamsPage.jsx"));
 const SettingsPage = lazy(() => import("./pages/SettingsPage.jsx"));
 
 /** Wartet auf geladenen Fortschritt, dann Routing. */
@@ -31,6 +32,7 @@ function AppRoutes() {
           <Route path="semester" element={<SemesterPage />} />
           <Route path="glossar" element={<GlossaryPage />} />
           <Route path="statistik" element={<StatsPage />} />
+          <Route path="klausuren" element={<ExamsPage />} />
           <Route path="einstellungen" element={<SettingsPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
