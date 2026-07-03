@@ -6,6 +6,7 @@ import SearchInput from "../components/ui/SearchInput.jsx";
 import GlossaryList from "../components/glossary/GlossaryList.jsx";
 import FlashcardDeck from "../components/flashcards/FlashcardDeck.jsx";
 import { GLOSSARY } from "../data/glossary.js";
+import { GLOSSAR_DECK_ID, GLOSSARY_CARDS } from "../utils/decks.js";
 import { ACCENT } from "../constants/theme.js";
 import { useDebouncedValue } from "../hooks/useDebouncedValue.js";
 import { useProgress } from "../context/ProgressContext.jsx";
@@ -14,8 +15,6 @@ import glossaryStyles from "../components/glossary/glossary.module.css";
 import styles from "./pages.module.css";
 
 const ALL_TERMS = Object.keys(GLOSSARY).sort((a, b) => a.localeCompare(b, "de"));
-const LEARN_DECK_ID = "glossar";
-const LEARN_CARDS = ALL_TERMS.map((term) => ({ front: term, back: GLOSSARY[term] }));
 
 const FILTERS = [
   { id: "all", label: "Alle" },
@@ -26,7 +25,7 @@ const FILTERS = [
 
 /** Glossar: Live-Suche, Filter, Favoriten, Lernmodus, Alpha-Navigation. */
 export default function GlossaryPage() {
-  const { favorites, toggleFavorite, recents, pushRecent, fcKnown, setKnownCard } = useProgress();
+  const { favorites, toggleFavorite, recents, pushRecent } = useProgress();
   const location = useLocation();
   const [query, setQuery] = useState(() => location.state?.query ?? "");
   const [filter, setFilter] = useState("all");
@@ -87,12 +86,7 @@ export default function GlossaryPage() {
       </div>
 
       {filter === "learn" ? (
-        <FlashcardDeck
-          cards={LEARN_CARDS}
-          color={ACCENT.violet}
-          known={new Set(fcKnown[LEARN_DECK_ID] || [])}
-          onKnown={(index, isKnown) => setKnownCard(LEARN_DECK_ID, index, isKnown)}
-        />
+        <FlashcardDeck deckId={GLOSSAR_DECK_ID} cards={GLOSSARY_CARDS} color={ACCENT.violet} />
       ) : (
         <>
           <p className={glossaryStyles.count} aria-live="polite">

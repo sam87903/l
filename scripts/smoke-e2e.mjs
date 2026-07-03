@@ -80,6 +80,25 @@ const smartOptions = await page.locator('#smart-quiz [role="group"] button').cou
 if (smartOptions < 1) throw new Error("Smart-Quiz erzeugte keine Fragen");
 console.log("✅ Smart-Quiz generiert Fragen");
 
+// Leitner-Lernkarten: Glossar-Lernmodus → "Nochmal" macht die Karte fällig,
+// das Karten-Training auf der Plan-Seite arbeitet sie ab.
+await page.click("nav >> text=Glossar");
+await page.click('button:has-text("🃏 Lernmodus")');
+await page.waitForSelector("text=Lernkarten");
+await page.getByRole("button", { name: /Begriff – antippen/ }).click();
+await page.getByRole("button", { name: "Nochmal" }).click();
+await page.waitForSelector("text=Fällig · 1");
+console.log("✅ Lernkarten: Nochmal → Karte fällig (Leitner Box 1)");
+await page.click("nav >> text=Plan");
+await page.waitForSelector("text=Karten-Training");
+await page.waitForSelector("text=1 fällig");
+await page.click('button:has-text("Training starten")');
+await page.getByRole("button", { name: /Begriff – antippen/ }).click();
+await page.getByRole("button", { name: "Gewusst" }).click();
+await page.waitForSelector("text=Session geschafft");
+await page.waitForSelector("text=0 fällig");
+console.log("✅ Karten-Training: fällige Karte wiederholt → Box 2");
+
 // Fokus-Timer starten und vorzeitig beenden → Minuten werden gespeichert
 await page.click("nav >> text=Start");
 await page.getByRole("button", { name: "Start", exact: true }).click();

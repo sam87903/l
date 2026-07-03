@@ -12,7 +12,7 @@ import styles from "./semester.module.css";
 /** Ein Studienmodul: Prüfungsform, Themen, Quiz-Sprung, Lernkarten. */
 const ModuleCard = memo(function ModuleCard({ module, color }) {
   const [open, setOpen] = useState(false);
-  const { quizBest, fcKnown, setKnownCard } = useProgress();
+  const { quizBest } = useProgress();
   const navigate = useNavigate();
   const toggle = () => setOpen((v) => !v);
 
@@ -73,14 +73,7 @@ const ModuleCard = memo(function ModuleCard({ module, color }) {
             </GlassCard>
           )}
 
-          {hasCards && (
-            <FlashcardDeck
-              cards={module.cards}
-              color={color}
-              known={new Set(fcKnown[module.id] || [])}
-              onKnown={(index, isKnown) => setKnownCard(module.id, index, isKnown)}
-            />
-          )}
+          {hasCards && <FlashcardDeck deckId={module.id} cards={module.cards} color={color} />}
 
           {!hasQuiz && !hasCards && (
             <p style={{ fontSize: "0.7rem", color: "var(--muted)", fontStyle: "italic", margin: 0 }}>

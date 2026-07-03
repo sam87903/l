@@ -20,7 +20,12 @@ export const STORAGE_KEYS = {
   mastered: "mrk7-wm",
   exams: "mrk7-ex",
   autoBackups: "mrk7-autobak",
+  srs: "mrk7-sr",
 };
+
+/** Leitner-System: Wiederholungsintervall in Tagen je Box (1–5). */
+export const LEITNER_INTERVALS = { 1: 0, 2: 3, 3: 7, 4: 14, 5: 30 };
+export const LEITNER_MAX_BOX = 5;
 
 /** Auto-Backup: Intervall (ms) und wie viele Versionen behalten werden. */
 export const AUTO_BACKUP_INTERVAL_MS = 60000;
