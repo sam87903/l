@@ -1,8 +1,9 @@
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 import GlassCard from "../ui/GlassCard.jsx";
 import Button from "../ui/Button.jsx";
 import QuizQuestion from "./QuizQuestion.jsx";
 import QuizAnalysis from "./QuizAnalysis.jsx";
+import { shuffleQuestionOptions } from "../../utils/questionBank.js";
 import { ACCENT } from "../../constants/theme.js";
 import styles from "./quiz.module.css";
 
@@ -12,8 +13,16 @@ const isCorrectAnswer = (question, optionIndex) =>
     : question.correct === optionIndex;
 
 /** Komplettes Modul-Quiz mit Sofort-Feedback, Bestscore, Retry und Lernanalyse. */
-const Quiz = memo(function Quiz({ questions, color = ACCENT.teal, best, onDone, onAnswer, module }) {
+const Quiz = memo(function Quiz({ questions: rawQuestions, color = ACCENT.teal, best, onDone, onAnswer, module, shuffleAnswers = false }) {
   const [answers, setAnswers] = useState({});
+  const [round, setRound] = useState(0);
+  // Bei aktiviertem Shuffle: Optionen je Runde neu mischen (kein
+  // Auswendiglernen der Antwort-Position möglich).
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const questions = useMemo(
+    () => (shuffleAnswers ? rawQuestions.map(shuffleQuestionOptions) : rawQuestions),
+    [rawQuestions, shuffleAnswers, round]
+  );
   const answeredCount = Object.keys(answers).length;
   const correctCount = Object.entries(answers).filter(
     ([qi, oi]) => isCorrectAnswer(questions[qi], oi)
@@ -55,7 +64,8 @@ const Quiz = memo(function Quiz({ questions, color = ACCENT.teal, best, onDone, 
       {finished && (
         <>
           {module && <QuizAnalysis module={module} questions={questions} answers={answers} />}
-          <Button tint={color} style={{ width: "100%", marginTop: "var(--s-3)" }} onClick={() => setAnswers({})}>
+          <Button tint={color} style={{ width: "100%", marginTop: "var(--s-3)" }}
+            onClick={() => { setAnswers({}); setRound((r) => r + 1); }}>
             ↺ Nochmal versuchen
           </Button>
         </>

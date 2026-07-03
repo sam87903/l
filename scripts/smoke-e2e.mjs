@@ -71,6 +71,25 @@ await page.waitForSelector("text=Prüfungswahrscheinlichkeit");
 await page.waitForSelector("text=Geprüfte Module");
 console.log("✅ Altklausur-Analyse liefert Report");
 
+
+// Smart-Quiz: starten und beantworten
+await page.click("nav >> text=Plan");
+await page.click('#smart-quiz button:has-text("Smart-Quiz starten")');
+await page.waitForSelector('#smart-quiz >> text=Quiz');
+const smartOptions = await page.locator('#smart-quiz [role="group"] button').count();
+if (smartOptions < 1) throw new Error("Smart-Quiz erzeugte keine Fragen");
+console.log("✅ Smart-Quiz generiert Fragen");
+
+// Fokus-Timer starten und vorzeitig beenden → Minuten werden gespeichert
+await page.click("nav >> text=Start");
+await page.getByRole("button", { name: "Start", exact: true }).click();
+await page.waitForTimeout(1400); // ≥1 Sek. Fortschritt, damit Minuten anfallen
+const finishBtn = page.getByRole("button", { name: /Beenden/ });
+await finishBtn.waitFor({ timeout: 4000 });
+await finishBtn.click();
+await page.waitForSelector("text=Fokus-Minuten gespeichert");
+console.log("✅ Fokus-Timer: vorzeitig beenden speichert Minuten");
+
 if (errors.length) {
   console.error("⚠️ JS-Fehler:", errors.slice(0, 5));
   process.exit(1);

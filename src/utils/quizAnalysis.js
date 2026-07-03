@@ -13,6 +13,7 @@ const wordSet = (text) =>
 
 /** Bestpassendes Modulthema zu einer Quizfrage (Keyword-Überlappung). */
 export function topicForQuestion(module, question) {
+  if (question.topic) return question.topic;
   const questionWords = [...wordSet(`${question.q} ${question.options.join(" ")}`)];
   let best = null;
   let bestScore = 0;

@@ -89,6 +89,7 @@ const QuizDirectory = memo(function QuizDirectory({ open, onToggle, openQuizIds,
                           <Quiz
                             questions={mod.quiz}
                             module={mod}
+                            shuffleAnswers
                             best={best}
                             onDone={(c, t) => saveQuizResult(mod.id, c, t)}
                             onAnswer={(qi, ok) => recordAnswer(mod.id, qi, ok)}

@@ -6,6 +6,7 @@ import WeekBanner from "../components/cards/WeekBanner.jsx";
 import DayCard from "../components/cards/DayCard.jsx";
 import QuizDirectory from "../components/quiz/QuizDirectory.jsx";
 import MistakeTrainer from "../components/quiz/MistakeTrainer.jsx";
+import SmartQuizCard from "../components/quiz/SmartQuizCard.jsx";
 import ResourceLibrary from "../components/resources/ResourceLibrary.jsx";
 import { PLAN, WOCHEN } from "../data/plan.js";
 import { WEEK_COLORS } from "../constants/theme.js";
@@ -112,6 +113,8 @@ export default function PlanPage() {
           </section>
         );
       })}
+
+      <SmartQuizCard />
 
       <MistakeTrainer />
 

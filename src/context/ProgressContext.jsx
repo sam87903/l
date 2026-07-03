@@ -1,9 +1,10 @@
-import { createContext, useCallback, useContext, useMemo } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useStoredState } from "../hooks/useStoredState.js";
-import { DEFAULT_START_DATE, EXAM_TEXT_LIMIT, MASTERY_STREAK, RECENTS_LIMIT, STORAGE_KEYS, XP_RULES } from "../constants/config.js";
+import { AUTO_BACKUP_INTERVAL_MS, DEFAULT_START_DATE, EXAM_TEXT_LIMIT, MASTERY_STREAK, MISTAKE_POOL_CAP, RECENTS_LIMIT, STORAGE_KEYS, XP_RULES } from "../constants/config.js";
 import { PLAN } from "../data/plan.js";
 import { computeStreak, computeXp, levelInfo } from "../utils/xp.js";
 import { todayISO } from "../utils/dates.js";
+import { pushAutoBackup, readAutoBackups } from "../services/autoBackup.js";
 
 const ProgressContext = createContext(null);
 
@@ -88,7 +89,7 @@ export function ProgressProvider({ children }) {
    * richtige Antworten in Folge meistern die Frage (Leitner-Prinzip).
    */
   const recordAnswer = useCallback(
-    (modId, questionIndex, wasCorrect) => {
+    (modId, questionIndex, wasCorrect, questionPayload) => {
       const key = `${modId}#${questionIndex}`;
       const current = wrongPool[key];
       if (wasCorrect) {
@@ -104,10 +105,34 @@ export function ProgressProvider({ children }) {
           setWrongPool({ ...wrongPool, [key]: { ...current, streak } });
         }
       } else {
-        setWrongPool({
+        const next = {
           ...wrongPool,
-          [key]: { modId, qi: questionIndex, misses: (current?.misses ?? 0) + 1, streak: 0 },
-        });
+          [key]: {
+            modId,
+            qi: questionIndex,
+            misses: (current?.misses ?? 0) + 1,
+            streak: 0,
+            // Generierte Smart-Quiz-Fragen mitschreiben, damit das
+            // Fehler-Training sie später rekonstruieren kann.
+            question: questionPayload ?? current?.question,
+          },
+        };
+        // Kartei begrenzen: bei Überlauf den Eintrag mit den wenigsten
+        // Fehlversuchen (außer dem gerade hinzugefügten) verwerfen.
+        const keys = Object.keys(next);
+        if (keys.length > MISTAKE_POOL_CAP) {
+          let dropKey = null;
+          let dropMisses = Infinity;
+          for (const k of keys) {
+            if (k === key) continue;
+            if (next[k].misses < dropMisses) {
+              dropMisses = next[k].misses;
+              dropKey = k;
+            }
+          }
+          if (dropKey) delete next[dropKey];
+        }
+        setWrongPool(next);
       }
     },
     [wrongPool, setWrongPool, setMastered, logActivity]
@@ -166,6 +191,25 @@ export function ProgressProvider({ children }) {
     [startDate, doneDays, quizBest, fcKnown, favorites, recents, activity, settings, wrongPool, mastered, exams]
   );
 
+  // ── Automatische, rotierende Backups (jede Minute) ──
+  const [autoBackups, setAutoBackups] = useState([]);
+  const exportRef = useRef(exportData);
+  exportRef.current = exportData;
+
+  useEffect(() => {
+    if (!ready) return;
+    let active = true;
+    readAutoBackups().then((list) => active && setAutoBackups(list));
+    const id = setInterval(async () => {
+      const next = await pushAutoBackup(exportRef.current());
+      if (active) setAutoBackups(next);
+    }, AUTO_BACKUP_INTERVAL_MS);
+    return () => {
+      active = false;
+      clearInterval(id);
+    };
+  }, [ready]);
+
   const importData = useCallback(
     (data) => {
       if (data.startDate) setStartDate(data.startDate);
@@ -181,6 +225,14 @@ export function ProgressProvider({ children }) {
       if (Array.isArray(data.exams)) setExams(data.exams);
     },
     [setStartDate, setDoneDays, setQuizBest, setFcKnown, setFavorites, setRecents, setActivity, setSettings, setWrongPool, setMastered, setExams]
+  );
+
+  const restoreAutoBackup = useCallback(
+    (index) => {
+      const entry = autoBackups[index];
+      if (entry) importData(entry.data);
+    },
+    [autoBackups, importData]
   );
 
   const resetAll = useCallback(() => {
@@ -210,12 +262,13 @@ export function ProgressProvider({ children }) {
       settings, setSettings,
       wrongPool, recordAnswer,
       exams, addExam, removeExam,
+      autoBackups, restoreAutoBackup,
       exportData, importData, resetAll,
     }),
     [ready, stats, doneDays, toggleDay, startDate, setStartDate, quizBest, saveQuizResult,
      fcKnown, setKnownCard, favorites, toggleFavorite, recents, pushRecent, activity,
      addFocusMinutes, settings, setSettings, wrongPool, recordAnswer, exams, addExam,
-     removeExam, exportData, importData, resetAll]
+     removeExam, autoBackups, restoreAutoBackup, exportData, importData, resetAll]
   );
 
   return <ProgressContext.Provider value={value}>{children}</ProgressContext.Provider>;

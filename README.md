@@ -17,10 +17,12 @@ im Stil einer nativen Apple-App (Liquid Glass, Dark/Light/Auto-Theme).
 | 📖 **Glossar** | ~150 Fachbegriffe, Live-Suche (debounced), ⭐ Favoriten, „Zuletzt angesehen", Lernmodus, Alpha-Navigation, inkrementelles Rendering |
 | 📊 **Statistik** | Hero-Fortschrittsring, Kontext-KPIs, Streak-Kalender, Details per Progressive Disclosure |
 | 🧠 **Lernanalyse** | Nach jedem Quiz: Stärken, Wissenslücken („Du hast Probleme mit …"), priorisierte Lernliste, nächste Lernaktivität – plus KI-Prompt-Export für ChatGPT/Claude |
-| 🔁 **Fehler-Training** | Falsch beantwortete Fragen werden wiederholt, bis sie 2× in Folge sitzen (Leitner-Prinzip) |
+| ✨ **Smart-Quiz** | Generiert aus ~500 Fragen (Lernkarten + Glossar) adaptive Quizze mit Fokus „Schwächen / Semester 1 / Alles"; gewichtet nach Fehler-Kartei; Antwortoptionen je Runde gemischt |
+| 🔁 **Fehler-Training** | Falsch beantwortete Fragen (auch aus dem Smart-Quiz) werden wiederholt, bis sie 2× in Folge sitzen (Leitner-Prinzip) |
 | 📄 **Klausuren** | Altklausuren einfügen → Themencluster, Aufgabentypen, Schwierigkeitsniveau, wiederkehrende Muster über mehrere Klausuren, „Top 10 Prüfungswahrscheinlichkeit" – alles lokal |
-| ⏱️ **Timer** | Pomodoro mit 20/25/45 Min, 5-Min-Pausen, Sound, Vibration, Benachrichtigung |
+| ⏱️ **Timer** | Pomodoro mit 20/25/45 Min, 5-Min-Pausen, **vorzeitig beenden** (schreibt gelernte Minuten gut), Sound, Vibration, Benachrichtigung |
 | ⚙️ **Einstellungen** | Theme (Auto/Hell/Dunkel), Backup-Export/-Import (JSON), CSV-Export, PDF/Druck, Reset |
+| 💾 **Auto-Backup** | Jede Minute automatische Sicherung mit Rotation (letzte 3 Versionen, älteste wird gelöscht); Wiederherstellung in den Einstellungen |
 | 📱 **PWA** | Installierbar, Offline-Modus (Service Worker), Manifest, App-Icon |
 
 Fortschritt wird lokal gespeichert (`localStorage`, kompatibel zu den

@@ -1,5 +1,5 @@
 import { memo, useCallback, useState } from "react";
-import { Coffee, Pause, Play, RotateCcw, Timer } from "lucide-react";
+import { Check, Coffee, Pause, Play, RotateCcw, Timer } from "lucide-react";
 import GlassCard from "../ui/GlassCard.jsx";
 import Button from "../ui/Button.jsx";
 import ProgressBar from "../ui/ProgressBar.jsx";
@@ -17,7 +17,7 @@ const SECONDS_PER_MINUTE = 60;
 const fmt = (s) =>
   `${String(Math.floor(s / SECONDS_PER_MINUTE)).padStart(2, "0")}:${String(s % SECONDS_PER_MINUTE).padStart(2, "0")}`;
 
-/** Pomodoro-Timer mit Presets (20/25/45), Pausenmodus, Sound & Vibration. */
+/** Pomodoro-Timer mit Presets (20/25/45), Pause, vorzeitigem Beenden, Sound & Vibration. */
 const FocusTimer = memo(function FocusTimer() {
   const { addFocusMinutes, settings } = useProgress();
   const { push } = useToast();
@@ -41,6 +41,10 @@ const FocusTimer = memo(function FocusTimer() {
   const total = (isBreak ? BREAK_MINUTES : minutes) * SECONDS_PER_MINUTE;
   const done = timer.remaining === 0;
   const pct = Math.round(((total - timer.remaining) / total) * 100);
+  // Vorzeitiges Beenden nur sinnvoll, wenn eine laufende Fokus-Session
+  // (kein Break) mindestens ein Stück fortgeschritten ist.
+  const elapsedSec = total - timer.remaining;
+  const canFinish = !isBreak && !done && elapsedSec > 0;
 
   const selectPreset = (m) => {
     setIsBreak(false);
@@ -52,6 +56,16 @@ const FocusTimer = memo(function FocusTimer() {
     setIsBreak(true);
     timer.reset(BREAK_MINUTES * SECONDS_PER_MINUTE);
     timer.start();
+  };
+
+  /** Session vorzeitig beenden und die bisher gelernten Minuten gutschreiben. */
+  const finishEarly = () => {
+    const earned = Math.max(1, Math.round(elapsedSec / SECONDS_PER_MINUTE));
+    addFocusMinutes(earned);
+    push(`${earned} Fokus-Minuten gespeichert – gut gemacht!`, "✅");
+    if (settings.sound) playChime();
+    setIsBreak(false);
+    timer.reset(minutes * SECONDS_PER_MINUTE);
   };
 
   return (
@@ -106,6 +120,14 @@ const FocusTimer = memo(function FocusTimer() {
           </>
         )}
       </div>
+
+      {canFinish && (
+        <Button tint={ACCENT.teal} style={{ width: "100%", marginTop: "var(--s-2)" }} onClick={finishEarly}>
+          <Check size={15} aria-hidden="true" />
+          Beenden &amp; {Math.max(1, Math.round(elapsedSec / SECONDS_PER_MINUTE))} Min speichern
+        </Button>
+      )}
+
       <p className={styles.hint}>5 Min Anki · 10 Min Video/Lesen · 5 Min Takeaways notieren</p>
     </GlassCard>
   );
