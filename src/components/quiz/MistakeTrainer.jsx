@@ -25,8 +25,13 @@ const MistakeTrainer = memo(function MistakeTrainer() {
       Object.entries(wrongPool)
         .map(([key, entry]) => {
           const module = MODULE_BY_ID.get(entry.modId);
-          const question = module?.quiz?.[entry.qi];
-          return question ? { key, ...entry, module, question } : null;
+          // Statische Fragen aus dem Modul, generierte aus dem Payload.
+          const question = entry.question ?? module?.quiz?.[entry.qi];
+          if (!question) return null;
+          const sourceLabel = module
+            ? `${module.code} · ${module.name}`
+            : `Smart-Quiz${entry.question?.topic ? ` · ${entry.question.topic}` : ""}`;
+          return { key, ...entry, question, sourceLabel };
         })
         .filter(Boolean)
         .sort((a, b) => b.misses - a.misses || a.key.localeCompare(b.key)),
@@ -60,7 +65,7 @@ const MistakeTrainer = memo(function MistakeTrainer() {
       {current ? (
         <>
           <div className={styles.trainerMeta}>
-            <span>Modul: <strong>{current.module.code}</strong> {current.module.name}</span>
+            <span>Quelle: <strong>{current.sourceLabel}</strong></span>
             <span>{current.misses}× falsch beantwortet</span>
             <span className={styles.trainerStreak}>
               Serie {current.streak ?? 0}/{MASTERY_STREAK} – {MASTERY_STREAK}× richtig = gemeistert

@@ -234,3 +234,31 @@
   color: var(--teal);
   font-weight: 800;
 }
+
+/* ═══ Smart-Quiz-Auswahl ═══ */
+
+.smartRow {
+  display: flex;
+  gap: var(--s-2);
+  margin-bottom: var(--s-2);
+}
+
+.smartOpt {
+  flex: 1;
+  min-height: 44px;
+  padding: 0.4rem 0.5rem;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--glass-border);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color var(--dur), background var(--dur), color var(--dur);
+}
+
+.smartOptActive {
+  border-color: color-mix(in srgb, var(--violet) 60%, transparent);
+  background: color-mix(in srgb, var(--violet) 18%, transparent);
+  color: var(--violet);
+}

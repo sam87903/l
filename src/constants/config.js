@@ -19,13 +19,22 @@ export const STORAGE_KEYS = {
   wrongPool: "mrk7-wq",
   mastered: "mrk7-wm",
   exams: "mrk7-ex",
+  autoBackups: "mrk7-autobak",
 };
+
+/** Auto-Backup: Intervall (ms) und wie viele Versionen behalten werden. */
+export const AUTO_BACKUP_INTERVAL_MS = 60000;
+export const AUTO_BACKUP_KEEP = 3;
 
 /** Fehler-Training: so oft in Folge richtig = gemeistert. */
 export const MASTERY_STREAK = 2;
 
 /** Max. gespeicherte Zeichen pro Altklausur. */
 export const EXAM_TEXT_LIMIT = 120000;
+
+/** Smart-Quiz: wählbare Fragenanzahl und Obergrenze der Fehler-Kartei. */
+export const SMART_QUIZ_SIZES = [5, 10, 15];
+export const MISTAKE_POOL_CAP = 80;
 
 /** Timer-Voreinstellungen in Minuten. */
 export const TIMER_PRESETS = [20, 25, 45];

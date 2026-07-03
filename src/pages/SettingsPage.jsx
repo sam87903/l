@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Bell, Download, FileSpreadsheet, Printer, RotateCcw, Upload, Volume2 } from "lucide-react";
+import { Bell, Download, FileSpreadsheet, History, Printer, RotateCcw, Upload, Volume2 } from "lucide-react";
 import PageTransition from "../components/layout/PageTransition.jsx";
 import GlassCard from "../components/ui/GlassCard.jsx";
 import Button from "../components/ui/Button.jsx";
@@ -27,11 +27,12 @@ const THEME_OPTIONS = [
 /** Einstellungen: Theme, Datum, Sound, Benachrichtigungen, Backup, Export. */
 export default function SettingsPage() {
   const { mode, setMode } = useTheme();
-  const { startDate, setStartDate, settings, setSettings, exportData, importData, resetAll, doneDays, favorites } = useProgress();
+  const { startDate, setStartDate, settings, setSettings, exportData, importData, resetAll, doneDays, favorites, autoBackups, restoreAutoBackup } = useProgress();
   const { push } = useToast();
   const fileInputRef = useRef(null);
   const [resetOpen, setResetOpen] = useState(false);
   const [pendingImport, setPendingImport] = useState(null);
+  const [pendingRestore, setPendingRestore] = useState(null);
 
   const toggleSound = () => {
     const next = !settings.sound;
@@ -81,6 +82,21 @@ export default function SettingsPage() {
     importData(pendingImport);
     setPendingImport(null);
     push("Backup wiederhergestellt", "✅");
+  };
+
+  const confirmRestore = () => {
+    if (pendingRestore != null) {
+      restoreAutoBackup(pendingRestore);
+      push("Auto-Backup wiederhergestellt", "⏱️");
+      setPendingRestore(null);
+    }
+  };
+
+  const relTime = (iso) => {
+    const diffMin = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
+    if (diffMin < 1) return "gerade eben";
+    if (diffMin < 60) return `vor ${diffMin} Min`;
+    return new Date(iso).toLocaleString("de-DE", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
   };
 
   const confirmReset = () => {
@@ -172,6 +188,34 @@ export default function SettingsPage() {
       <input ref={fileInputRef} type="file" accept="application/json,.json" onChange={onImportFile}
         style={{ display: "none" }} aria-hidden="true" tabIndex={-1} />
 
+      <div className={styles.sectionTitle}>
+        <History size={14} aria-hidden="true" /> Automatische Backups
+      </div>
+      <GlassCard style={{ padding: "var(--s-3) var(--s-4)", marginBottom: "var(--s-4)" }}>
+        <p style={{ margin: "0 0 var(--s-2)", fontSize: "var(--fs-xs)", color: "var(--muted)", lineHeight: 1.55 }}>
+          Dein Fortschritt wird jede Minute automatisch gesichert. Es werden die letzten
+          {" "}{autoBackups.length > 0 ? autoBackups.length : "3"} Versionen behalten – die älteste wird gelöscht.
+        </p>
+        {autoBackups.length === 0 ? (
+          <p style={{ margin: 0, fontSize: "var(--fs-sm)", color: "var(--muted)" }}>
+            Noch kein Auto-Backup – das erste wird in Kürze erstellt.
+          </p>
+        ) : (
+          autoBackups.map((entry, i) => (
+            <div key={entry.at} style={{ display: "flex", alignItems: "center", gap: "var(--s-2)",
+              padding: "var(--s-2) 0", borderTop: i > 0 ? "1px solid var(--border)" : "none" }}>
+              <span aria-hidden="true">⏱️</span>
+              <span style={{ flex: 1, fontSize: "var(--fs-sm)", fontWeight: i === 0 ? 700 : 500 }}>
+                {relTime(entry.at)}{i === 0 ? " · neueste" : ""}
+              </span>
+              <Button onClick={() => setPendingRestore(i)} style={{ minHeight: 38, padding: "0.35rem 0.8rem" }}>
+                <RotateCcw size={13} aria-hidden="true" /> Wiederherstellen
+              </Button>
+            </div>
+          ))
+        )}
+      </GlassCard>
+
       <div className={styles.sectionTitle} style={{ color: ACCENT.red }}>⚠️ Gefahrenzone</div>
       <Button tint={ACCENT.red} style={{ width: "100%" }} onClick={() => setResetOpen(true)}>
         <RotateCcw size={15} aria-hidden="true" /> Gesamten Fortschritt zurücksetzen
@@ -185,6 +229,10 @@ export default function SettingsPage() {
       <Modal open={pendingImport != null} title="Backup wiederherstellen?"
         confirmLabel="Wiederherstellen" onConfirm={confirmImport} onClose={() => setPendingImport(null)}>
         Der aktuelle Fortschritt wird durch den Stand aus der Backup-Datei ersetzt.
+      </Modal>
+      <Modal open={pendingRestore != null} title="Auto-Backup wiederherstellen?"
+        confirmLabel="Wiederherstellen" onConfirm={confirmRestore} onClose={() => setPendingRestore(null)}>
+        Der aktuelle Fortschritt wird durch diese automatisch gesicherte Version ersetzt.
       </Modal>
     </PageTransition>
   );
