@@ -25,7 +25,7 @@ export function toCSV(rows) {
 export const downloadCSV = (name, rows) =>
   downloadFile(name, "﻿" + toCSV(rows), "text/csv;charset=utf-8");
 
-const BACKUP_KEYS = ["doneDays", "quizBest", "fcKnown", "favorites", "recents", "activity", "settings", "wrongPool", "exams"];
+const BACKUP_KEYS = ["doneDays", "quizBest", "fcKnown", "favorites", "recents", "activity", "settings", "wrongPool", "exams", "srs"];
 
 /** Backup-Text validieren; wirft bei ungültigem Format. */
 export function parseBackup(text) {

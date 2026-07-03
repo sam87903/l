@@ -4,27 +4,53 @@ import { ArrowLeft, ArrowRight, Check, RotateCcw, Shuffle } from "lucide-react";
 import GlassCard from "../ui/GlassCard.jsx";
 import Button from "../ui/Button.jsx";
 import ProgressBar from "../ui/ProgressBar.jsx";
+import { useProgress } from "../../context/ProgressContext.jsx";
+import { isDue } from "../../utils/decks.js";
+import { LEITNER_MAX_BOX } from "../../constants/config.js";
 import { ACCENT } from "../../constants/theme.js";
 import { cx, shuffleArray } from "../../utils/misc.js";
 import styles from "./flashcards.module.css";
 
+const SWIPE_DISTANCE = 70;
+const SWIPE_VELOCITY = 500;
+
+const fmtShort = (iso) => (iso ? `${iso.slice(8, 10)}.${iso.slice(5, 7)}.` : "");
+
 /**
- * Lernkarten-Deck mit 3D-Flip, Shuffle, "Nur neue"-Filter und
- * Gewusst/Nochmal-Tracking (Spaced-Repetition light).
+ * Lernkarten-Deck mit 3D-Flip, Leitner-Boxen (1–5), Fällig-/Neu-Filter,
+ * Wisch-Gesten (rechts = Gewusst, links = Nochmal) und Shuffle.
  */
-const FlashcardDeck = memo(function FlashcardDeck({ cards, color = ACCENT.violet, known, onKnown }) {
+const FlashcardDeck = memo(function FlashcardDeck({ deckId, cards, color = ACCENT.violet }) {
+  const { fcKnown, srs, reviewCard } = useProgress();
   const [order, setOrder] = useState(() => cards.map((_, i) => i));
   const [pos, setPos] = useState(0);
   const [flipped, setFlipped] = useState(false);
-  const [onlyNew, setOnlyNew] = useState(false);
+  const [filter, setFilter] = useState("all");
 
-  const sequence = useMemo(
-    () => (onlyNew ? order.filter((i) => !known.has(i)) : order),
-    [order, onlyNew, known]
+  const known = useMemo(() => new Set(fcKnown[deckId] || []), [fcKnown, deckId]);
+  const deckSrs = srs[deckId] || {};
+
+  const newIndices = useMemo(
+    () => order.filter((i) => !known.has(i) && !deckSrs[i]),
+    [order, known, deckSrs]
   );
+  const dueIndices = useMemo(() => order.filter((i) => isDue(deckSrs[i])), [order, deckSrs]);
+  const sequence = filter === "new" ? newIndices : filter === "due" ? dueIndices : order;
+
   const safePos = sequence.length ? Math.min(pos, sequence.length - 1) : 0;
   const cardIndex = sequence.length ? sequence[safePos] : null;
   const card = cardIndex != null ? cards[cardIndex] : null;
+  const entry = cardIndex != null ? deckSrs[cardIndex] : null;
+
+  // Verteilung auf die Leitner-Boxen (für die Mini-Übersicht).
+  const boxCounts = useMemo(() => {
+    const counts = new Array(LEITNER_MAX_BOX).fill(0);
+    for (const e of Object.values(deckSrs)) {
+      if (e?.box >= 1 && e.box <= LEITNER_MAX_BOX) counts[e.box - 1] += 1;
+    }
+    return counts;
+  }, [deckSrs]);
+  const hasSrs = boxCounts.some((n) => n > 0);
 
   const go = useCallback(
     (dir) => {
@@ -43,12 +69,31 @@ const FlashcardDeck = memo(function FlashcardDeck({ cards, color = ACCENT.violet
     setFlipped(false);
   };
 
+  const selectFilter = (id) => {
+    setFilter((f) => (f === id ? "all" : id));
+    setPos(0);
+    setFlipped(false);
+  };
+
   const mark = (isKnown) => {
     if (cardIndex == null) return;
-    onKnown(cardIndex, isKnown);
+    reviewCard(deckId, cardIndex, isKnown);
     setFlipped(false);
-    // Im "Nur neue"-Modus rückt eine gewusste Karte automatisch nach.
-    if (!(onlyNew && isKnown)) go(1);
+    // Verlässt die Karte den aktiven Filter, rückt die nächste automatisch nach.
+    const leaves = filter === "new" || (filter === "due" && isKnown);
+    if (!leaves) go(1);
+  };
+
+  /** Wischen: umgedreht = bewerten (→ Gewusst / ← Nochmal), sonst blättern. */
+  const onDragEnd = (_e, info) => {
+    const swipe = info.offset.x > SWIPE_DISTANCE || info.velocity.x > SWIPE_VELOCITY
+      ? 1
+      : info.offset.x < -SWIPE_DISTANCE || info.velocity.x < -SWIPE_VELOCITY
+        ? -1
+        : 0;
+    if (!swipe) return;
+    if (flipped) mark(swipe === 1);
+    else go(swipe === 1 ? -1 : 1);
   };
 
   return (
@@ -65,17 +110,34 @@ const FlashcardDeck = memo(function FlashcardDeck({ cards, color = ACCENT.violet
             <Shuffle size={12} aria-hidden="true" />
           </button>
           <button
-            className={cx(styles.tool, onlyNew && styles.toolActive, "hover-pop")}
-            onClick={() => { setOnlyNew((v) => !v); setPos(0); setFlipped(false); }}
-            aria-pressed={onlyNew}
+            className={cx(styles.tool, filter === "new" && styles.toolActive, "hover-pop")}
+            onClick={() => selectFilter("new")}
+            aria-pressed={filter === "new"}
           >
-            Nur neue{onlyNew ? " ✓" : ""}
+            Neu · {newIndices.length}
+          </button>
+          <button
+            className={cx(styles.tool, filter === "due" && styles.toolActive, dueIndices.length > 0 && filter !== "due" && styles.toolAlert, "hover-pop")}
+            onClick={() => selectFilter("due")}
+            aria-pressed={filter === "due"}
+          >
+            Fällig · {dueIndices.length}
           </button>
         </div>
       </div>
 
       <ProgressBar value={known.size} max={cards.length} from={ACCENT.teal} to={color} height={4}
         label="Gewusste Karten" />
+
+      {hasSrs && (
+        <div className={styles.boxRow} aria-label="Leitner-Boxen">
+          {boxCounts.map((n, i) => (
+            <span key={i} className={cx(styles.boxPill, n > 0 && styles.boxPillFilled)} title={`Box ${i + 1}: ${n} Karten`}>
+              <span className={styles.boxNr}>B{i + 1}</span> {n}
+            </span>
+          ))}
+        </div>
+      )}
 
       {card ? (
         <>
@@ -84,7 +146,11 @@ const FlashcardDeck = memo(function FlashcardDeck({ cards, color = ACCENT.violet
               className={styles.cardInner}
               animate={{ rotateY: flipped ? 180 : 0 }}
               transition={{ type: "spring", stiffness: 260, damping: 24 }}
-              onClick={() => setFlipped((f) => !f)}
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.7}
+              onDragEnd={onDragEnd}
+              onTap={() => setFlipped((f) => !f)}
               role="button"
               tabIndex={0}
               onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && (e.preventDefault(), setFlipped((f) => !f))}
@@ -92,7 +158,14 @@ const FlashcardDeck = memo(function FlashcardDeck({ cards, color = ACCENT.violet
             >
               <div className={styles.face}>
                 <span className={styles.pos}>{safePos + 1}/{sequence.length}</span>
-                {known.has(cardIndex) && <span className={styles.knownBadge}>✓ gewusst</span>}
+                {entry ? (
+                  <span className={cx(styles.boxBadge, isDue(entry) && styles.boxBadgeDue)}>
+                    📦 Stufe {entry.box}/{LEITNER_MAX_BOX}
+                    {isDue(entry) ? " · fällig" : ` · ab ${fmtShort(entry.due)}`}
+                  </span>
+                ) : known.has(cardIndex) ? (
+                  <span className={styles.knownBadge}>✓ gewusst</span>
+                ) : null}
                 <div className={styles.faceLabel}>Begriff</div>
                 <div className={styles.faceTerm}>{card.front}</div>
               </div>
@@ -124,14 +197,25 @@ const FlashcardDeck = memo(function FlashcardDeck({ cards, color = ACCENT.violet
               </>
             )}
           </div>
+          <p className={styles.swipeHint}>
+            {flipped
+              ? "Wischen: rechts = Gewusst · links = Nochmal"
+              : "Antippen zum Umdrehen · Wischen zum Blättern"}
+          </p>
         </>
       ) : (
         <div className={styles.doneBox}>
-          <div style={{ fontSize: "1.5rem", marginBottom: "var(--s-1)" }} aria-hidden="true">🎉</div>
+          <div style={{ fontSize: "1.5rem", marginBottom: "var(--s-1)" }} aria-hidden="true">
+            {filter === "due" ? "✅" : "🎉"}
+          </div>
           <p style={{ margin: "0 0 var(--s-3)", fontWeight: 700, fontSize: "var(--fs-md)" }}>
-            Alle Karten gewusst – stark!
+            {filter === "due"
+              ? "Nichts fällig – alles im grünen Bereich!"
+              : filter === "new"
+                ? "Keine neuen Karten mehr – stark!"
+                : "Alle Karten gewusst – stark!"}
           </p>
-          <Button tint={color} onClick={() => { setOnlyNew(false); setPos(0); }}>
+          <Button tint={color} onClick={() => { setFilter("all"); setPos(0); }}>
             Alle Karten zeigen
           </Button>
         </div>

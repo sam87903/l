@@ -48,3 +48,10 @@ export function todayPlanDay(startIso, totalDays) {
 }
 
 export const dayNum = (n) => String(n).padStart(2, "0");
+
+/** Lokales ISO-Datum in `days` Tagen (für Leitner-Fälligkeiten). */
+export function addDaysISO(days, from = new Date()) {
+  const d = new Date(from);
+  d.setDate(d.getDate() + days);
+  return toLocalISO(d);
+}

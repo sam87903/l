@@ -61,6 +61,78 @@
   color: var(--c);
 }
 
+/* Fällig-Filter mit offenen Wiederholungen: dezent hervorheben */
+.toolAlert {
+  border-color: color-mix(in srgb, var(--orange) 55%, transparent);
+  color: var(--orange);
+}
+
+/* ── Leitner-Box-Übersicht ── */
+.boxRow {
+  display: flex;
+  gap: var(--s-1);
+  margin-top: var(--s-2);
+  flex-wrap: wrap;
+}
+
+.boxPill {
+  flex: 1;
+  min-width: 0;
+  padding: 0.2rem 0.3rem;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--glass-border);
+  text-align: center;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.boxPillFilled {
+  border-color: color-mix(in srgb, var(--c) 40%, transparent);
+  background: color-mix(in srgb, var(--c) 10%, transparent);
+  color: var(--text);
+}
+
+.boxNr {
+  opacity: 0.65;
+  font-weight: 800;
+}
+
+.boxBadge {
+  position: absolute;
+  top: 0.45rem;
+  right: 0.6rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: var(--r-full);
+  border: 1px solid color-mix(in srgb, var(--c) 45%, transparent);
+  background: color-mix(in srgb, var(--c) 12%, transparent);
+  color: var(--c);
+  font-size: 0.6rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.boxBadgeDue {
+  border-color: color-mix(in srgb, var(--orange) 50%, transparent);
+  background: color-mix(in srgb, var(--orange) 14%, transparent);
+  color: var(--orange);
+}
+
+.swipeHint {
+  margin: var(--s-2) 0 0;
+  text-align: center;
+  font-size: 0.62rem;
+  color: var(--muted);
+}
+
+.trainerText {
+  margin: 0 0 var(--s-2);
+  font-size: var(--fs-sm);
+  line-height: 1.55;
+  color: var(--muted);
+}
+
 .scene {
   perspective: 1000px;
   margin: var(--s-3) 0;

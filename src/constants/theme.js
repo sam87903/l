@@ -4,6 +4,7 @@ export const ACCENT = {
   teal: "#2dd4a8",
   violet: "#a78bfa",
   blue: "#5b7cfa",
+  orange: "#f0a24b",
   blueD: "#0e1c60",
 };
 

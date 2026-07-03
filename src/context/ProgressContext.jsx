@@ -1,9 +1,9 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useStoredState } from "../hooks/useStoredState.js";
-import { AUTO_BACKUP_INTERVAL_MS, DEFAULT_START_DATE, EXAM_TEXT_LIMIT, MASTERY_STREAK, MISTAKE_POOL_CAP, RECENTS_LIMIT, STORAGE_KEYS, XP_RULES } from "../constants/config.js";
+import { AUTO_BACKUP_INTERVAL_MS, DEFAULT_START_DATE, EXAM_TEXT_LIMIT, LEITNER_INTERVALS, LEITNER_MAX_BOX, MASTERY_STREAK, MISTAKE_POOL_CAP, RECENTS_LIMIT, STORAGE_KEYS, XP_RULES } from "../constants/config.js";
 import { PLAN } from "../data/plan.js";
 import { computeStreak, computeXp, levelInfo } from "../utils/xp.js";
-import { todayISO } from "../utils/dates.js";
+import { addDaysISO, todayISO } from "../utils/dates.js";
 import { pushAutoBackup, readAutoBackups } from "../services/autoBackup.js";
 
 const ProgressContext = createContext(null);
@@ -26,8 +26,9 @@ export function ProgressProvider({ children }) {
   const [wrongPool, setWrongPool, l9] = useStoredState(STORAGE_KEYS.wrongPool, {});
   const [mastered, setMastered, l10] = useStoredState(STORAGE_KEYS.mastered, 0);
   const [exams, setExams, l11] = useStoredState(STORAGE_KEYS.exams, []);
+  const [srs, setSrs, l12] = useStoredState(STORAGE_KEYS.srs, {});
 
-  const ready = l1 && l2 && l3 && l4 && l5 && l6 && l7 && l8 && l9 && l10 && l11;
+  const ready = l1 && l2 && l3 && l4 && l5 && l6 && l7 && l8 && l9 && l10 && l11 && l12;
 
   const logActivity = useCallback(
     (minutes) => {
@@ -70,6 +71,25 @@ export function ProgressProvider({ children }) {
       if (isKnown) logActivity(1);
     },
     [setFcKnown, logActivity]
+  );
+
+  /**
+   * Leitner-Wiederholung: „Gewusst" hebt die Karte eine Box höher
+   * (Wiederholung in 3/7/14/30 Tagen), „Nochmal" setzt sie auf Box 1
+   * zurück und macht sie sofort wieder fällig.
+   */
+  const reviewCard = useCallback(
+    (deckId, index, known) => {
+      setSrs((s) => {
+        const deck = s[deckId] || {};
+        const prevBox = deck[index]?.box ?? 0;
+        const box = known ? Math.min(prevBox + 1, LEITNER_MAX_BOX) : 1;
+        const due = known ? addDaysISO(LEITNER_INTERVALS[box]) : todayISO();
+        return { ...s, [deckId]: { ...deck, [index]: { box, due } } };
+      });
+      setKnownCard(deckId, index, known);
+    },
+    [setSrs, setKnownCard]
   );
 
   const toggleFavorite = useCallback(
@@ -186,9 +206,9 @@ export function ProgressProvider({ children }) {
       version: 3,
       exportedAt: new Date().toISOString(),
       startDate, doneDays, quizBest, fcKnown, favorites, recents, activity, settings,
-      wrongPool, mastered, exams,
+      wrongPool, mastered, exams, srs,
     }),
-    [startDate, doneDays, quizBest, fcKnown, favorites, recents, activity, settings, wrongPool, mastered, exams]
+    [startDate, doneDays, quizBest, fcKnown, favorites, recents, activity, settings, wrongPool, mastered, exams, srs]
   );
 
   // ── Automatische, rotierende Backups (jede Minute) ──
@@ -223,8 +243,9 @@ export function ProgressProvider({ children }) {
       if (data.wrongPool) setWrongPool(data.wrongPool);
       if (typeof data.mastered === "number") setMastered(data.mastered);
       if (Array.isArray(data.exams)) setExams(data.exams);
+      if (data.srs) setSrs(data.srs);
     },
-    [setStartDate, setDoneDays, setQuizBest, setFcKnown, setFavorites, setRecents, setActivity, setSettings, setWrongPool, setMastered, setExams]
+    [setStartDate, setDoneDays, setQuizBest, setFcKnown, setFavorites, setRecents, setActivity, setSettings, setWrongPool, setMastered, setExams, setSrs]
   );
 
   const restoreAutoBackup = useCallback(
@@ -247,7 +268,8 @@ export function ProgressProvider({ children }) {
     setWrongPool({});
     setMastered(0);
     setExams([]);
-  }, [setDoneDays, setQuizBest, setFcKnown, setFavorites, setRecents, setActivity, setSettings, setStartDate, setWrongPool, setMastered, setExams]);
+    setSrs({});
+  }, [setDoneDays, setQuizBest, setFcKnown, setFavorites, setRecents, setActivity, setSettings, setStartDate, setWrongPool, setMastered, setExams, setSrs]);
 
   const value = useMemo(
     () => ({
@@ -262,13 +284,14 @@ export function ProgressProvider({ children }) {
       settings, setSettings,
       wrongPool, recordAnswer,
       exams, addExam, removeExam,
+      srs, reviewCard,
       autoBackups, restoreAutoBackup,
       exportData, importData, resetAll,
     }),
     [ready, stats, doneDays, toggleDay, startDate, setStartDate, quizBest, saveQuizResult,
      fcKnown, setKnownCard, favorites, toggleFavorite, recents, pushRecent, activity,
      addFocusMinutes, settings, setSettings, wrongPool, recordAnswer, exams, addExam,
-     removeExam, autoBackups, restoreAutoBackup, exportData, importData, resetAll]
+     removeExam, srs, reviewCard, autoBackups, restoreAutoBackup, exportData, importData, resetAll]
   );
 
   return <ProgressContext.Provider value={value}>{children}</ProgressContext.Provider>;
