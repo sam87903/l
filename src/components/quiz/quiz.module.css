@@ -235,6 +235,32 @@
   font-weight: 800;
 }
 
+.viewToggle {
+  min-height: 30px;
+  padding: 0.15rem 0.6rem;
+  border-radius: var(--r-full);
+  border: 1px solid var(--glass-border);
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.6rem;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.viewToggle:hover {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--c, var(--teal)) 50%, transparent);
+}
+
+.stepMeta {
+  margin-bottom: var(--s-1);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--muted);
+}
+
 .extSwitch {
   display: flex;
   gap: var(--s-1);

@@ -48,20 +48,36 @@ await page.waitForSelector('#quiz-verzeichnis >> text=Studienplan & HRW');
 console.log("✅ Bonus-Quizze erscheinen im Verzeichnis");
 await page.click('#quiz-verzeichnis >> text=Einführung in die BWL');
 await page.waitForSelector("text=Was besagt das Minimalprinzip?");
+// Standard: Einzelmodus (eine Frage pro Schritt)
+await page.waitForSelector('#quiz-verzeichnis >> text=Frage 1 von');
+console.log("✅ Quiz startet im Einzelmodus (eine Frage sichtbar)");
+// Frage 1 absichtlich falsch beantworten → „Weiter" blättert zur nächsten Frage
+const { default: semester1 } = await import("../src/data/semesters/semester1.js");
+const bwlQuiz = semester1.modules.find((m) => m.id === "s1-bwl").quiz;
+await page
+  .locator('[role="group"][aria-label="Frage 1"]')
+  .locator("button", { hasText: bwlQuiz[0].options.find((_, oi) => oi !== bwlQuiz[0].correct) })
+  .first()
+  .click();
+await page.getByRole("button", { name: "Weiter", exact: true }).click();
+await page.waitForSelector('#quiz-verzeichnis >> text=Frage 2 von');
+console.log("✅ Einzelmodus: Antwort → Weiter → nächste Frage ohne Scrollen");
+// Für den Rest-Durchlauf zur Listenansicht wechseln
+await page.click('#quiz-verzeichnis button:has-text("Liste")');
+await page.waitForSelector('[role="group"][aria-label="Frage 2"]');
+console.log("✅ Ansicht-Umschalter wechselt zur Listenansicht");
 // Erweitert-Umschalter: Zusatzfragen erscheinen, dann zurück zum Basis-Quiz
 await page.click('#quiz-verzeichnis button:has-text("Erweitert ·")');
 await page.waitForSelector("text=Restbuchwert nach 3 Jahren");
 console.log("✅ Erweitert-Button lädt Zusatzfragen");
 await page.click('#quiz-verzeichnis button:has-text("Quiz ·")');
 await page.waitForSelector("text=Was besagt das Minimalprinzip?");
-// Frage 1 absichtlich falsch, alle weiteren richtig – Antworttexte aus den Quelldaten
-const { default: semester1 } = await import("../src/data/semesters/semester1.js");
-const bwlQuiz = semester1.modules.find((m) => m.id === "s1-bwl").quiz;
+// Tab-Wechsel hat das Quiz zurückgesetzt: Frage 1 erneut falsch, Rest richtig
 for (let qi = 0; qi < bwlQuiz.length; qi++) {
   const q = bwlQuiz[qi];
   const text = qi === 0 ? q.options.find((_, oi) => oi !== q.correct) : q.options[q.correct];
   await page
-    .locator(`[role="group"][aria-label="Frage ${qi + 1}"]`)
+    .locator(`#quiz-verzeichnis [role="group"][aria-label="Frage ${qi + 1}"]`)
     .locator("button", { hasText: text })
     .first()
     .click();
