@@ -10,7 +10,7 @@ describe("extendedQuiz (Erweitert-Fragensätze)", () => {
     expect(Object.keys(EXTENDED_QUIZ).length).toBeGreaterThanOrEqual(20);
     for (const [modId, questions] of Object.entries(EXTENDED_QUIZ)) {
       expect(moduleIds.has(modId)).toBe(true);
-      expect(questions.length).toBeGreaterThanOrEqual(5);
+      expect(questions.length).toBeGreaterThanOrEqual(10);
       for (const q of questions) {
         expect(q.options).toHaveLength(4);
         expect(q.options[q.correct]).toBeDefined();
