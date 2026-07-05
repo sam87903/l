@@ -6,6 +6,7 @@
 import { SEMESTERS } from "../data/semesters/index.js";
 import { GLOSSARY } from "../data/glossary.js";
 import { shuffleArray } from "./misc.js";
+import { isMistakeDue } from "./mistakes.js";
 
 const OPTION_LENGTH = 150;
 const EXPLAIN_LENGTH = 220;
@@ -126,7 +127,9 @@ export const QUESTION_BANK_SIZE = BANK.length;
 
 /** Schwächen-Gewicht eines Bank-Items (höher = wird eher gezogen). */
 function weightFor(item, { wrongPool = {}, fcKnown = {}, quizBest = {} }) {
-  if (wrongPool[`${item.recordMod}#${item.recordKey}`]) return 6;
+  const mistake = wrongPool[`${item.recordMod}#${item.recordKey}`];
+  // Fällige Fehler hart drillen; wartende nur leicht (Leitner-Abstand wahren).
+  if (mistake) return isMistakeDue(mistake) ? 8 : 2;
   if (item.kind === "static") {
     const best = quizBest[item.modId];
     return !best || best.c < best.t ? 4 : 1;

@@ -235,6 +235,37 @@
   font-weight: 800;
 }
 
+.trainerAhead {
+  padding: 0.1rem 0.5rem;
+  border-radius: var(--r-full);
+  border: 1px solid color-mix(in srgb, var(--orange) 50%, transparent);
+  background: color-mix(in srgb, var(--orange) 12%, transparent);
+  color: var(--orange);
+  font-weight: 800;
+}
+
+.trainerFeedback {
+  margin: 0 0 var(--s-3);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.feedbackGood {
+  color: var(--teal);
+}
+
+.feedbackBad {
+  color: var(--red);
+}
+
+.trainerWait {
+  margin: 0 0 var(--s-3);
+  font-size: var(--fs-sm);
+  color: var(--muted);
+  line-height: 1.6;
+}
+
 /* ═══ Smart-Quiz-Auswahl ═══ */
 
 .smartRow {

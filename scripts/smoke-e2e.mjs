@@ -54,14 +54,22 @@ await page.waitForSelector("text=Lernanalyse");
 await page.waitForSelector("text=Du hast Probleme mit");
 console.log("✅ Lernanalyse nach Quiz erscheint");
 await page.click('button:has-text("Fehler üben")');
-await page.waitForSelector("#fehler-training >> text=1 offen");
+await page.waitForSelector("#fehler-training >> text=1 fällig");
 await page.waitForSelector("#fehler-training >> text=Was besagt das Minimalprinzip?");
-// 2× richtig = gemeistert (nach der 2. Antwort verschwindet der Trainer-Inhalt sofort)
+// Leitner: richtig → Stufe 2 (wartet bis morgen) → vorziehen → Stufe 3 → oberste Stufe bestanden = gemeistert
 await page.click('#fehler-training button:has-text("Ein festes Ziel mit minimalem Mitteleinsatz erreichen")');
+await page.waitForSelector("#fehler-training >> text=Hoch auf Stufe 2");
+await page.click('#fehler-training button:has-text("Weiter")');
+await page.waitForSelector("#fehler-training >> text=Nichts fällig");
+await page.click('#fehler-training button:has-text("Trotzdem vorziehen")');
+await page.click('#fehler-training button:has-text("Ein festes Ziel mit minimalem Mitteleinsatz erreichen")');
+await page.waitForSelector("#fehler-training >> text=Hoch auf Stufe 3");
 await page.click('#fehler-training button:has-text("Weiter")');
 await page.click('#fehler-training button:has-text("Ein festes Ziel mit minimalem Mitteleinsatz erreichen")');
+await page.waitForSelector("#fehler-training >> text=Gemeistert – Stufe 3 bestanden");
+await page.click('#fehler-training button:has-text("Weiter")');
 await page.waitForSelector("text=Alle Fehler gemeistert");
-console.log("✅ Fehler-Training: falsch → üben → gemeistert");
+console.log("✅ Fehler-Training: falsch → 3 gestufte Wiederholungen → gemeistert");
 
 // Altklausur-Analyse
 await page.click("nav >> text=Klausuren");

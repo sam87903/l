@@ -31,8 +31,9 @@ export const LEITNER_MAX_BOX = 5;
 export const AUTO_BACKUP_INTERVAL_MS = 60000;
 export const AUTO_BACKUP_KEEP = 3;
 
-/** Fehler-Training: so oft in Folge richtig = gemeistert. */
-export const MASTERY_STREAK = 2;
+/** Fehler-Kartei (Leitner light): Wartezeit in Tagen je Box; oberste Stufe bestanden = gemeistert. */
+export const MISTAKE_INTERVALS = { 1: 0, 2: 1, 3: 3 };
+export const MISTAKE_MAX_BOX = 3;
 
 /** Max. gespeicherte Zeichen pro Altklausur. */
 export const EXAM_TEXT_LIMIT = 120000;
