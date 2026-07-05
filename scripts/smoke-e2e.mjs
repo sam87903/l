@@ -46,10 +46,18 @@ await page.click("nav >> text=Plan");
 await page.click('#quiz-verzeichnis >> text=Quiz-Verzeichnis');
 await page.click('#quiz-verzeichnis >> text=Einführung in die BWL');
 await page.waitForSelector("text=Was besagt das Minimalprinzip?");
-// Frage 1 falsch, 2 & 3 richtig beantworten
-await page.click('button:has-text("Immer die billigste Option wählen")');
-await page.click('button:has-text("GbR")');
-await page.click('button:has-text("Soll")');
+// Frage 1 absichtlich falsch, alle weiteren richtig – Antworttexte aus den Quelldaten
+const { default: semester1 } = await import("../src/data/semesters/semester1.js");
+const bwlQuiz = semester1.modules.find((m) => m.id === "s1-bwl").quiz;
+for (let qi = 0; qi < bwlQuiz.length; qi++) {
+  const q = bwlQuiz[qi];
+  const text = qi === 0 ? q.options.find((_, oi) => oi !== q.correct) : q.options[q.correct];
+  await page
+    .locator(`[role="group"][aria-label="Frage ${qi + 1}"]`)
+    .locator("button", { hasText: text })
+    .first()
+    .click();
+}
 await page.waitForSelector("text=Lernanalyse");
 await page.waitForSelector("text=Du hast Probleme mit");
 console.log("✅ Lernanalyse nach Quiz erscheint");
