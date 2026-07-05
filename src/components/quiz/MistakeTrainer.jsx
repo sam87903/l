@@ -5,6 +5,7 @@ import Button from "../ui/Button.jsx";
 import QuizQuestion from "./QuizQuestion.jsx";
 import { SEMESTERS } from "../../data/semesters/index.js";
 import { GENERAL_QUIZ_BY_ID } from "../../data/generalQuiz.js";
+import { EXTENDED_QUIZ, baseQuizId } from "../../data/extendedQuiz.js";
 import { useProgress } from "../../context/ProgressContext.jsx";
 import { ACCENT } from "../../constants/theme.js";
 import { MISTAKE_MAX_BOX } from "../../constants/config.js";
@@ -22,13 +23,17 @@ const inDays = (iso) => {
 
 /** Fragen-Payload + Quellen-Label zu einem Kartei-Eintrag auflösen. */
 function resolveEntry(entry) {
-  const module = MODULE_BY_ID.get(entry.modId);
+  const extBase = baseQuizId(entry.modId);
+  const module = MODULE_BY_ID.get(extBase ?? entry.modId);
   const general = GENERAL_QUIZ_BY_ID.get(entry.modId);
-  // Statische Fragen aus Modul/Bonus-Deck, generierte aus dem Payload.
-  const question = entry.question ?? module?.quiz?.[entry.qi] ?? general?.quiz?.[entry.qi];
+  // Statische Fragen aus Modul-/Erweitert-/Bonus-Satz, generierte aus dem Payload.
+  const question =
+    entry.question ??
+    (extBase ? EXTENDED_QUIZ[extBase]?.[entry.qi] : module?.quiz?.[entry.qi]) ??
+    general?.quiz?.[entry.qi];
   if (!question) return null;
   const sourceLabel = module
-    ? `${module.code} · ${module.name}`
+    ? `${module.code} · ${module.name}${extBase ? " · Erweitert" : ""}`
     : general
       ? `${general.icon} ${general.name}`
       : `Smart-Quiz${entry.question?.topic ? ` · ${entry.question.topic}` : ""}`;

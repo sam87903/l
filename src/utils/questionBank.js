@@ -6,6 +6,7 @@
 import { SEMESTERS } from "../data/semesters/index.js";
 import { GLOSSARY } from "../data/glossary.js";
 import { GENERAL_QUIZZES } from "../data/generalQuiz.js";
+import { EXTENDED_QUIZ, extQuizId } from "../data/extendedQuiz.js";
 import { shuffleArray } from "./misc.js";
 import { isMistakeDue } from "./mistakes.js";
 
@@ -67,6 +68,25 @@ function buildBank() {
         semNr: mod.semNr,
         topic: null,
         recordMod: mod.id,
+        recordKey: qi,
+        make: () => ({ ...q }),
+      });
+    });
+  }
+
+  // Erweiterte Fragensätze („Erweitert"-Button) je Modul – mit Semesterbezug.
+  for (const [baseId, questions] of Object.entries(EXTENDED_QUIZ)) {
+    const mod = ALL_MODULES.find((m) => m.id === baseId);
+    const recordMod = extQuizId(baseId);
+    questions.forEach((q, qi) => {
+      bank.push({
+        id: `xs:${baseId}:${qi}`,
+        kind: "static",
+        modId: baseId,
+        bestId: recordMod,
+        semNr: mod?.semNr ?? 0,
+        topic: null,
+        recordMod,
         recordKey: qi,
         make: () => ({ ...q }),
       });
@@ -148,7 +168,7 @@ function weightFor(item, { wrongPool = {}, fcKnown = {}, quizBest = {} }) {
   // Fällige Fehler hart drillen; wartende nur leicht (Leitner-Abstand wahren).
   if (mistake) return isMistakeDue(mistake) ? 8 : 2;
   if (item.kind === "static") {
-    const best = quizBest[item.modId];
+    const best = quizBest[item.bestId ?? item.modId];
     return !best || best.c < best.t ? 4 : 1;
   }
   if (item.kind === "card") {

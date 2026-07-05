@@ -5,11 +5,60 @@ import Collapse from "../ui/Collapse.jsx";
 import Quiz from "./Quiz.jsx";
 import { SEMESTERS } from "../../data/semesters/index.js";
 import { GENERAL_QUIZZES } from "../../data/generalQuiz.js";
+import { EXTENDED_QUIZ, extQuizId } from "../../data/extendedQuiz.js";
 import { ACCENT } from "../../constants/theme.js";
 import { useProgress } from "../../context/ProgressContext.jsx";
 import { kb } from "../../utils/misc.js";
 import quizStyles from "./quiz.module.css";
 import cardStyles from "../cards/cards.module.css";
+
+/**
+ * Basis- und Erweitert-Quiz eines Moduls mit Umschalter. Der erweiterte
+ * Satz läuft unter eigener ID (<modId>~ext) für Bestscore & Fehler-Kartei.
+ */
+function ModuleQuiz({ mod, quizBest, saveQuizResult, recordAnswer }) {
+  const extQuestions = EXTENDED_QUIZ[mod.id];
+  const extId = extQuizId(mod.id);
+  const [showExt, setShowExt] = useState(false);
+  const active = showExt && extQuestions;
+
+  return (
+    <>
+      {extQuestions && (
+        <div className={quizStyles.extSwitch} role="group" aria-label="Fragensatz wählen">
+          <button className={quizStyles.extTab} aria-pressed={!active} onClick={() => setShowExt(false)}>
+            🧩 Quiz · {mod.quiz.length}
+          </button>
+          <button className={quizStyles.extTab} aria-pressed={!!active} onClick={() => setShowExt(true)}>
+            🚀 Erweitert · {extQuestions.length}
+          </button>
+        </div>
+      )}
+      {active ? (
+        <Quiz
+          key="ext"
+          questions={extQuestions}
+          module={mod}
+          shuffleAnswers
+          color={ACCENT.violet}
+          best={quizBest[extId]}
+          onDone={(c, t) => saveQuizResult(extId, c, t)}
+          onAnswer={(qi, ok) => recordAnswer(extId, qi, ok)}
+        />
+      ) : (
+        <Quiz
+          key="base"
+          questions={mod.quiz}
+          module={mod}
+          shuffleAnswers
+          best={quizBest[mod.id]}
+          onDone={(c, t) => saveQuizResult(mod.id, c, t)}
+          onAnswer={(qi, ok) => recordAnswer(mod.id, qi, ok)}
+        />
+      )}
+    </>
+  );
+}
 
 /** Alle Modul-Quizze, nach Semester gruppiert, mit Bestscores. */
 const QuizDirectory = memo(function QuizDirectory({ open, onToggle, openQuizIds, onToggleQuiz }) {
@@ -87,14 +136,8 @@ const QuizDirectory = memo(function QuizDirectory({ open, onToggle, openQuizIds,
                       </div>
                       <Collapse open={isOpen}>
                         <div style={{ padding: "0 var(--s-2) var(--s-2)" }}>
-                          <Quiz
-                            questions={mod.quiz}
-                            module={mod}
-                            shuffleAnswers
-                            best={best}
-                            onDone={(c, t) => saveQuizResult(mod.id, c, t)}
-                            onAnswer={(qi, ok) => recordAnswer(mod.id, qi, ok)}
-                          />
+                          <ModuleQuiz mod={mod} quizBest={quizBest}
+                            saveQuizResult={saveQuizResult} recordAnswer={recordAnswer} />
                         </div>
                       </Collapse>
                     </GlassCard>

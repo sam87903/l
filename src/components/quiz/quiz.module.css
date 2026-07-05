@@ -235,6 +235,32 @@
   font-weight: 800;
 }
 
+.extSwitch {
+  display: flex;
+  gap: var(--s-1);
+  margin-bottom: var(--s-2);
+}
+
+.extTab {
+  flex: 1;
+  min-height: 40px;
+  padding: 0.35rem 0.6rem;
+  border-radius: var(--r-full);
+  border: 1px solid var(--glass-border);
+  background: transparent;
+  color: var(--muted);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.extTab[aria-pressed="true"] {
+  border-color: color-mix(in srgb, var(--violet) 55%, transparent);
+  background: color-mix(in srgb, var(--violet) 14%, transparent);
+  color: var(--text);
+}
+
 .trainerAhead {
   padding: 0.1rem 0.5rem;
   border-radius: var(--r-full);

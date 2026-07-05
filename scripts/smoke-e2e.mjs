@@ -48,6 +48,12 @@ await page.waitForSelector('#quiz-verzeichnis >> text=Studienplan & HRW');
 console.log("✅ Bonus-Quizze erscheinen im Verzeichnis");
 await page.click('#quiz-verzeichnis >> text=Einführung in die BWL');
 await page.waitForSelector("text=Was besagt das Minimalprinzip?");
+// Erweitert-Umschalter: Zusatzfragen erscheinen, dann zurück zum Basis-Quiz
+await page.click('#quiz-verzeichnis button:has-text("Erweitert ·")');
+await page.waitForSelector("text=Restbuchwert nach 3 Jahren");
+console.log("✅ Erweitert-Button lädt Zusatzfragen");
+await page.click('#quiz-verzeichnis button:has-text("Quiz ·")');
+await page.waitForSelector("text=Was besagt das Minimalprinzip?");
 // Frage 1 absichtlich falsch, alle weiteren richtig – Antworttexte aus den Quelldaten
 const { default: semester1 } = await import("../src/data/semesters/semester1.js");
 const bwlQuiz = semester1.modules.find((m) => m.id === "s1-bwl").quiz;
