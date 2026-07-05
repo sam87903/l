@@ -44,6 +44,8 @@ console.log("✅ Abhaken + Statistik funktioniert");
 // Fehler-Training: Quiz absichtlich falsch beantworten → Frage landet im Trainer
 await page.click("nav >> text=Plan");
 await page.click('#quiz-verzeichnis >> text=Quiz-Verzeichnis');
+await page.waitForSelector('#quiz-verzeichnis >> text=Studienplan & HRW');
+console.log("✅ Bonus-Quizze erscheinen im Verzeichnis");
 await page.click('#quiz-verzeichnis >> text=Einführung in die BWL');
 await page.waitForSelector("text=Was besagt das Minimalprinzip?");
 // Frage 1 absichtlich falsch, alle weiteren richtig – Antworttexte aus den Quelldaten
@@ -79,8 +81,35 @@ await page.click('#fehler-training button:has-text("Weiter")');
 await page.waitForSelector("text=Alle Fehler gemeistert");
 console.log("✅ Fehler-Training: falsch → 3 gestufte Wiederholungen → gemeistert");
 
-// Altklausur-Analyse
+// Altklausur-Analyse – zuerst DOCX-Upload (Datei wird client-seitig extrahiert)
 await page.click("nav >> text=Klausuren");
+const { deflateRawSync, crc32 } = await import("node:zlib");
+const docxXml = '<?xml version="1.0"?><w:document xmlns:w="x"><w:body><w:p><w:r><w:t>Probeklausur BWL: Buchungssatz und Bilanz erläutern.</w:t></w:r></w:p></w:body></w:document>';
+const zipEntry = (entryName, content) => {
+  const nameBuf = Buffer.from(entryName);
+  const raw = Buffer.from(content, "utf8");
+  const data = deflateRawSync(raw);
+  const local = Buffer.alloc(30);
+  local.writeUInt32LE(0x04034b50, 0); local.writeUInt16LE(20, 4); local.writeUInt16LE(8, 8);
+  local.writeUInt32LE(crc32(raw), 14); local.writeUInt32LE(data.length, 18);
+  local.writeUInt32LE(raw.length, 22); local.writeUInt16LE(nameBuf.length, 26);
+  const central = Buffer.alloc(46);
+  central.writeUInt32LE(0x02014b50, 0); central.writeUInt16LE(8, 10);
+  central.writeUInt32LE(crc32(raw), 16); central.writeUInt32LE(data.length, 20);
+  central.writeUInt32LE(raw.length, 24); central.writeUInt16LE(nameBuf.length, 28);
+  central.writeUInt32LE(0, 42);
+  const eocd = Buffer.alloc(22);
+  eocd.writeUInt32LE(0x06054b50, 0); eocd.writeUInt16LE(1, 8); eocd.writeUInt16LE(1, 10);
+  eocd.writeUInt32LE(46 + nameBuf.length, 12); eocd.writeUInt32LE(30 + nameBuf.length + data.length, 16);
+  return Buffer.concat([local, nameBuf, data, central, nameBuf, eocd]);
+};
+await page.setInputFiles('input[type="file"]', {
+  name: "probeklausur-bwl.docx",
+  mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  buffer: zipEntry("word/document.xml", docxXml),
+});
+await page.waitForFunction(() => document.querySelector("#exam-text")?.value.includes("Probeklausur BWL"));
+console.log("✅ Klausur-Upload: DOCX wird client-seitig extrahiert");
 await page.fill("#exam-text", "Aufgabe 1: Erläutern Sie das Minimalprinzip und nennen Sie die GoB. Aufgabe 2: Berechnen Sie die lineare Abschreibung eines Laptops (1.200 €, 3 Jahre). Aufgabe 3 (Fallstudie): Ein Online-Shop plant eine GmbH-Gründung – beurteilen Sie die Rechtsformwahl. Kreuzen Sie an: Welche Aussage zur Bilanz ist korrekt? a) ... b) ...");
 await page.click('button:has-text("Analysieren")');
 await page.waitForSelector("text=Prüfungswahrscheinlichkeit");

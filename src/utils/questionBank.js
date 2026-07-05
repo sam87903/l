@@ -5,6 +5,7 @@
  */
 import { SEMESTERS } from "../data/semesters/index.js";
 import { GLOSSARY } from "../data/glossary.js";
+import { GENERAL_QUIZZES } from "../data/generalQuiz.js";
 import { shuffleArray } from "./misc.js";
 import { isMistakeDue } from "./mistakes.js";
 
@@ -66,6 +67,22 @@ function buildBank() {
         semNr: mod.semNr,
         topic: null,
         recordMod: mod.id,
+        recordKey: qi,
+        make: () => ({ ...q }),
+      });
+    });
+  }
+
+  // Bonus-Quizze (Transfer-/Umfeldwissen) fließen wie Modul-Quizze ein.
+  for (const deck of GENERAL_QUIZZES) {
+    deck.quiz.forEach((q, qi) => {
+      bank.push({
+        id: `gs:${deck.id}:${qi}`,
+        kind: "static",
+        modId: deck.id,
+        semNr: 0,
+        topic: null,
+        recordMod: deck.id,
         recordKey: qi,
         make: () => ({ ...q }),
       });

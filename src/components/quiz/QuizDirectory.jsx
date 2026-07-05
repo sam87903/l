@@ -4,6 +4,7 @@ import GlassCard from "../ui/GlassCard.jsx";
 import Collapse from "../ui/Collapse.jsx";
 import Quiz from "./Quiz.jsx";
 import { SEMESTERS } from "../../data/semesters/index.js";
+import { GENERAL_QUIZZES } from "../../data/generalQuiz.js";
 import { ACCENT } from "../../constants/theme.js";
 import { useProgress } from "../../context/ProgressContext.jsx";
 import { kb } from "../../utils/misc.js";
@@ -39,7 +40,7 @@ const QuizDirectory = memo(function QuizDirectory({ open, onToggle, openQuizIds,
           Quiz-Verzeichnis
         </span>
         <span style={{ fontSize: "var(--fs-xs)", color: "var(--muted)" }}>
-          {grouped.reduce((n, g) => n + g.modules.length, 0)} Module
+          {grouped.reduce((n, g) => n + g.modules.length, 0)} Module · {GENERAL_QUIZZES.length} Bonus
         </span>
         {open ? <ChevronUp size={15} aria-hidden="true" /> : <ChevronDown size={15} aria-hidden="true" />}
       </div>
@@ -100,6 +101,46 @@ const QuizDirectory = memo(function QuizDirectory({ open, onToggle, openQuizIds,
                   );
                 })}
               </div>
+            );
+          })}
+
+          <div className={quizStyles.dirSem}>Bonus · über den Modulstoff hinaus</div>
+          {GENERAL_QUIZZES.map((deck) => {
+            const isOpen = openQuizIds.has(deck.id);
+            const best = quizBest[deck.id];
+            return (
+              <GlassCard key={deck.id} tint={isOpen ? ACCENT.violet : undefined} style={{ borderRadius: "var(--r-sm)", marginBottom: "var(--s-1)", overflow: "hidden" }}>
+                <div
+                  className={`${quizStyles.dirRow} hover-pop`}
+                  onClick={() => onToggleQuiz(deck.id)}
+                  {...kb(() => onToggleQuiz(deck.id))}
+                  aria-expanded={isOpen}
+                >
+                  <span className={quizStyles.dirCode} aria-hidden="true">{deck.icon}</span>
+                  <span style={{ flex: 1, fontWeight: isOpen ? 700 : 500 }}>{deck.name}</span>
+                  {best && (
+                    <span style={{ fontSize: "0.56rem", fontWeight: 800, color: best.c === best.t ? ACCENT.teal : "var(--muted)" }}>
+                      🏆{best.c}/{best.t}
+                    </span>
+                  )}
+                  {isOpen ? <ChevronUp size={13} aria-hidden="true" /> : <ChevronDown size={13} aria-hidden="true" />}
+                </div>
+                <Collapse open={isOpen}>
+                  <div style={{ padding: "0 var(--s-2) var(--s-2)" }}>
+                    <p style={{ margin: "0 0 var(--s-2)", fontSize: "var(--fs-xs)", color: "var(--muted)", lineHeight: 1.5 }}>
+                      {deck.desc}
+                    </p>
+                    <Quiz
+                      questions={deck.quiz}
+                      shuffleAnswers
+                      color={ACCENT.violet}
+                      best={best}
+                      onDone={(c, t) => saveQuizResult(deck.id, c, t)}
+                      onAnswer={(qi, ok) => recordAnswer(deck.id, qi, ok)}
+                    />
+                  </div>
+                </Collapse>
+              </GlassCard>
             );
           })}
         </div>

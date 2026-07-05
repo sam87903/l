@@ -4,6 +4,7 @@ import GlassCard from "../ui/GlassCard.jsx";
 import Button from "../ui/Button.jsx";
 import QuizQuestion from "./QuizQuestion.jsx";
 import { SEMESTERS } from "../../data/semesters/index.js";
+import { GENERAL_QUIZ_BY_ID } from "../../data/generalQuiz.js";
 import { useProgress } from "../../context/ProgressContext.jsx";
 import { ACCENT } from "../../constants/theme.js";
 import { MISTAKE_MAX_BOX } from "../../constants/config.js";
@@ -22,12 +23,15 @@ const inDays = (iso) => {
 /** Fragen-Payload + Quellen-Label zu einem Kartei-Eintrag auflösen. */
 function resolveEntry(entry) {
   const module = MODULE_BY_ID.get(entry.modId);
-  // Statische Fragen aus dem Modul, generierte aus dem Payload.
-  const question = entry.question ?? module?.quiz?.[entry.qi];
+  const general = GENERAL_QUIZ_BY_ID.get(entry.modId);
+  // Statische Fragen aus Modul/Bonus-Deck, generierte aus dem Payload.
+  const question = entry.question ?? module?.quiz?.[entry.qi] ?? general?.quiz?.[entry.qi];
   if (!question) return null;
   const sourceLabel = module
     ? `${module.code} · ${module.name}`
-    : `Smart-Quiz${entry.question?.topic ? ` · ${entry.question.topic}` : ""}`;
+    : general
+      ? `${general.icon} ${general.name}`
+      : `Smart-Quiz${entry.question?.topic ? ` · ${entry.question.topic}` : ""}`;
   return { ...entry, question, sourceLabel };
 }
 
