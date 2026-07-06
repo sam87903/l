@@ -13,20 +13,32 @@
     <meta name="apple-mobile-web-app-title" content="Lernplan" />
     <link rel="manifest" href="./manifest.webmanifest" />
     <title>Marokko-Lernplan · HRW E-Commerce</title>
+    <meta name="color-scheme" content="dark light" />
     <style>
-      html, body { margin: 0; background: #0a0e1a; }
+      :root { --splash-bg: #0a0e1a; --splash-fg: #8a96b8; }
+      html, body { margin: 0; background: var(--splash-bg); }
       #splash {
         min-height: 100vh; display: flex; flex-direction: column;
         align-items: center; justify-content: center; gap: 0.75rem;
-        color: #8a96b8; font: 0.9rem system-ui, sans-serif;
+        padding: 0 1.5rem; text-align: center;
+        color: var(--splash-fg); font: 0.9rem/1.5 system-ui, sans-serif;
+        animation: splashPulse 2s ease-in-out infinite;
       }
       #splash span { font-size: 2.5rem; }
+      #splash p { margin: 0; }
+      @keyframes splashPulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+      @media (prefers-reduced-motion: reduce) { #splash { animation: none; } }
     </style>
   </head>
   <body>
-    <div id="root"><div id="splash"><span>🇲🇦</span>Lernplan wird geladen…</div></div>
+    <div id="root">
+      <div id="splash" role="status" aria-live="polite">
+        <span aria-hidden="true">🇲🇦</span>
+        <p>Lernplan wird geladen…</p>
+      </div>
+    </div>
     <noscript>
-      <p style="color:#eef2fb;font-family:system-ui;padding:2rem">
+      <p style="color:#eef2fb;font-family:system-ui;padding:2rem;text-align:center">
         Bitte JavaScript aktivieren, um den Marokko-Lernplan zu nutzen.
       </p>
     </noscript>

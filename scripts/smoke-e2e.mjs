@@ -176,6 +176,14 @@ await finishBtn.click();
 await page.waitForSelector("text=Fokus-Minuten gespeichert");
 console.log("✅ Fokus-Timer: vorzeitig beenden speichert Minuten");
 
+// Loader-Fallback: Ohne DecompressionStream muss eine klare Fehlermeldung erscheinen
+const oldBrowserPage = await browser.newPage({ viewport: { width: 390, height: 844 } });
+await oldBrowserPage.addInitScript(() => { window.DecompressionStream = undefined; });
+await oldBrowserPage.goto("file://" + path.join(root, "release/marokko-lernplan-app.html"));
+await oldBrowserPage.waitForSelector("text=Dein Browser ist zu alt", { timeout: 8000 });
+await oldBrowserPage.close();
+console.log("✅ Loader: klare Fehlermeldung für alte Browser");
+
 if (errors.length) {
   console.error("⚠️ JS-Fehler:", errors.slice(0, 5));
   process.exit(1);
