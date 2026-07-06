@@ -44,27 +44,94 @@ console.log("✅ Abhaken + Statistik funktioniert");
 // Fehler-Training: Quiz absichtlich falsch beantworten → Frage landet im Trainer
 await page.click("nav >> text=Plan");
 await page.click('#quiz-verzeichnis >> text=Quiz-Verzeichnis');
+await page.waitForSelector('#quiz-verzeichnis >> text=Studienplan & HRW');
+console.log("✅ Bonus-Quizze erscheinen im Verzeichnis");
 await page.click('#quiz-verzeichnis >> text=Einführung in die BWL');
 await page.waitForSelector("text=Was besagt das Minimalprinzip?");
-// Frage 1 falsch, 2 & 3 richtig beantworten
-await page.click('button:has-text("Immer die billigste Option wählen")');
-await page.click('button:has-text("GbR")');
-await page.click('button:has-text("Soll")');
+// Standard: Einzelmodus (eine Frage pro Schritt)
+await page.waitForSelector('#quiz-verzeichnis >> text=Frage 1 von');
+console.log("✅ Quiz startet im Einzelmodus (eine Frage sichtbar)");
+// Frage 1 absichtlich falsch beantworten → „Weiter" blättert zur nächsten Frage
+const { default: semester1 } = await import("../src/data/semesters/semester1.js");
+const bwlQuiz = semester1.modules.find((m) => m.id === "s1-bwl").quiz;
+await page
+  .locator('[role="group"][aria-label="Frage 1"]')
+  .locator("button", { hasText: bwlQuiz[0].options.find((_, oi) => oi !== bwlQuiz[0].correct) })
+  .first()
+  .click();
+await page.getByRole("button", { name: "Weiter", exact: true }).click();
+await page.waitForSelector('#quiz-verzeichnis >> text=Frage 2 von');
+console.log("✅ Einzelmodus: Antwort → Weiter → nächste Frage ohne Scrollen");
+// Für den Rest-Durchlauf zur Listenansicht wechseln
+await page.click('#quiz-verzeichnis button:has-text("Liste")');
+await page.waitForSelector('[role="group"][aria-label="Frage 2"]');
+console.log("✅ Ansicht-Umschalter wechselt zur Listenansicht");
+// Erweitert-Umschalter: Zusatzfragen erscheinen, dann zurück zum Basis-Quiz
+await page.click('#quiz-verzeichnis button:has-text("Erweitert ·")');
+await page.waitForSelector("text=Restbuchwert nach 3 Jahren");
+console.log("✅ Erweitert-Button lädt Zusatzfragen");
+await page.click('#quiz-verzeichnis button:has-text("Quiz ·")');
+await page.waitForSelector("text=Was besagt das Minimalprinzip?");
+// Tab-Wechsel hat das Quiz zurückgesetzt: Frage 1 erneut falsch, Rest richtig
+for (let qi = 0; qi < bwlQuiz.length; qi++) {
+  const q = bwlQuiz[qi];
+  const text = qi === 0 ? q.options.find((_, oi) => oi !== q.correct) : q.options[q.correct];
+  await page
+    .locator(`#quiz-verzeichnis [role="group"][aria-label="Frage ${qi + 1}"]`)
+    .locator("button", { hasText: text })
+    .first()
+    .click();
+}
 await page.waitForSelector("text=Lernanalyse");
 await page.waitForSelector("text=Du hast Probleme mit");
 console.log("✅ Lernanalyse nach Quiz erscheint");
 await page.click('button:has-text("Fehler üben")');
-await page.waitForSelector("#fehler-training >> text=1 offen");
+await page.waitForSelector("#fehler-training >> text=1 fällig");
 await page.waitForSelector("#fehler-training >> text=Was besagt das Minimalprinzip?");
-// 2× richtig = gemeistert (nach der 2. Antwort verschwindet der Trainer-Inhalt sofort)
+// Leitner: richtig → Stufe 2 (wartet bis morgen) → vorziehen → Stufe 3 → oberste Stufe bestanden = gemeistert
 await page.click('#fehler-training button:has-text("Ein festes Ziel mit minimalem Mitteleinsatz erreichen")');
+await page.waitForSelector("#fehler-training >> text=Hoch auf Stufe 2");
+await page.click('#fehler-training button:has-text("Weiter")');
+await page.waitForSelector("#fehler-training >> text=Nichts fällig");
+await page.click('#fehler-training button:has-text("Trotzdem vorziehen")');
+await page.click('#fehler-training button:has-text("Ein festes Ziel mit minimalem Mitteleinsatz erreichen")');
+await page.waitForSelector("#fehler-training >> text=Hoch auf Stufe 3");
 await page.click('#fehler-training button:has-text("Weiter")');
 await page.click('#fehler-training button:has-text("Ein festes Ziel mit minimalem Mitteleinsatz erreichen")');
+await page.waitForSelector("#fehler-training >> text=Gemeistert – Stufe 3 bestanden");
+await page.click('#fehler-training button:has-text("Weiter")');
 await page.waitForSelector("text=Alle Fehler gemeistert");
-console.log("✅ Fehler-Training: falsch → üben → gemeistert");
+console.log("✅ Fehler-Training: falsch → 3 gestufte Wiederholungen → gemeistert");
 
-// Altklausur-Analyse
+// Altklausur-Analyse – zuerst DOCX-Upload (Datei wird client-seitig extrahiert)
 await page.click("nav >> text=Klausuren");
+const { deflateRawSync, crc32 } = await import("node:zlib");
+const docxXml = '<?xml version="1.0"?><w:document xmlns:w="x"><w:body><w:p><w:r><w:t>Probeklausur BWL: Buchungssatz und Bilanz erläutern.</w:t></w:r></w:p></w:body></w:document>';
+const zipEntry = (entryName, content) => {
+  const nameBuf = Buffer.from(entryName);
+  const raw = Buffer.from(content, "utf8");
+  const data = deflateRawSync(raw);
+  const local = Buffer.alloc(30);
+  local.writeUInt32LE(0x04034b50, 0); local.writeUInt16LE(20, 4); local.writeUInt16LE(8, 8);
+  local.writeUInt32LE(crc32(raw), 14); local.writeUInt32LE(data.length, 18);
+  local.writeUInt32LE(raw.length, 22); local.writeUInt16LE(nameBuf.length, 26);
+  const central = Buffer.alloc(46);
+  central.writeUInt32LE(0x02014b50, 0); central.writeUInt16LE(8, 10);
+  central.writeUInt32LE(crc32(raw), 16); central.writeUInt32LE(data.length, 20);
+  central.writeUInt32LE(raw.length, 24); central.writeUInt16LE(nameBuf.length, 28);
+  central.writeUInt32LE(0, 42);
+  const eocd = Buffer.alloc(22);
+  eocd.writeUInt32LE(0x06054b50, 0); eocd.writeUInt16LE(1, 8); eocd.writeUInt16LE(1, 10);
+  eocd.writeUInt32LE(46 + nameBuf.length, 12); eocd.writeUInt32LE(30 + nameBuf.length + data.length, 16);
+  return Buffer.concat([local, nameBuf, data, central, nameBuf, eocd]);
+};
+await page.setInputFiles('input[type="file"]', {
+  name: "probeklausur-bwl.docx",
+  mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  buffer: zipEntry("word/document.xml", docxXml),
+});
+await page.waitForFunction(() => document.querySelector("#exam-text")?.value.includes("Probeklausur BWL"));
+console.log("✅ Klausur-Upload: DOCX wird client-seitig extrahiert");
 await page.fill("#exam-text", "Aufgabe 1: Erläutern Sie das Minimalprinzip und nennen Sie die GoB. Aufgabe 2: Berechnen Sie die lineare Abschreibung eines Laptops (1.200 €, 3 Jahre). Aufgabe 3 (Fallstudie): Ein Online-Shop plant eine GmbH-Gründung – beurteilen Sie die Rechtsformwahl. Kreuzen Sie an: Welche Aussage zur Bilanz ist korrekt? a) ... b) ...");
 await page.click('button:has-text("Analysieren")');
 await page.waitForSelector("text=Prüfungswahrscheinlichkeit");

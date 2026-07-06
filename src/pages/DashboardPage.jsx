@@ -50,13 +50,13 @@ export default function DashboardPage() {
 
       <TodayCard />
 
-      {stats.mistakesOpen > 0 && (
+      {stats.mistakesDue > 0 && (
         <GlassCard tint={ACCENT.red} className={dashStyles.today} style={{ "--c": ACCENT.red }}>
           <Repeat2 size={22} color={ACCENT.red} aria-hidden="true" style={{ flexShrink: 0 }} />
           <div className={dashStyles.todayBody}>
             <div className={dashStyles.todayKicker}>Fehler-Training</div>
             <div className={dashStyles.todayTitle}>
-              {stats.mistakesOpen} {stats.mistakesOpen === 1 ? "Frage wartet" : "Fragen warten"} auf Wiederholung
+              {stats.mistakesDue} {stats.mistakesDue === 1 ? "Frage ist" : "Fragen sind"} fällig zur Wiederholung
             </div>
           </div>
           <Button tint={ACCENT.red} onClick={() => navigate("/plan", { state: { openTrainer: Date.now() } })}>

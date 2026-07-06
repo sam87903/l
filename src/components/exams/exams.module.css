@@ -3,6 +3,26 @@
 .upload {
   padding: var(--s-4);
   margin-bottom: var(--s-4);
+  transition: outline-color 0.15s ease;
+  outline: 2px dashed transparent;
+  outline-offset: -6px;
+}
+
+.dragOver {
+  outline-color: var(--blue);
+  background: color-mix(in srgb, var(--blue) 8%, transparent);
+}
+
+.spin {
+  animation: uploadSpin 0.9s linear infinite;
+}
+
+@keyframes uploadSpin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spin { animation: none; }
 }
 
 .nameInput {

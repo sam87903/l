@@ -235,6 +235,89 @@
   font-weight: 800;
 }
 
+.viewToggle {
+  min-height: 30px;
+  padding: 0.15rem 0.6rem;
+  border-radius: var(--r-full);
+  border: 1px solid var(--glass-border);
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.6rem;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.viewToggle:hover {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--c, var(--teal)) 50%, transparent);
+}
+
+.stepMeta {
+  margin-bottom: var(--s-1);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.extSwitch {
+  display: flex;
+  gap: var(--s-1);
+  margin-bottom: var(--s-2);
+}
+
+.extTab {
+  flex: 1;
+  min-height: 40px;
+  padding: 0.35rem 0.6rem;
+  border-radius: var(--r-full);
+  border: 1px solid var(--glass-border);
+  background: transparent;
+  color: var(--muted);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.extTab[aria-pressed="true"] {
+  border-color: color-mix(in srgb, var(--violet) 55%, transparent);
+  background: color-mix(in srgb, var(--violet) 14%, transparent);
+  color: var(--text);
+}
+
+.trainerAhead {
+  padding: 0.1rem 0.5rem;
+  border-radius: var(--r-full);
+  border: 1px solid color-mix(in srgb, var(--orange) 50%, transparent);
+  background: color-mix(in srgb, var(--orange) 12%, transparent);
+  color: var(--orange);
+  font-weight: 800;
+}
+
+.trainerFeedback {
+  margin: 0 0 var(--s-3);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.feedbackGood {
+  color: var(--teal);
+}
+
+.feedbackBad {
+  color: var(--red);
+}
+
+.trainerWait {
+  margin: 0 0 var(--s-3);
+  font-size: var(--fs-sm);
+  color: var(--muted);
+  line-height: 1.6;
+}
+
 /* ═══ Smart-Quiz-Auswahl ═══ */
 
 .smartRow {

@@ -5,7 +5,10 @@
  */
 import { SEMESTERS } from "../data/semesters/index.js";
 import { GLOSSARY } from "../data/glossary.js";
+import { GENERAL_QUIZZES } from "../data/generalQuiz.js";
+import { EXTENDED_QUIZ, extQuizId } from "../data/extendedQuiz.js";
 import { shuffleArray } from "./misc.js";
+import { isMistakeDue } from "./mistakes.js";
 
 const OPTION_LENGTH = 150;
 const EXPLAIN_LENGTH = 220;
@@ -71,6 +74,41 @@ function buildBank() {
     });
   }
 
+  // Erweiterte Fragensätze („Erweitert"-Button) je Modul – mit Semesterbezug.
+  for (const [baseId, questions] of Object.entries(EXTENDED_QUIZ)) {
+    const mod = ALL_MODULES.find((m) => m.id === baseId);
+    const recordMod = extQuizId(baseId);
+    questions.forEach((q, qi) => {
+      bank.push({
+        id: `xs:${baseId}:${qi}`,
+        kind: "static",
+        modId: baseId,
+        bestId: recordMod,
+        semNr: mod?.semNr ?? 0,
+        topic: null,
+        recordMod,
+        recordKey: qi,
+        make: () => ({ ...q }),
+      });
+    });
+  }
+
+  // Bonus-Quizze (Transfer-/Umfeldwissen) fließen wie Modul-Quizze ein.
+  for (const deck of GENERAL_QUIZZES) {
+    deck.quiz.forEach((q, qi) => {
+      bank.push({
+        id: `gs:${deck.id}:${qi}`,
+        kind: "static",
+        modId: deck.id,
+        semNr: 0,
+        topic: null,
+        recordMod: deck.id,
+        recordKey: qi,
+        make: () => ({ ...q }),
+      });
+    });
+  }
+
   const allCards = ALL_MODULES.flatMap((mod) =>
     (mod.cards ?? []).map((card, ci) => ({ ...card, modId: mod.id, semNr: mod.semNr, ci }))
   );
@@ -126,9 +164,11 @@ export const QUESTION_BANK_SIZE = BANK.length;
 
 /** Schwächen-Gewicht eines Bank-Items (höher = wird eher gezogen). */
 function weightFor(item, { wrongPool = {}, fcKnown = {}, quizBest = {} }) {
-  if (wrongPool[`${item.recordMod}#${item.recordKey}`]) return 6;
+  const mistake = wrongPool[`${item.recordMod}#${item.recordKey}`];
+  // Fällige Fehler hart drillen; wartende nur leicht (Leitner-Abstand wahren).
+  if (mistake) return isMistakeDue(mistake) ? 8 : 2;
   if (item.kind === "static") {
-    const best = quizBest[item.modId];
+    const best = quizBest[item.bestId ?? item.modId];
     return !best || best.c < best.t ? 4 : 1;
   }
   if (item.kind === "card") {

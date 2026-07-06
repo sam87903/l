@@ -1,9 +1,10 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useStoredState } from "../hooks/useStoredState.js";
-import { AUTO_BACKUP_INTERVAL_MS, DEFAULT_START_DATE, EXAM_TEXT_LIMIT, LEITNER_INTERVALS, LEITNER_MAX_BOX, MASTERY_STREAK, MISTAKE_POOL_CAP, RECENTS_LIMIT, STORAGE_KEYS, XP_RULES } from "../constants/config.js";
+import { AUTO_BACKUP_INTERVAL_MS, DEFAULT_START_DATE, EXAM_TEXT_LIMIT, LEITNER_INTERVALS, LEITNER_MAX_BOX, MISTAKE_POOL_CAP, RECENTS_LIMIT, STORAGE_KEYS, XP_RULES } from "../constants/config.js";
 import { PLAN } from "../data/plan.js";
 import { computeStreak, computeXp, levelInfo } from "../utils/xp.js";
 import { addDaysISO, todayISO } from "../utils/dates.js";
+import { reviewMistake, splitMistakes } from "../utils/mistakes.js";
 import { pushAutoBackup, readAutoBackups } from "../services/autoBackup.js";
 
 const ProgressContext = createContext(null);
@@ -105,8 +106,9 @@ export function ProgressProvider({ children }) {
   const addFocusMinutes = useCallback((minutes) => logActivity(minutes), [logActivity]);
 
   /**
-   * Fehler-Kartei: falsche Antworten landen im Pool; MASTERY_STREAK
-   * richtige Antworten in Folge meistern die Frage (Leitner-Prinzip).
+   * Fehler-Kartei (Leitner light): falsche Antworten setzen die Frage auf
+   * Box 1 (sofort fällig), richtige heben sie eine Box mit Wartezeit –
+   * wer die oberste Stufe besteht, hat die Frage gemeistert.
    */
   const recordAnswer = useCallback(
     (modId, questionIndex, wasCorrect, questionPayload) => {
@@ -114,24 +116,27 @@ export function ProgressProvider({ children }) {
       const current = wrongPool[key];
       if (wasCorrect) {
         if (!current) return;
-        const streak = (current.streak ?? 0) + 1;
-        if (streak >= MASTERY_STREAK) {
+        const result = reviewMistake(current, true);
+        if (result.mastered) {
           const next = { ...wrongPool };
           delete next[key];
           setWrongPool(next);
           setMastered((m) => m + 1);
           logActivity(1);
         } else {
-          setWrongPool({ ...wrongPool, [key]: { ...current, streak } });
+          const { streak: _legacy, ...entry } = current;
+          setWrongPool({ ...wrongPool, [key]: { ...entry, box: result.box, due: result.due } });
         }
       } else {
+        const { box, due } = reviewMistake(current, false);
         const next = {
           ...wrongPool,
           [key]: {
             modId,
             qi: questionIndex,
             misses: (current?.misses ?? 0) + 1,
-            streak: 0,
+            box,
+            due,
             // Generierte Smart-Quiz-Fragen mitschreiben, damit das
             // Fehler-Training sie später rekonstruieren kann.
             question: questionPayload ?? current?.question,
@@ -195,6 +200,7 @@ export function ProgressProvider({ children }) {
       streak: computeStreak(activity),
       mastered,
       mistakesOpen: Object.keys(wrongPool).length,
+      mistakesDue: splitMistakes(wrongPool).due.length,
     };
     const xp = computeXp(base);
     return { ...base, xp, ...levelInfo(xp) };
