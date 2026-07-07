@@ -48,6 +48,12 @@
   font-size: 0.7rem;
   font-weight: 600;
   cursor: pointer;
+  transition: transform var(--dur) var(--ease), background var(--dur) var(--ease),
+    border-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+
+.tab:active {
+  transform: scale(0.965);
 }
 
 .tabActive {
@@ -79,7 +85,7 @@
 
 .groupDesc {
   font-size: 0.64rem;
-  color: var(--muted);
+  color: var(--text);
 }
 
 .pills {

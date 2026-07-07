@@ -17,6 +17,12 @@
   font-size: var(--fs-xs);
   font-weight: 700;
   cursor: pointer;
+  transition: transform var(--dur) var(--ease), background var(--dur) var(--ease),
+    border-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+
+.filter:active {
+  transform: scale(0.965);
 }
 
 .filterActive {
@@ -51,6 +57,12 @@
   font-size: 0.7rem;
   font-weight: 800;
   cursor: pointer;
+  transition: transform var(--dur) var(--ease), background var(--dur) var(--ease),
+    border-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+
+.alphaBtn:active {
+  transform: scale(0.94);
 }
 
 .groupHead {

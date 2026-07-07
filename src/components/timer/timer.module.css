@@ -38,6 +38,12 @@
   font-size: var(--fs-xs);
   font-weight: 700;
   cursor: pointer;
+  transition: transform var(--dur) var(--ease), background var(--dur) var(--ease),
+    border-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+
+.preset:active {
+  transform: scale(0.965);
 }
 
 .presetActive {

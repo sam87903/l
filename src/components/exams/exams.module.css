@@ -33,9 +33,12 @@
   border-radius: var(--r-sm);
   border: 1px solid var(--glass-border);
   background: var(--surface);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
   color: var(--text);
   font-size: var(--fs-md);
   outline: none;
+  transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
 }
 
 .textarea {
@@ -45,12 +48,21 @@
   border-radius: var(--r-sm);
   border: 1px solid var(--glass-border);
   background: var(--surface);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
   color: var(--text);
   font-size: var(--fs-sm);
   font-family: inherit;
   line-height: 1.6;
   resize: vertical;
   outline: none;
+  transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+
+.nameInput:focus,
+.textarea:focus {
+  border-color: color-mix(in srgb, var(--blue) 55%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--blue) 18%, transparent), inset 0 1px 0 var(--glass-hi);
 }
 
 .hint {
@@ -153,7 +165,10 @@
 .topBarFill {
   height: 100%;
   border-radius: var(--r-full);
-  background: linear-gradient(90deg, var(--teal), var(--blue));
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, transparent 55%),
+    linear-gradient(90deg, var(--teal), var(--blue));
+  background-blend-mode: overlay, normal;
 }
 
 .topPct {
