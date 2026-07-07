@@ -29,7 +29,10 @@ const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 function countMatches(textLower, term) {
   try {
-    const re = new RegExp(`(?<![a-zä-üß])${escapeRe(term.toLowerCase())}(?![a-zä-üß])`, "g");
+    // Wortgrenze inkl. Bindestrich/Ziffern: verhindert Fehltreffer, bei denen
+    // ein kurzer Begriff in einem größeren Kompositum steckt
+    // (z. B. „break" in „Break-even", „AG" in „AGB").
+    const re = new RegExp(`(?<![a-zä-üß0-9-])${escapeRe(term.toLowerCase())}(?![a-zä-üß0-9-])`, "g");
     return (textLower.match(re) ?? []).length;
   } catch {
     return 0;
@@ -119,11 +122,67 @@ export function analyzeExam(text, otherTexts = []) {
       rank: i + 1,
       term: h.term,
       module: h.module,
+      inGlossary: h.term in GLOSSARY,
       count: h.count,
       recurrence: h.recurrence,
       probability: Math.max(8, Math.round((h.score / maxScore) * 100)),
     })),
     recurring,
+  };
+}
+
+/**
+ * Aggregiert die prüfungsrelevantesten Themen über ALLE gespeicherten
+ * Klausuren (Gesamt-Prüfungsradar). Ein Thema wiegt umso schwerer, je in
+ * mehr Klausuren es vorkommt – das ist der eigentliche Mehrwert beim
+ * Vergleich mehrerer Altklausuren.
+ * @param {{name?:string,text:string}[]} exams
+ */
+export function aggregateExams(exams = []) {
+  const total = exams.length;
+  if (total === 0) return { total: 0, terms: [] };
+
+  const agg = new Map(); // key: term.toLowerCase → Aggregat
+  exams.forEach((exam, idx) => {
+    const lower = (exam.text ?? "").toLowerCase();
+    for (const entry of INDEX) {
+      const count = countMatches(lower, entry.term);
+      if (count === 0) continue;
+      const key = entry.term.toLowerCase();
+      const cur = agg.get(key) ?? {
+        term: entry.term,
+        module: entry.module,
+        weight: entry.weight,
+        inGlossary: entry.term in GLOSSARY,
+        mentions: 0,
+        exams: new Set(),
+      };
+      cur.mentions += count;
+      cur.exams.add(idx);
+      if (!cur.module && entry.module) cur.module = entry.module;
+      cur.weight = Math.max(cur.weight, entry.weight);
+      agg.set(key, cur);
+    }
+  });
+
+  // Score: Vorkommen in mehreren Klausuren dominiert, Häufigkeit gewichtet.
+  const ranked = [...agg.values()]
+    .map((v) => ({ ...v, score: v.exams.size * 100 + v.mentions * v.weight }))
+    .sort((a, b) => b.score - a.score);
+  const maxScore = ranked[0]?.score ?? 1;
+
+  return {
+    total,
+    terms: ranked.slice(0, 12).map((v, i) => ({
+      rank: i + 1,
+      term: v.term,
+      module: v.module,
+      inGlossary: v.inGlossary,
+      inExams: v.exams.size,
+      total,
+      mentions: v.mentions,
+      probability: Math.max(10, Math.round((v.score / maxScore) * 100)),
+    })),
   };
 }
 

@@ -4,6 +4,8 @@ import { Bot, Puzzle } from "lucide-react";
 import GlassCard from "../ui/GlassCard.jsx";
 import Button from "../ui/Button.jsx";
 import EmptyState from "../ui/EmptyState.jsx";
+import TopicRow from "./TopicRow.jsx";
+import { useOpenTopic } from "./useOpenTopic.js";
 import { analyzeExam, buildExamPrompt } from "../../utils/examAnalysis.js";
 import { copyText } from "../../utils/misc.js";
 import { useToast } from "../ui/Toast.jsx";
@@ -13,6 +15,7 @@ import styles from "./exams.module.css";
 /** Vollständiger Analyse-Report einer gespeicherten Altklausur. */
 const ExamReport = memo(function ExamReport({ exam, otherTexts }) {
   const navigate = useNavigate();
+  const openTopic = useOpenTopic();
   const { push } = useToast();
   const analysis = useMemo(() => analyzeExam(exam.text, otherTexts), [exam, otherTexts]);
 
@@ -38,19 +41,25 @@ const ExamReport = memo(function ExamReport({ exam, otherTexts }) {
         <div className={styles.sectionKicker} style={{ "--c": ACCENT.teal }}>
           🎯 Top {analysis.top10.length} Prüfungswahrscheinlichkeit
         </div>
-        {analysis.top10.map((t) => (
-          <div key={t.rank} className={styles.topRow}
-            title={`${t.count}× in dieser Klausur${t.recurrence ? ` · auch in ${t.recurrence} weiteren` : ""}`}>
-            <span className={styles.topRank}>{t.rank}.</span>
-            <span className={styles.topTerm}>{t.term}</span>
-            <div className={styles.topBarTrack} role="progressbar" aria-valuenow={t.probability}
-              aria-valuemin={0} aria-valuemax={100}
-              aria-valuetext={`${t.term}: ${t.probability}% relative Prüfungswahrscheinlichkeit`}>
-              <div className={styles.topBarFill} style={{ width: `${t.probability}%` }} />
-            </div>
-            <span className={styles.topPct}>{t.probability}%</span>
-          </div>
-        ))}
+        <div className={styles.topList}>
+          {analysis.top10.map((t) => (
+            <TopicRow
+              key={t.rank}
+              rank={t.rank}
+              term={t.term}
+              probability={t.probability}
+              color={ACCENT.teal}
+              meta={
+                t.recurrence > 0
+                  ? `${t.count}× hier · auch in ${t.recurrence} weiterer${t.recurrence > 1 ? "en" : ""} Klausur`
+                  : t.module
+                    ? `${t.count}× erwähnt · Modul ${t.module.code}`
+                    : `${t.count}× erwähnt${t.inGlossary ? " · im Glossar" : ""}`
+              }
+              onClick={() => openTopic(t)}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Themencluster / geprüfte Module */}

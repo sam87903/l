@@ -11,6 +11,15 @@ import styles from "./exams.module.css";
 const MIN_TEXT_LENGTH = 80;
 const ACCEPT = ".txt,.md,.pdf,.docx,text/plain,text/markdown,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
+const SAMPLE_NAME = "Beispiel: BWL EC – WiSe 2024/25";
+const SAMPLE_TEXT = `Klausur Einführung in die BWL – WiSe 2024/25
+
+Aufgabe 1 (10 Punkte): Definieren Sie das Wirtschaftlichkeitsprinzip und erläutern Sie den Unterschied zwischen Minimalprinzip und Maximalprinzip.
+Aufgabe 2 (15 Punkte): Berechnen Sie den Deckungsbeitrag und die Gewinnschwelle (Break-even-Point) für die gegebene Kostenstruktur. Nennen Sie die verwendete Formel.
+Aufgabe 3 (10 Punkte): Erklären Sie die wichtigsten Rechtsformen von Unternehmen (GmbH, AG, OHG) und vergleichen Sie Haftung und Kapitalbedarf.
+Aufgabe 4 (20 Punkte): Erläutern Sie die Grundlagen des E-Commerce, typische Geschäftsmodelle und Instrumente des Online-Marketings. Diskutieren Sie Chancen und Risiken.
+Aufgabe 5 (15 Punkte): Buchführungspflicht nach HGB, Soll und Haben, T-Konten und Buchungssätze. Ordnen Sie die Geschäftsvorfälle den Konten zu.`;
+
 /**
  * Eingabe einer Altklausur: Text einfügen, Dateien laden (.pdf, .docx,
  * .txt, .md – auch mehrere) oder einfach per Drag & Drop hineinziehen.
@@ -64,6 +73,14 @@ const ExamUpload = memo(function ExamUpload({ onAdd }) {
     setText("");
   };
 
+  const fillExample = () => {
+    setText(SAMPLE_TEXT);
+    if (!name.trim()) setName(SAMPLE_NAME);
+  };
+
+  const chars = text.trim().length;
+  const ready = chars >= MIN_TEXT_LENGTH;
+
   return (
     <GlassCard
       tint={ACCENT.blue}
@@ -88,6 +105,20 @@ const ExamUpload = memo(function ExamUpload({ onAdd }) {
         onChange={(e) => setText(e.target.value)}
         placeholder="Klausurtext einfügen – oder PDF/Word-Datei laden bzw. hierher ziehen …"
       />
+      <div className={styles.metaRow}>
+        <span className={styles.charCount} data-ready={ready || undefined}>
+          {chars === 0
+            ? `Noch kein Text · min. ${MIN_TEXT_LENGTH} Zeichen`
+            : ready
+              ? `${chars.toLocaleString("de-DE")} Zeichen · bereit zur Analyse`
+              : `${chars} / ${MIN_TEXT_LENGTH} Zeichen`}
+        </span>
+        {chars === 0 && (
+          <button type="button" className={`${styles.exampleBtn} hover-pop`} onClick={fillExample}>
+            ✨ Beispiel einfügen
+          </button>
+        )}
+      </div>
       <p className={styles.hint}>
         💡 Lädt <strong>.pdf</strong>, <strong>.docx</strong>, .txt und .md direkt – auch mehrere
         Dateien auf einmal (werden zusammengeführt). Bei gescannten PDFs ohne Textebene: Text im

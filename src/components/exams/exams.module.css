@@ -65,6 +65,43 @@
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--blue) 18%, transparent), inset 0 1px 0 var(--glass-hi);
 }
 
+.metaRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-2);
+  margin-top: var(--s-1);
+  flex-wrap: wrap;
+}
+
+.charCount {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.charCount[data-ready] {
+  color: var(--teal);
+}
+
+.exampleBtn {
+  min-height: 32px;
+  padding: 0.25rem 0.7rem;
+  border-radius: var(--r-full);
+  border: 1px solid color-mix(in srgb, var(--blue) 40%, transparent);
+  background: color-mix(in srgb, var(--blue) 12%, transparent);
+  color: var(--blue);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform var(--dur) var(--ease), background var(--dur) var(--ease);
+}
+
+.exampleBtn:active {
+  transform: scale(0.96);
+}
+
 .hint {
   margin: var(--s-2) 0 var(--s-3);
   font-size: var(--fs-xs);
@@ -130,53 +167,142 @@
   color: var(--c, var(--muted));
 }
 
-.topRow {
+/* ── Themenzeilen (Top-Themen & Radar): voll ausgeschrieben, klickbar ── */
+.topList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+}
+
+.topItem {
   display: flex;
   align-items: center;
   gap: var(--s-2);
-  margin-bottom: var(--s-2);
-  font-size: var(--fs-sm);
+  width: 100%;
+  padding: var(--s-2);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  color: var(--text);
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  transition: transform var(--dur) var(--ease), background var(--dur) var(--ease),
+    border-color var(--dur) var(--ease);
 }
 
-.topRank {
-  width: 22px;
+button.topItem:hover {
+  border-color: color-mix(in srgb, var(--c, var(--teal)) 45%, transparent);
+  background: color-mix(in srgb, var(--c, var(--teal)) 8%, transparent);
+}
+
+button.topItem:active {
+  transform: scale(0.985);
+}
+
+.topItemRank {
   flex-shrink: 0;
-  font-weight: 900;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-full);
+  background: color-mix(in srgb, var(--c, var(--teal)) 18%, transparent);
+  color: var(--c, var(--teal));
+  font-size: 0.66rem;
+  font-weight: 800;
+}
+
+.topItemMain {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.topItemHead {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+}
+
+.topItemTerm {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.topItemPct {
+  flex-shrink: 0;
+  font-size: var(--fs-xs);
+  font-weight: 800;
+  color: var(--c, var(--teal));
+}
+
+.topItemMeta {
+  font-size: 0.62rem;
+  font-weight: 600;
   color: var(--muted);
 }
 
-.topTerm {
-  width: 38%;
-  min-width: 0;
-  font-weight: 700;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.topItemGo {
+  flex-shrink: 0;
+  color: var(--muted);
 }
 
-.topBarTrack {
-  flex: 1;
-  height: 8px;
+.barTrack {
+  display: block;
+  height: 6px;
   border-radius: var(--r-full);
-  background: color-mix(in srgb, var(--text) 8%, transparent);
+  background: color-mix(in srgb, var(--text) 9%, transparent);
   overflow: hidden;
 }
 
-.topBarFill {
+.barFill {
+  display: block;
   height: 100%;
   border-radius: var(--r-full);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, transparent 55%),
-    linear-gradient(90deg, var(--teal), var(--blue));
+    linear-gradient(90deg, color-mix(in srgb, var(--c, var(--teal)) 55%, transparent), var(--c, var(--teal)));
   background-blend-mode: overlay, normal;
 }
 
-.topPct {
-  width: 40px;
-  flex-shrink: 0;
-  text-align: right;
+/* ── Gesamt-Prüfungsradar ── */
+.radar {
+  padding: var(--s-4);
+  margin-bottom: var(--s-4);
+}
+
+.radarHead {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+  margin-bottom: var(--s-1);
+}
+
+.radarTitle {
+  font-size: var(--fs-lg);
   font-weight: 800;
+}
+
+.radarSub {
   font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--c, var(--orange));
+}
+
+.radarLead {
+  margin: 0 0 var(--s-3);
+  font-size: var(--fs-sm);
+  color: var(--text);
+  line-height: 1.5;
 }
 
 .typeRow {
