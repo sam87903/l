@@ -6,7 +6,7 @@ import { STORAGE_KEYS } from "../constants/config.js";
 const ThemeContext = createContext(null);
 
 const CYCLE = { auto: "light", light: "dark", dark: "auto" };
-const META_COLORS = { dark: "#0a0e1a", light: "#efe9db" };
+const META_COLORS = { dark: "#05070f", light: "#e9ecf5" };
 
 /** Theme-Modus (auto/hell/dunkel) mit System-Erkennung und Persistenz. */
 export function ThemeProvider({ children }) {

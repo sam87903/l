@@ -53,6 +53,12 @@
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
+  transition: transform var(--dur) var(--ease), background var(--dur) var(--ease),
+    border-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+
+.tool:active {
+  transform: scale(0.965);
 }
 
 .toolActive {

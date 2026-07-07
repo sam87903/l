@@ -71,7 +71,12 @@
   text-align: left;
   cursor: pointer;
   line-height: 1.4;
-  transition: border-color var(--dur), background var(--dur);
+  transition: transform var(--dur) var(--ease), border-color var(--dur) var(--ease),
+    background var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+
+.option:active:not(:disabled) {
+  transform: scale(0.965);
 }
 
 .option:disabled {
@@ -101,7 +106,7 @@
 .explain {
   margin-top: var(--s-2);
   font-size: 0.71rem;
-  color: var(--muted);
+  color: var(--text);
   line-height: 1.55;
 }
 
@@ -176,7 +181,7 @@
 .analysisText {
   margin: 0;
   font-size: var(--fs-sm);
-  color: var(--muted);
+  color: var(--text);
   line-height: 1.6;
 }
 
@@ -246,7 +251,11 @@
   font-weight: 700;
   white-space: nowrap;
   cursor: pointer;
-  transition: color 0.15s ease, border-color 0.15s ease;
+  transition: transform var(--dur) var(--ease), color 0.15s ease, border-color 0.15s ease;
+}
+
+.viewToggle:active {
+  transform: scale(0.965);
 }
 
 .viewToggle:hover {
@@ -278,7 +287,12 @@
   font-size: var(--fs-xs);
   font-weight: 700;
   cursor: pointer;
-  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+  transition: transform var(--dur) var(--ease), color 0.15s ease,
+    border-color 0.15s ease, background 0.15s ease;
+}
+
+.extTab:active {
+  transform: scale(0.965);
 }
 
 .extTab[aria-pressed="true"] {
@@ -337,7 +351,12 @@
   font-size: var(--fs-xs);
   font-weight: 700;
   cursor: pointer;
-  transition: border-color var(--dur), background var(--dur), color var(--dur);
+  transition: transform var(--dur) var(--ease), border-color var(--dur) var(--ease),
+    background var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+
+.smartOpt:active {
+  transform: scale(0.965);
 }
 
 .smartOptActive {

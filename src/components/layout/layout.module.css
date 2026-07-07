@@ -4,14 +4,16 @@
   position: sticky;
   top: 0;
   z-index: 40;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   gap: var(--s-3);
   padding: calc(env(safe-area-inset-top, 0px) + var(--s-3)) var(--s-4) var(--s-3);
-  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  background: color-mix(in srgb, var(--bg) 55%, transparent);
   backdrop-filter: var(--blur);
   -webkit-backdrop-filter: var(--blur);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .brand {
@@ -67,6 +69,13 @@
   -webkit-backdrop-filter: var(--blur);
   color: var(--text);
   cursor: pointer;
+  box-shadow: inset 0 1px 0 var(--glass-hi);
+  transition: transform var(--dur) var(--ease), background var(--dur) var(--ease),
+    border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+
+.iconBtn:active {
+  transform: scale(0.965);
 }
 
 .streakChip {
@@ -83,23 +92,30 @@
 }
 
 .main {
+  flex: 1 1 auto;
+  min-height: 0; /* erlaubt dem Flex-Kind, kleiner als sein Inhalt zu werden → scrollt */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  width: 100%;
   max-width: 760px;
-  margin: 0 auto;
-  padding: var(--s-4) var(--s-4)
-    calc(var(--nav-size) + env(safe-area-inset-bottom, 0px) + var(--s-5));
+  margin-inline: auto;
+  padding: var(--s-4) var(--s-4) var(--s-5);
+  scroll-padding-top: var(--s-4);
 }
 
+/* Navigationsleiste: eigene untere Zeile der App-Shell → bleibt immer am
+   Bildschirmrand, ohne auf position:fixed angewiesen zu sein. */
 .nav {
-  position: fixed;
-  left: 50%;
-  bottom: calc(env(safe-area-inset-bottom, 0px) + var(--s-2));
-  transform: translateX(-50%);
+  flex-shrink: 0;
+  align-self: stretch;
+  margin: var(--s-1) var(--s-2) calc(env(safe-area-inset-bottom, 0px) + var(--s-2));
   z-index: 50;
   display: flex;
   gap: var(--s-1);
   padding: var(--s-1);
   border-radius: var(--r-full);
-  box-shadow: var(--shadow-float);
+  box-shadow: var(--shadow-float), inset 0 1px 0 var(--glass-hi), inset 0 -1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .navItem {
@@ -108,34 +124,64 @@
   align-items: center;
   justify-content: center;
   gap: 2px;
-  min-width: 50px;
+  flex: 1 1 0; /* mobile: Items teilen sich die Breite gleichmäßig */
+  min-width: 0;
   min-height: 48px; /* Apple HIG: ≥44pt Touch-Target */
-  padding: 0.45rem 0.6rem;
+  padding: 0.45rem 0.35rem;
   border-radius: var(--r-full);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
   color: var(--muted);
-  font-size: 0.66rem;
+  font-size: 0.6rem;
+  letter-spacing: -0.01em;
   font-weight: 700;
   text-decoration: none;
-  transition: color var(--dur), background var(--dur);
+  transition: color var(--dur) var(--ease), background var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease), transform var(--dur) var(--ease);
 }
 
+.navItem:active {
+  transform: scale(0.94);
+}
+
+/* Aktives Nav-Item: leuchtende Glaslinse */
 .navItemActive {
   color: var(--text);
-  background: color-mix(in srgb, var(--blue) 22%, transparent);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.02) 100%),
+    color-mix(in srgb, var(--blue) 26%, transparent);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.10),
+    0 6px 18px color-mix(in srgb, var(--blue) 30%, transparent);
 }
 
-/* Desktop: Navigation als linke Rail, Inhalt rückt ein */
+/* Desktop: normaler Dokument-Fluss (Fenster scrollt), Navigation als fixe
+   linke Rail, Inhalt rückt ein. */
 @media (min-width: 900px) {
   .nav {
+    position: fixed;
     left: var(--s-4);
     top: 50%;
     bottom: auto;
+    margin: 0;
     transform: translateY(-50%);
     flex-direction: column;
     border-radius: var(--r-xl);
+    align-self: auto;
+  }
+
+  .navItem {
+    flex: 0 0 auto;
+    min-width: 50px;
+    padding: 0.45rem 0.6rem;
+    font-size: 0.66rem;
   }
 
   .main {
+    overflow: visible;
     padding-left: calc(var(--nav-size) + var(--s-6));
     padding-bottom: var(--s-6);
   }
