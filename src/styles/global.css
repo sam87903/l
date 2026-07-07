@@ -53,6 +53,20 @@ body::before {
     flex-direction: column;
     overflow: hidden;
   }
+
+  /* Mobil (v. a. iOS/Safari): backdrop-filter ist auf Handys extrem teuer.
+     Beim Auf-/Zuklappen verschieben sich alle Karten darunter und müssten
+     ihren Blur pro Frame neu berechnen → Ruckeln. Die Inhalts-Karten liegen
+     ohnehin nur über dem glatten Aurora-Verlauf, wo ein Blur optisch kaum
+     etwas bringt. Deshalb Blur im scrollenden Inhalt (<main>) deaktivieren.
+     Header, Nav-Kapsel und Toasts liegen außerhalb von <main> und behalten
+     ihren echten Glas-Blur (dort scrollt Inhalt sichtbar dahinter durch). */
+  main *,
+  main *::before,
+  main *::after {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
 }
 
 a {
