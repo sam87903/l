@@ -31,8 +31,11 @@
   --r-xl: 30px;
   --r-full: 9999px;
 
-  /* Effekte – Liquid Glass: kräftiger Blur + Sättigung, Feder-Easing */
-  --blur: blur(30px) saturate(200%);
+  /* Effekte – Liquid Glass: Blur + Sättigung, Feder-Easing.
+     18px statt 30px: optisch weiterhin klar „frosted", aber deutlich
+     günstiger für die GPU (Blur-Kosten wachsen mit dem Radius) → flüssiges
+     Scrollen auch auf dem Handy. */
+  --blur: blur(18px) saturate(160%);
   --dur: 0.28s;
   --ease: cubic-bezier(0.32, 0.72, 0.33, 1);
   --nav-size: 64px;
