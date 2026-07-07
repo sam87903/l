@@ -9,6 +9,11 @@ import styles from "./semester.module.css";
 const TopicItem = memo(function TopicItem({ topic, color }) {
   const [open, setOpen] = useState(false);
   const toggle = () => setOpen((v) => !v);
+  // Doppelklick/-tipp auf Definition oder Beispiel klappt das Thema wieder ein.
+  const collapse = () => {
+    setOpen(false);
+    window.getSelection?.()?.removeAllRanges?.();
+  };
 
   return (
     <GlassCard tint={open ? color : undefined} style={{ "--c": color, borderRadius: "var(--r-sm)" }}>
@@ -18,7 +23,7 @@ const TopicItem = memo(function TopicItem({ topic, color }) {
         {open ? <ChevronUp size={13} aria-hidden="true" /> : <ChevronDown size={13} aria-hidden="true" />}
       </div>
       <Collapse open={open}>
-        <div className={styles.topicDetail}>
+        <div className={styles.topicDetail} onDoubleClick={collapse} title="Doppelklick zum Einklappen">
           {topic.def && (
             <p className={styles.topicDef}>
               <span className={styles.topicLabel}>Definition: </span>{topic.def}
