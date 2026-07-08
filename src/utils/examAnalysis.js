@@ -49,7 +49,35 @@ const EXAM_KEYWORDS = [
   ["Eigenmarke", "s1-hbl"], ["Private Label", "s1-hbl"], ["Absatzkanal", "s1-hbl"],
   ["Handelsmarke", "s1-hbl"],
   // Investition & Finanzierung (s3-bwl6)
-  ["ROI", "s3-bwl6"],
+  ["ROI", "s3-bwl6"], ["Kapitalwert", "s3-bwl6"], ["Amortisation", "s3-bwl6"],
+  // Datenbanken (s2-dat)
+  ["ER-Modell", "s2-dat"], ["Primärschlüssel", "s2-dat"], ["Fremdschlüssel", "s2-dat"],
+  ["Normalisierung", "s2-dat"], ["Referenzielle Integrität", "s2-dat"], ["NoSQL", "s2-dat"],
+  ["Relationale Algebra", "s2-dat"], ["Kardinalität", "s2-dat"], ["Datenbankschema", "s2-dat"],
+  // Angewandte Statistik (s3-stat)
+  ["Standardabweichung", "s3-stat"], ["Normalverteilung", "s3-stat"], ["Hypothesentest", "s3-stat"],
+  ["Korrelation", "s3-stat"], ["Regression", "s3-stat"], ["Signifikanzniveau", "s3-stat"],
+  ["Konfidenzintervall", "s3-stat"], ["Binomialverteilung", "s3-stat"], ["Grundgesamtheit", "s3-stat"],
+  // Softwaretechnik (s3-swt)
+  ["UML", "s3-swt"], ["Klassendiagramm", "s3-swt"], ["Use-Case-Diagramm", "s3-swt"],
+  ["Entwurfsmuster", "s3-swt"], ["Wasserfallmodell", "s3-swt"], ["Requirements Engineering", "s3-swt"],
+  ["Refactoring", "s3-swt"], ["Vorgehensmodell", "s3-swt"], ["Pflichtenheft", "s3-swt"],
+  // Operations & Supply Chain (s4-oscm)
+  ["Bullwhip-Effekt", "s4-oscm"], ["Just-in-Time", "s4-oscm"], ["Kanban", "s4-oscm"],
+  ["Sicherheitsbestand", "s4-oscm"], ["ABC-Analyse", "s4-oscm"], ["Meldebestand", "s4-oscm"],
+  ["Losgröße", "s4-oscm"], ["Durchlaufzeit", "s4-oscm"], ["Wiederbeschaffungszeit", "s4-oscm"],
+  // Webtechnologien (s4-app)
+  ["HTML", "s4-app"], ["CSS", "s4-app"], ["JavaScript", "s4-app"],
+  ["REST", "s4-app"], ["JSON", "s4-app"], ["XML", "s4-app"],
+  // MMI & GUI (s4-mmi)
+  ["Usability", "s4-mmi"], ["Wireframe", "s4-mmi"], ["Barrierefreiheit", "s4-mmi"],
+  ["Prototyp", "s4-mmi"], ["Interaktionsdesign", "s4-mmi"], ["Mensch-Maschine-Interaktion", "s4-mmi"],
+  // Entrepreneurship (s4-ent)
+  ["Venture Capital", "s4-ent"], ["Business Angel", "s4-ent"], ["Startup", "s4-ent"],
+  ["MVP", "s4-ent"], ["Crowdfunding", "s4-ent"], ["Bootstrapping", "s4-ent"], ["Elevator Pitch", "s4-ent"],
+  // Informatik & Programmierung (s1-gip)
+  ["Algorithmus", "s1-gip"], ["Boolesche Algebra", "s1-gip"], ["Hexadezimalsystem", "s1-gip"],
+  ["Compiler", "s1-gip"], ["Array", "s1-gip"],
 ];
 
 /* Suchindex: Themen-Titel + Lernkarten-Begriffe (→ Modul) + Glossarbegriffe

@@ -85,3 +85,20 @@ describe("examAnalysis – aggregateExams (Prüfungsradar)", () => {
     expect(aggregateExams([])).toEqual({ total: 0, terms: [] });
   });
 });
+
+describe("examAnalysis – Abdeckung über den ganzen Lehrplan", () => {
+  const cases = [
+    ["Datenbanken", "ER-Modell, Primärschlüssel, Fremdschlüssel, Normalisierung bis 3NF, SQL JOIN, referenzielle Integrität.", "DAT"],
+    ["Statistik", "Mittelwert, Median, Standardabweichung, Normalverteilung, Hypothesentest, Korrelation und Regression.", "Ang.Stat."],
+    ["Softwaretechnik", "UML-Klassendiagramm, Use-Case-Diagramm, Entwurfsmuster, Wasserfallmodell und Scrum, Requirements Engineering.", "SWT EC"],
+    ["Operations", "Bullwhip-Effekt, Just-in-Time, Kanban, Meldebestand, Sicherheitsbestand, ABC-Analyse.", "OSCM"],
+  ];
+
+  it.each(cases)("erkennt %s-Themen und ordnet sie dem richtigen Modul zu", (_name, text, code) => {
+    const { top10, modules } = analyzeExam(text);
+    expect(top10.length).toBeGreaterThanOrEqual(3);
+    expect(modules.map((m) => m.module.code)).toContain(code);
+    // erkannte Themen sind im Glossar hinterlegt (verlinken zur Definition)
+    expect(top10.some((t) => t.inGlossary)).toBe(true);
+  });
+});
