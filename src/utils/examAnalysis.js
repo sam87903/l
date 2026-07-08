@@ -15,7 +15,7 @@ const inGlossary = (term) => GLOSSARY_KEYS.has(term.toLowerCase());
 /* Begriffe, die zwar im Glossar stehen (z. B. Java-Schlüsselwörter), als
    „Top-Prüfungsthema" aber nur Rauschen sind bzw. fälschlich in Komposita
    greifen (z. B. „break" in „Break-even"). */
-const STOPWORDS = new Set(["break", "continue", "goto", "print"]);
+const STOPWORDS = new Set(["break", "continue", "goto", "print", "and", "or"]);
 
 /**
  * Kuratierte Prüfungsvokabeln echter Klausuren, die (noch) nicht als
