@@ -6,21 +6,61 @@ import { SEMESTERS } from "../data/semesters/index.js";
 import { GLOSSARY } from "../data/glossary.js";
 
 const ALL_MODULES = SEMESTERS.flatMap((s) => s.modules.map((m) => ({ ...m, semNr: s.nr })));
+const MODULE_BY_ID = new Map(ALL_MODULES.map((m) => [m.id, m]));
 
-/* Suchindex: Themen-Titel + Lernkarten-Begriffe (→ Modul) + Glossarbegriffe */
+/* Begriffe, die zwar im Glossar stehen (z. B. Java-Schlüsselwörter), als
+   „Top-Prüfungsthema" aber nur Rauschen sind bzw. fälschlich in Komposita
+   greifen (z. B. „break" in „Break-even"). */
+const STOPWORDS = new Set(["break", "continue", "goto", "print"]);
+
+/**
+ * Kuratierte Prüfungsvokabeln echter Klausuren, die (noch) nicht als
+ * Modulthema/Lernkarte/Glossarbegriff erfasst sind – jeweils dem inhaltlich
+ * passenden Modul zugeordnet, damit sie erkannt UND zum Lernen verlinkt
+ * werden. Format: [Begriff (wie er in Klausuren steht), Modul-ID].
+ */
+const EXAM_KEYWORDS = [
+  // Grundlagen E-Commerce (s1-ecm)
+  ["E-Marketplace", "s1-ecm"], ["E-Marktplatz", "s1-ecm"], ["Online-Marktplatz", "s1-ecm"],
+  ["Betreiber-Modell", "s1-ecm"], ["Dienstleister-Modell", "s1-ecm"], ["Partner-Modell", "s1-ecm"],
+  ["Application Service Providing", "s1-ecm"], ["ASP", "s1-ecm"], ["eMatching", "s1-ecm"],
+  ["Chicken-and-Egg-Problem", "s1-ecm"], ["kritische Masse", "s1-ecm"], ["Netzeffekte", "s1-ecm"],
+  ["Lastenheft", "s1-ecm"], ["Realgüterstrom", "s1-ecm"], ["Nominalgüterstrom", "s1-ecm"],
+  ["Informationsstrom", "s1-ecm"], ["Frontend", "s1-ecm"], ["Backend", "s1-ecm"],
+  ["Warenwirtschaftssystem", "s1-ecm"], ["Powershopping", "s1-ecm"], ["CMS-System", "s1-ecm"],
+  // Marketing (s2-mkt)
+  ["Customer Journey", "s2-mkt"], ["Suchmaschinenoptimierung", "s2-mkt"], ["SEO", "s2-mkt"],
+  ["SEA", "s2-mkt"], ["SEM", "s2-mkt"], ["Affiliate-Marketing", "s2-mkt"],
+  ["Permission Marketing", "s2-mkt"], ["Opt-In", "s2-mkt"], ["Double Opt-In", "s2-mkt"],
+  ["Skyscraper", "s2-mkt"], ["Pay per Click", "s2-mkt"], ["Pay per Sale", "s2-mkt"],
+  ["Pay per Lead", "s2-mkt"], ["Pay per View", "s2-mkt"], ["Conversion", "s2-mkt"],
+  // Prozessmanagement im E-Commerce (s2-pme)
+  ["E-Fulfillment", "s2-pme"], ["Retourenmanagement", "s2-pme"], ["Distributionslogistik", "s2-pme"],
+  ["Payment-Service-Provider", "s2-pme"], ["Lastschriftverfahren", "s2-pme"], ["Warenkorb", "s2-pme"],
+  // Geschäftsmodelle im E-Commerce (s5-ebm)
+  ["PurePlayer", "s5-ebm"], ["Pure Player", "s5-ebm"], ["Long Tail", "s5-ebm"],
+  ["Plattformökonomie", "s5-ebm"], ["Vergleichsportal", "s5-ebm"], ["Teufelskreis", "s5-ebm"],
+  ["Marktplatzbetreiber", "s5-ebm"],
+  // Handelsmanagement (s1-hbl)
+  ["Eigenmarke", "s1-hbl"], ["Private Label", "s1-hbl"], ["Absatzkanal", "s1-hbl"],
+  ["Handelsmarke", "s1-hbl"],
+  // Investition & Finanzierung (s3-bwl6)
+  ["ROI", "s3-bwl6"],
+];
+
+/* Suchindex: Themen-Titel + Lernkarten-Begriffe (→ Modul) + Glossarbegriffe
+   + kuratierte Prüfungsvokabeln. Stoppwörter werden ausgelassen. */
 function buildIndex() {
   const entries = [];
+  const push = (term, module, weight) => {
+    if (term.length >= 3 && !STOPWORDS.has(term.toLowerCase())) entries.push({ term, module, weight });
+  };
   for (const mod of ALL_MODULES) {
-    for (const t of mod.topics ?? []) {
-      entries.push({ term: t.t, module: mod, weight: 3 });
-    }
-    for (const c of mod.cards ?? []) {
-      if (c.front.length >= 3) entries.push({ term: c.front, module: mod, weight: 2 });
-    }
+    for (const t of mod.topics ?? []) push(t.t, mod, 3);
+    for (const c of mod.cards ?? []) push(c.front, mod, 2);
   }
-  for (const term of Object.keys(GLOSSARY)) {
-    if (term.length >= 3) entries.push({ term, module: null, weight: 1 });
-  }
+  for (const term of Object.keys(GLOSSARY)) push(term, null, 1);
+  for (const [term, moduleId] of EXAM_KEYWORDS) push(term, MODULE_BY_ID.get(moduleId) ?? null, 3);
   return entries;
 }
 const INDEX = buildIndex();
@@ -29,10 +69,11 @@ const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 function countMatches(textLower, term) {
   try {
-    // Wortgrenze inkl. Bindestrich/Ziffern: verhindert Fehltreffer, bei denen
-    // ein kurzer Begriff in einem größeren Kompositum steckt
-    // (z. B. „break" in „Break-even", „AG" in „AGB").
-    const re = new RegExp(`(?<![a-zä-üß0-9-])${escapeRe(term.toLowerCase())}(?![a-zä-üß0-9-])`, "g");
+    // Wortgrenze über Buchstaben: trennt Wörter sauber (z. B. „AG" nicht in
+    // „AGB"), lässt aber zusammengesetzte Fachbegriffe an Bindestrichen zu
+    // (z. B. „E-Marketplace" in „E-Marketplace-Management"). Reine Rausch-
+    // Treffer wie „break" in „Break-even" fängt stattdessen die STOPWORDS-Liste.
+    const re = new RegExp(`(?<![a-zä-üß])${escapeRe(term.toLowerCase())}(?![a-zä-üß])`, "g");
     return (textLower.match(re) ?? []).length;
   } catch {
     return 0;
