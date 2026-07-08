@@ -29,7 +29,10 @@ export default function GlossaryPage() {
   const location = useLocation();
   const [query, setQuery] = useState(() => location.state?.query ?? "");
   const [filter, setFilter] = useState("all");
-  const [openTerms, setOpenTerms] = useState(() => new Set());
+  // Beim Sprung aus der Klausur-Analyse den Zielbegriff direkt aufgeklappt zeigen.
+  const [openTerms, setOpenTerms] = useState(() =>
+    location.state?.openTerm ? new Set([location.state.openTerm]) : new Set()
+  );
   const debouncedQuery = useDebouncedValue(query.trim().toLowerCase());
 
   const filtered = useMemo(() => {

@@ -7,6 +7,10 @@ import { GLOSSARY } from "../data/glossary.js";
 
 const ALL_MODULES = SEMESTERS.flatMap((s) => s.modules.map((m) => ({ ...m, semNr: s.nr })));
 const MODULE_BY_ID = new Map(ALL_MODULES.map((m) => [m.id, m]));
+/* Glossar-Schlüssel case-insensitiv, damit z. B. „kritische Masse" zur
+   Definition „Kritische Masse" verlinkt. */
+const GLOSSARY_KEYS = new Set(Object.keys(GLOSSARY).map((k) => k.toLowerCase()));
+const inGlossary = (term) => GLOSSARY_KEYS.has(term.toLowerCase());
 
 /* Begriffe, die zwar im Glossar stehen (z. B. Java-Schlüsselwörter), als
    „Top-Prüfungsthema" aber nur Rauschen sind bzw. fälschlich in Komposita
@@ -24,7 +28,7 @@ const EXAM_KEYWORDS = [
   ["E-Marketplace", "s1-ecm"], ["E-Marktplatz", "s1-ecm"], ["Online-Marktplatz", "s1-ecm"],
   ["Betreiber-Modell", "s1-ecm"], ["Dienstleister-Modell", "s1-ecm"], ["Partner-Modell", "s1-ecm"],
   ["Application Service Providing", "s1-ecm"], ["ASP", "s1-ecm"], ["eMatching", "s1-ecm"],
-  ["Chicken-and-Egg-Problem", "s1-ecm"], ["kritische Masse", "s1-ecm"], ["Netzeffekte", "s1-ecm"],
+  ["Chicken-and-Egg-Problem", "s1-ecm"], ["Kritische Masse", "s1-ecm"], ["Netzeffekte", "s1-ecm"],
   ["Lastenheft", "s1-ecm"], ["Realgüterstrom", "s1-ecm"], ["Nominalgüterstrom", "s1-ecm"],
   ["Informationsstrom", "s1-ecm"], ["Frontend", "s1-ecm"], ["Backend", "s1-ecm"],
   ["Warenwirtschaftssystem", "s1-ecm"], ["Powershopping", "s1-ecm"], ["CMS-System", "s1-ecm"],
@@ -163,7 +167,7 @@ export function analyzeExam(text, otherTexts = []) {
       rank: i + 1,
       term: h.term,
       module: h.module,
-      inGlossary: h.term in GLOSSARY,
+      inGlossary: inGlossary(h.term),
       count: h.count,
       recurrence: h.recurrence,
       probability: Math.max(8, Math.round((h.score / maxScore) * 100)),
@@ -194,7 +198,7 @@ export function aggregateExams(exams = []) {
         term: entry.term,
         module: entry.module,
         weight: entry.weight,
-        inGlossary: entry.term in GLOSSARY,
+        inGlossary: inGlossary(entry.term),
         mentions: 0,
         exams: new Set(),
       };
