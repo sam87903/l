@@ -1,4 +1,4 @@
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, ChevronDown, ChevronUp, Puzzle } from "lucide-react";
 import GlassCard from "../ui/GlassCard.jsx";
@@ -10,18 +10,27 @@ import { cx, kb } from "../../utils/misc.js";
 import styles from "./semester.module.css";
 
 /** Ein Studienmodul: Prüfungsform, Themen, Quiz-Sprung, Lernkarten. */
-const ModuleCard = memo(function ModuleCard({ module, color }) {
+const ModuleCard = memo(function ModuleCard({ module, color, autoOpen = false }) {
   const [open, setOpen] = useState(false);
   const { quizBest } = useProgress();
   const navigate = useNavigate();
   const toggle = () => setOpen((v) => !v);
+
+  // Von außen angesteuert (z. B. Lernketten-Klick): Modul aufklappen.
+  useEffect(() => {
+    if (autoOpen) setOpen(true);
+  }, [autoOpen]);
 
   const hasQuiz = module.quiz?.length > 0;
   const hasCards = module.cards?.length > 0;
   const best = quizBest[module.id];
 
   return (
-    <GlassCard tint={open ? color : undefined} style={{ "--c": color, borderRadius: "var(--r-md)" }}>
+    <GlassCard
+      id={`modul-${module.id}`}
+      tint={open ? color : undefined}
+      style={{ "--c": color, borderRadius: "var(--r-md)", scrollMarginTop: "84px" }}
+    >
       <div className={`${styles.modHead} hover-pop`} onClick={toggle} {...kb(toggle)} aria-expanded={open}>
         <span className={styles.modCode}>{module.code}</span>
         <div style={{ flex: 1, minWidth: 0 }}>

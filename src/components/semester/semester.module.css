@@ -293,3 +293,146 @@
   font-weight: 700;
   letter-spacing: 0.04em;
 }
+
+/* ── Lernketten (Chain-Learning) & Brücken-Themen ── */
+
+.chainsCard {
+  padding: var(--s-4);
+  margin: var(--s-4) 0;
+}
+
+.chainsKicker {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+  margin-bottom: var(--s-1);
+  font-size: var(--fs-xs);
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--blue);
+}
+
+.chainsLead {
+  margin: 0 0 var(--s-3);
+  font-size: var(--fs-sm);
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.chain {
+  margin-bottom: var(--s-3);
+}
+
+.chain:last-child {
+  margin-bottom: 0;
+}
+
+.chainHead {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--s-1);
+  margin-bottom: var(--s-2);
+  font-size: var(--fs-sm);
+}
+
+.chainDesc {
+  font-size: var(--fs-xs);
+  color: var(--dim);
+}
+
+.chainSteps {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-1) 0;
+}
+
+.chainStepWrap {
+  display: flex;
+  align-items: center;
+}
+
+.chainConnector {
+  width: 14px;
+  height: 2px;
+  background: color-mix(in srgb, var(--text) 22%, transparent);
+  flex-shrink: 0;
+}
+
+.chainStep {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 34px;
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--r-full);
+  border: 1px solid var(--glass-border);
+  background: transparent;
+  color: var(--text);
+  font-size: var(--fs-xs);
+  cursor: pointer;
+  transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+
+.chainStepCode {
+  font-weight: 800;
+}
+
+.chainStepStatus {
+  color: var(--muted);
+  font-size: 0.6rem;
+}
+
+.chainStep_sicher {
+  border-color: color-mix(in srgb, var(--teal) 50%, transparent);
+  background: color-mix(in srgb, var(--teal) 10%, transparent);
+}
+
+.chainStep_begonnen {
+  border-color: color-mix(in srgb, var(--orange) 45%, transparent);
+  background: color-mix(in srgb, var(--orange) 8%, transparent);
+}
+
+.bridgeRow {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-2) var(--s-1);
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.bridgeRow:last-child {
+  border-bottom: none;
+}
+
+.bridgeTerm {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.bridgeMods {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.bridgeChip {
+  font-size: 0.6rem;
+  font-weight: 800;
+  padding: 0.12rem 0.45rem;
+  border-radius: var(--r-full);
+  border: 1px solid color-mix(in srgb, var(--violet) 40%, transparent);
+  color: var(--violet);
+  white-space: nowrap;
+}
+
+.bridgeGo {
+  color: var(--dim);
+  flex-shrink: 0;
+}

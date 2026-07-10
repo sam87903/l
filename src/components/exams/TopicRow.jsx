@@ -5,10 +5,12 @@ import styles from "./exams.module.css";
 /**
  * Eine Themenzeile (Top-Thema / Radar-Eintrag): Rang, ausgeschriebener
  * Begriff mit Prüfungswahrscheinlichkeit, Balken und optionaler Meta-Zeile.
+ * `insight` (Zahl in %) blendet den kuratierten Erfahrungswert ein –
+ * bewusst getrennt von den echten Werten aus den eigenen Klausuren.
  * Ist `onClick` gesetzt, wird die Zeile zu einem Button, der ins gezielte
  * Lernen führt (Glossar-Definition bzw. Quiz).
  */
-const TopicRow = memo(function TopicRow({ rank, term, probability, meta, onClick, color = "var(--teal)", actionHint }) {
+const TopicRow = memo(function TopicRow({ rank, term, probability, meta, insight, onClick, color = "var(--teal)", actionHint }) {
   const interactive = typeof onClick === "function";
   const Tag = interactive ? "button" : "div";
   return (
@@ -36,6 +38,11 @@ const TopicRow = memo(function TopicRow({ rank, term, probability, meta, onClick
           <span className={styles.barFill} style={{ width: `${probability}%` }} />
         </span>
         {meta && <span className={styles.topItemMeta}>{meta}</span>}
+        {insight != null && (
+          <span className={styles.topItemInsight}>
+            <span aria-hidden="true">📊</span> In typischen E-Commerce-Klausuren: {insight} %
+          </span>
+        )}
       </span>
       {interactive && <ChevronRight size={16} className={styles.topItemGo} aria-hidden="true" />}
     </Tag>

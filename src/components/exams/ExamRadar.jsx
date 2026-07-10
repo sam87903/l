@@ -2,6 +2,7 @@ import { memo, useMemo } from "react";
 import GlassCard from "../ui/GlassCard.jsx";
 import TopicRow from "./TopicRow.jsx";
 import { aggregateExams } from "../../utils/examAnalysis.js";
+import { insightFor, INSIGHTS_LABEL } from "../../data/communityInsights.js";
 import { useOpenTopic } from "./useOpenTopic.js";
 import { ACCENT } from "../../constants/theme.js";
 import styles from "./exams.module.css";
@@ -40,10 +41,14 @@ const ExamRadar = memo(function ExamRadar({ exams }) {
                 ? `in ${t.inExams} von ${t.total} Klausuren`
                 : `in 1 Klausur · ${t.mentions}× erwähnt`
             }
+            insight={insightFor(t.term)}
             onClick={() => openTopic(t)}
           />
         ))}
       </div>
+      {shown.some((t) => insightFor(t.term) != null) && (
+        <p className={styles.insightNote}>📊 Community-Werte: {INSIGHTS_LABEL}.</p>
+      )}
     </GlassCard>
   );
 });

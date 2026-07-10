@@ -8,7 +8,7 @@ import { kb } from "../../utils/misc.js";
 import styles from "./semester.module.css";
 
 /** Ein Semester als kontrolliertes Akkordeon mit allen Modulen. */
-const SemesterAccordion = memo(function SemesterAccordion({ semester, open, onToggle }) {
+const SemesterAccordion = memo(function SemesterAccordion({ semester, open, onToggle, autoOpenModuleId = null }) {
   const toggle = () => onToggle(semester.nr);
   const isNext = semester.nr === 1;
   const color = isNext ? ACCENT.red : ACCENT.blue;
@@ -36,7 +36,12 @@ const SemesterAccordion = memo(function SemesterAccordion({ semester, open, onTo
       <Collapse open={open}>
         <div className={styles.modWrap}>
           {semester.modules.map((mod, i) => (
-            <ModuleCard key={mod.id} module={mod} color={WEEK_COLORS[(i % 3) + 1]} />
+            <ModuleCard
+              key={mod.id}
+              module={mod}
+              color={WEEK_COLORS[(i % 3) + 1]}
+              autoOpen={autoOpenModuleId === mod.id}
+            />
           ))}
         </div>
       </Collapse>

@@ -63,6 +63,12 @@ export default function PlanPage() {
         document.getElementById("quiz-verzeichnis")?.scrollIntoView({ behavior: "smooth" });
       }, 250);
     }
+    // Generisches Sprungziel (z. B. „smart-quiz", „karten-training")
+    if (state.scrollTo) {
+      setTimeout(() => {
+        document.getElementById(state.scrollTo)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 250);
+    }
   }, [location.state]);
 
   return (
@@ -117,7 +123,9 @@ export default function PlanPage() {
 
       <SmartQuizCard />
 
-      <DueTrainer />
+      <div id="karten-training" style={{ scrollMarginTop: "100px" }}>
+        <DueTrainer />
+      </div>
 
       <MistakeTrainer />
 

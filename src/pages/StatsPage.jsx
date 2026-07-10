@@ -6,10 +6,12 @@ import ProgressBar from "../components/ui/ProgressBar.jsx";
 import Disclosure from "../components/ui/Disclosure.jsx";
 import KpiCard from "../components/dashboard/KpiCard.jsx";
 import AchievementsRow from "../components/dashboard/AchievementsRow.jsx";
+import WeakSpotRadar from "../components/stats/WeakSpotRadar.jsx";
 import Heatmap from "../components/charts/Heatmap.jsx";
 import BarChart from "../components/charts/BarChart.jsx";
 import { SEMESTERS } from "../data/semesters/index.js";
 import { GLOSSARY } from "../data/glossary.js";
+import { baseModId, deckLabel } from "../utils/insights.js";
 import { ACCENT, WEEK_COLORS } from "../constants/theme.js";
 import { ACHIEVEMENTS } from "../constants/achievements.js";
 import { useProgress } from "../context/ProgressContext.jsx";
@@ -57,11 +59,29 @@ export default function StatsPage() {
     [fcKnown]
   );
 
-  const quizResults = useMemo(() => {
-    const nameById = new Map(SEMESTERS.flatMap((s) => s.modules).map((m) => [m.id, m.name]));
-    return Object.entries(quizBest)
-      .map(([id, best]) => ({ id, name: nameById.get(id) ?? id, ...best }))
-      .sort((a, b) => b.c / b.t - a.c / a.t);
+  const quizResults = useMemo(
+    () =>
+      Object.entries(quizBest)
+        .map(([id, best]) => ({ id, name: deckLabel(id), ...best }))
+        .sort((a, b) => b.c / b.t - a.c / a.t),
+    [quizBest]
+  );
+
+  // Erfolgsquote je Thema: Basis- und Erweitert-Quiz aufs Modul gebündelt,
+  // schwächste zuerst – macht Schwachstellen auf einen Blick sichtbar.
+  const successByTopic = useMemo(() => {
+    const byMod = new Map();
+    for (const [id, best] of Object.entries(quizBest)) {
+      if (!best?.t) continue;
+      const base = baseModId(id);
+      const cur = byMod.get(base) ?? { id: base, c: 0, t: 0 };
+      cur.c += best.c;
+      cur.t += best.t;
+      byMod.set(base, cur);
+    }
+    return [...byMod.values()]
+      .map((m) => ({ ...m, name: deckLabel(m.id), pct: Math.round((m.c / m.t) * 100) }))
+      .sort((a, b) => a.pct - b.pct);
   }, [quizBest]);
 
   const unlockedCount = ACHIEVEMENTS.filter((a) => a.test(stats)).length;
@@ -134,6 +154,30 @@ export default function StatsPage() {
       </GlassCard>
 
       {/* Details per Progressive Disclosure */}
+      <WeakSpotRadar />
+
+      {successByTopic.length > 0 && (
+        <Disclosure icon="📈" title="Erfolgsquote je Thema" meta={`${successByTopic.length} Themen`}>
+          {successByTopic.map((m) => (
+            <div key={m.id} className={styles.moduleProgress}>
+              <span className={styles.moduleProgressName}>{m.name}</span>
+              <div style={{ flex: 1 }}>
+                <ProgressBar
+                  value={m.pct} max={100}
+                  from={m.pct < 50 ? ACCENT.red : ACCENT.blue} to={m.pct < 50 ? ACCENT.orange : ACCENT.teal}
+                  height={5}
+                  label={`${m.name}: Erfolgsquote`}
+                  valueText={`${m.pct} % richtig (${m.c} von ${m.t} Fragen)`}
+                />
+              </div>
+              <span style={{ color: m.pct < 50 ? ACCENT.red : "var(--muted)", fontWeight: 800, width: 44, textAlign: "right" }}>
+                {m.pct} %
+              </span>
+            </div>
+          ))}
+        </Disclosure>
+      )}
+
       <Disclosure icon="⏱️" title="Lernminuten · letzte 7 Tage" meta={`${stats.focusTotal}′ gesamt`} defaultOpen>
         <BarChart days={7} />
       </Disclosure>

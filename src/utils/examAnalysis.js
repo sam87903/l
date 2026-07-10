@@ -259,6 +259,10 @@ export function aggregateExams(exams = []) {
   };
 }
 
+/** Begriff→Modul-Zuordnungen des Suchindex (z. B. für Brücken-Themen). */
+export const termModuleEntries = () =>
+  INDEX.map(({ term, module, weight }) => ({ term, module, weight }));
+
 /* ═══ Text-Ähnlichkeit für den RAG-Prompt ═══ */
 
 /* Deduplizierte Begriffsliste als Vektor-Dimensionen. */

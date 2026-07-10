@@ -8,6 +8,7 @@ import ExamUpload from "../components/exams/ExamUpload.jsx";
 import ExamReport from "../components/exams/ExamReport.jsx";
 import ExamRadar from "../components/exams/ExamRadar.jsx";
 import ExamSimulator from "../components/exams/ExamSimulator.jsx";
+import ExamHeatmap from "../components/exams/ExamHeatmap.jsx";
 import { useProgress } from "../context/ProgressContext.jsx";
 import { useToast } from "../components/ui/Toast.jsx";
 import { ACCENT } from "../constants/theme.js";
@@ -48,6 +49,8 @@ export default function ExamsPage() {
       </GlassCard>
 
       <ExamRadar exams={exams} />
+
+      <ExamHeatmap exams={exams} />
 
       <ExamSimulator />
 

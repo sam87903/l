@@ -391,3 +391,70 @@ button.topItem:active {
   font-size: var(--fs-sm);
   line-height: 1.6;
 }
+
+/* ── Exam Heatmap (Module × Klausuren) ── */
+
+.heatScroll {
+  overflow-x: auto;
+  margin: 0 calc(-1 * var(--s-1));
+  padding: 0 var(--s-1);
+}
+
+.heatGrid {
+  display: grid;
+  gap: 3px;
+  align-items: center;
+  min-width: 260px;
+}
+
+.heatCorner {
+  min-height: 1rem;
+}
+
+.heatColLabel {
+  font-size: 0.62rem;
+  font-weight: 800;
+  color: var(--muted);
+  text-align: center;
+}
+
+.heatRowLabel {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--text);
+  padding-right: var(--s-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.heatCell {
+  display: block;
+  height: 26px;
+  border-radius: 6px;
+  border: 1px solid color-mix(in srgb, var(--text) 6%, transparent);
+}
+
+.heatLegend {
+  margin: var(--s-2) 0 0;
+  font-size: 0.62rem;
+  color: var(--dim);
+  line-height: 1.5;
+}
+
+/* ── Community Insights (kuratierte Erfahrungswerte) ── */
+
+.topItemInsight {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: color-mix(in srgb, var(--violet) 80%, var(--text));
+}
+
+.insightNote {
+  margin: var(--s-2) 0 0;
+  font-size: 0.62rem;
+  color: var(--dim);
+  line-height: 1.5;
+}

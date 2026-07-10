@@ -257,3 +257,76 @@
   line-height: 1.55;
   margin: 0;
 }
+
+/* ── „Heute empfohlen" (dynamische Lern-Empfehlungen) ── */
+
+.recCard {
+  padding: var(--s-3) var(--s-4);
+  margin-bottom: var(--s-4);
+}
+
+.recKicker {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+  margin-bottom: var(--s-2);
+  font-size: var(--fs-xs);
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--violet);
+}
+
+.recRow {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-2);
+  margin: 0 calc(-1 * var(--s-1));
+  border-radius: var(--r-md);
+  cursor: pointer;
+  transition: background var(--dur) var(--ease);
+}
+
+.recRow:hover,
+.recRow:focus-visible {
+  background: color-mix(in srgb, var(--violet) 10%, transparent);
+}
+
+.recRowUrgent {
+  background: color-mix(in srgb, var(--red) 9%, transparent);
+}
+
+.recRowUrgent:hover,
+.recRowUrgent:focus-visible {
+  background: color-mix(in srgb, var(--red) 15%, transparent);
+}
+
+.recIcon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.recBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.recTitle {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}
+
+.recReason {
+  font-size: var(--fs-xs);
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.recGo {
+  color: var(--dim);
+  flex-shrink: 0;
+}

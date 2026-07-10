@@ -1,0 +1,97 @@
+/* ═══ Statistik-Widgets (Weak-Spot Radar & Co.) ═══ */
+
+.weakRow {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin-bottom: var(--s-2);
+}
+
+.weakRank {
+  width: 20px;
+  font-weight: 800;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.weakBody {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.weakHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-2);
+}
+
+.weakName {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.weakPct {
+  font-weight: 800;
+  font-size: var(--fs-sm);
+  color: var(--red);
+  flex-shrink: 0;
+}
+
+.weakTrack {
+  height: 6px;
+  border-radius: var(--r-full);
+  background: color-mix(in srgb, var(--text) 8%, transparent);
+  overflow: hidden;
+}
+
+.weakFill {
+  height: 100%;
+  border-radius: var(--r-full);
+  background: linear-gradient(90deg, var(--orange), var(--red));
+  transition: width var(--dur) var(--ease);
+}
+
+.weakChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1);
+}
+
+.weakChip {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--muted);
+  padding: 0.1rem 0.45rem;
+  border-radius: var(--r-full);
+  border: 1px solid var(--glass-border);
+}
+
+.successRow {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin-bottom: var(--s-2);
+}
+
+.successName {
+  width: 40%;
+  min-width: 0;
+  font-size: var(--fs-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.successPct {
+  width: 52px;
+  text-align: right;
+  font-weight: 800;
+  flex-shrink: 0;
+}

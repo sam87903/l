@@ -7,6 +7,7 @@ import EmptyState from "../ui/EmptyState.jsx";
 import TopicRow from "./TopicRow.jsx";
 import { useOpenTopic } from "./useOpenTopic.js";
 import { analyzeExam, buildExamPrompt } from "../../utils/examAnalysis.js";
+import { insightFor, INSIGHTS_LABEL } from "../../data/communityInsights.js";
 import { copyText } from "../../utils/misc.js";
 import { useToast } from "../ui/Toast.jsx";
 import { ACCENT } from "../../constants/theme.js";
@@ -59,10 +60,14 @@ const ExamReport = memo(function ExamReport({ exam, otherExams = [] }) {
                     ? `${t.count}× erwähnt · Modul ${t.module.code}`
                     : `${t.count}× erwähnt${t.inGlossary ? " · im Glossar" : ""}`
               }
+              insight={insightFor(t.term)}
               onClick={() => openTopic(t)}
             />
           ))}
         </div>
+        {analysis.top10.some((t) => insightFor(t.term) != null) && (
+          <p className={styles.insightNote}>📊 Community-Werte: {INSIGHTS_LABEL}.</p>
+        )}
       </div>
 
       {/* Themencluster / geprüfte Module */}

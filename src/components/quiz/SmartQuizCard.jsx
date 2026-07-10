@@ -4,6 +4,7 @@ import GlassCard from "../ui/GlassCard.jsx";
 import Button from "../ui/Button.jsx";
 import Quiz from "./Quiz.jsx";
 import { buildSmartQuiz, QUESTION_BANK_SIZE } from "../../utils/questionBank.js";
+import { smartModuleWeights } from "../../utils/insights.js";
 import { SMART_QUIZ_SIZES } from "../../constants/config.js";
 import { useProgress } from "../../context/ProgressContext.jsx";
 import { ACCENT } from "../../constants/theme.js";
@@ -21,13 +22,19 @@ const SCOPES = [
  * gewichtet sie nach den Schwächen des Nutzers (Fehler-Kartei zuerst).
  */
 const SmartQuizCard = memo(function SmartQuizCard() {
-  const { wrongPool, fcKnown, quizBest, recordAnswer } = useProgress();
+  const { wrongPool, fcKnown, quizBest, srs, exams, recordAnswer } = useProgress();
   const [count, setCount] = useState(SMART_QUIZ_SIZES[1]);
   const [scope, setScope] = useState("weak");
   const [session, setSession] = useState(null);
   const progress = useMemo(() => ({ wrongPool, fcKnown, quizBest }), [wrongPool, fcKnown, quizBest]);
+  // SRS 2.0: Ziehung Richtung schwacher, klausurrelevanter und lange
+  // nicht wiederholter Module verschieben.
+  const moduleWeights = useMemo(
+    () => smartModuleWeights({ wrongPool, quizBest, srs, fcKnown, exams }),
+    [wrongPool, quizBest, srs, fcKnown, exams]
+  );
 
-  const start = () => setSession(buildSmartQuiz({ count, scope, progress }));
+  const start = () => setSession(buildSmartQuiz({ count, scope, progress, moduleWeights }));
 
   return (
     <GlassCard tint={ACCENT.violet} id="smart-quiz"
