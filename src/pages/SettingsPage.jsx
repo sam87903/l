@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Bell, Download, FileSpreadsheet, History, Printer, RotateCcw, Upload, Volume2 } from "lucide-react";
+import { Bell, Contrast, Download, FileSpreadsheet, History, Printer, RotateCcw, Upload, Volume2, ZapOff } from "lucide-react";
 import PageTransition from "../components/layout/PageTransition.jsx";
 import GlassCard from "../components/ui/GlassCard.jsx";
 import Button from "../components/ui/Button.jsx";
@@ -39,6 +39,8 @@ export default function SettingsPage() {
     setSettings((s) => ({ ...s, sound: next }));
     if (next) playChime();
   };
+
+  const toggleSetting = (key) => setSettings((s) => ({ ...s, [key]: !s[key] }));
 
   const toggleNotifications = async () => {
     if (settings.notifications) {
@@ -166,6 +168,32 @@ export default function SettingsPage() {
           aria-checked={settings.notifications} aria-label="Benachrichtigungen umschalten" tabIndex={0}
           onClick={toggleNotifications}
           onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && (e.preventDefault(), toggleNotifications())}>
+          <span className={styles.switchKnob} />
+        </div>
+      </GlassCard>
+      <GlassCard className={styles.settingRow}>
+        <ZapOff size={18} aria-hidden="true" style={{ flexShrink: 0, color: ACCENT.teal }} />
+        <div className={styles.settingBody}>
+          <div className={styles.settingTitle}>Reduzierte Animationen</div>
+          <div className={styles.settingDesc}>Übergänge und Effekte auf ein Minimum reduzieren.</div>
+        </div>
+        <div className={cx(styles.switch, settings.reducedMotion && styles.switchOn)} role="switch"
+          aria-checked={!!settings.reducedMotion} aria-label="Reduzierte Animationen umschalten" tabIndex={0}
+          onClick={() => toggleSetting("reducedMotion")}
+          onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && (e.preventDefault(), toggleSetting("reducedMotion"))}>
+          <span className={styles.switchKnob} />
+        </div>
+      </GlassCard>
+      <GlassCard className={styles.settingRow}>
+        <Contrast size={18} aria-hidden="true" style={{ flexShrink: 0, color: ACCENT.orange }} />
+        <div className={styles.settingBody}>
+          <div className={styles.settingTitle}>Hoher Kontrast</div>
+          <div className={styles.settingDesc}>Opake Flächen, kräftige Ränder und besser lesbarer Text.</div>
+        </div>
+        <div className={cx(styles.switch, settings.highContrast && styles.switchOn)} role="switch"
+          aria-checked={!!settings.highContrast} aria-label="Hohen Kontrast umschalten" tabIndex={0}
+          onClick={() => toggleSetting("highContrast")}
+          onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && (e.preventDefault(), toggleSetting("highContrast"))}>
           <span className={styles.switchKnob} />
         </div>
       </GlassCard>

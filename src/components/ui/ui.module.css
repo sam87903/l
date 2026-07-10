@@ -312,3 +312,41 @@
     border-color: color-mix(in srgb, var(--text) 45%, transparent);
   }
 }
+
+/* Wie die Media-Query, aber per App-Einstellung erzwingbar */
+:global(:root[data-contrast="more"]) .glass {
+  background: var(--surface-solid);
+  border-color: color-mix(in srgb, var(--text) 45%, transparent);
+}
+
+/* ── LoadingScreen: indeterminierter Balken + Karten-Skelette ── */
+
+.loadingBar {
+  width: min(240px, 70%);
+  height: 4px;
+  border-radius: var(--r-full);
+  background: color-mix(in srgb, var(--text) 10%, transparent);
+  overflow: hidden;
+}
+
+.loadingBarFill {
+  display: block;
+  width: 40%;
+  height: 100%;
+  border-radius: var(--r-full);
+  background: linear-gradient(90deg, var(--blue), var(--teal));
+  animation: loading-slide 1.2s ease-in-out infinite;
+}
+
+@keyframes loading-slide {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(250%); }
+}
+
+.loadingSkeletons {
+  width: min(420px, 88%);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  margin-top: var(--s-2);
+}

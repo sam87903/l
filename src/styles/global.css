@@ -158,6 +158,16 @@ input[type="search"]::-webkit-search-cancel-button {
   }
 }
 
+/* Wie die Media-Query, aber per App-Einstellung erzwingbar */
+:root[data-motion="reduced"] *,
+:root[data-motion="reduced"] *::before,
+:root[data-motion="reduced"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
 /* WCAG 2.4.11: fokussierte Elemente nie hinter Header/Nav verstecken */
 html {
   scroll-padding-top: 96px;
@@ -178,4 +188,19 @@ html {
     --glass-border: rgba(20, 25, 50, 0.4);
     --border: rgba(20, 25, 50, 0.3);
   }
+}
+
+/* Wie die Media-Query, aber per App-Einstellung erzwingbar */
+:root[data-contrast="more"][data-theme="dark"] {
+  --muted: #e7ecf7;
+  --dim: #c3cce4;
+  --glass-border: rgba(255, 255, 255, 0.4);
+  --border: rgba(255, 255, 255, 0.3);
+}
+
+:root[data-contrast="more"][data-theme="light"] {
+  --muted: #141726;
+  --dim: #2a3247;
+  --glass-border: rgba(20, 25, 50, 0.4);
+  --border: rgba(20, 25, 50, 0.3);
 }

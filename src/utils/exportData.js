@@ -1,4 +1,5 @@
 /** Backup, CSV- und Datei-Export. */
+import { EXAM_TEXT_LIMIT } from "../constants/config.js";
 
 export function downloadFile(name, content, type) {
   const blob = new Blob([content], { type });
@@ -25,9 +26,61 @@ export function toCSV(rows) {
 export const downloadCSV = (name, rows) =>
   downloadFile(name, "﻿" + toCSV(rows), "text/csv;charset=utf-8");
 
-const BACKUP_KEYS = ["doneDays", "quizBest", "fcKnown", "favorites", "recents", "activity", "settings", "wrongPool", "exams", "srs"];
+const isObject = (v) => v != null && typeof v === "object" && !Array.isArray(v);
+const finitePositive = (v) => Number.isFinite(v) && v >= 0;
 
-/** Backup-Text validieren; wirft bei ungültigem Format. */
+/*
+ * Pro-Slice-Validierung: ungültige EINTRÄGE werden verworfen statt das
+ * ganze Backup abzulehnen – ein kaputter Slice darf nicht alle anderen
+ * Daten mit in den Abgrund reißen. (Bewusst ohne Zod: eine einzige
+ * Validierungsstelle rechtfertigt keine Bundle-Dependency.)
+ */
+const SLICE_VALIDATORS = {
+  doneDays: (v) =>
+    isObject(v) ? Object.fromEntries(Object.entries(v).filter(([, val]) => val === true)) : null,
+  quizBest: (v) =>
+    isObject(v)
+      ? Object.fromEntries(
+          Object.entries(v).filter(
+            ([, b]) => isObject(b) && finitePositive(b.c) && finitePositive(b.t) && b.t > 0
+          )
+        )
+      : null,
+  fcKnown: (v) =>
+    isObject(v)
+      ? Object.fromEntries(
+          Object.entries(v)
+            .filter(([, list]) => Array.isArray(list))
+            .map(([k, list]) => [k, list.filter((i) => Number.isInteger(i) && i >= 0)])
+        )
+      : null,
+  favorites: (v) => (Array.isArray(v) ? v.filter((t) => typeof t === "string") : null),
+  recents: (v) => (Array.isArray(v) ? v.filter((t) => typeof t === "string") : null),
+  activity: (v) =>
+    isObject(v)
+      ? Object.fromEntries(Object.entries(v).filter(([, min]) => finitePositive(min)))
+      : null,
+  settings: (v) => (isObject(v) ? v : null),
+  wrongPool: (v) =>
+    isObject(v)
+      ? Object.fromEntries(Object.entries(v).filter(([, e]) => isObject(e)))
+      : null,
+  exams: (v) =>
+    Array.isArray(v)
+      ? v
+          .filter((e) => isObject(e) && typeof e.name === "string" && typeof e.text === "string")
+          .map((e) => ({ ...e, text: e.text.slice(0, EXAM_TEXT_LIMIT) }))
+      : null,
+  srs: (v) =>
+    isObject(v)
+      ? Object.fromEntries(Object.entries(v).filter(([, entries]) => isObject(entries)))
+      : null,
+};
+
+/**
+ * Backup-Text validieren; wirft nur bei grundsätzlich falschem Format.
+ * Einzelne defekte Slices/Einträge werden still verworfen.
+ */
 export function parseBackup(text) {
   const data = JSON.parse(text);
   if (!data || typeof data !== "object" || !("doneDays" in data)) {
@@ -35,10 +88,12 @@ export function parseBackup(text) {
   }
   const clean = {
     startDate: typeof data.startDate === "string" ? data.startDate : undefined,
-    mastered: typeof data.mastered === "number" ? data.mastered : undefined,
+    mastered: finitePositive(data.mastered) ? data.mastered : undefined,
   };
-  for (const key of BACKUP_KEYS) {
-    if (key in data && typeof data[key] === "object" && data[key] !== null) clean[key] = data[key];
+  for (const [key, validate] of Object.entries(SLICE_VALIDATORS)) {
+    if (!(key in data)) continue;
+    const value = validate(data[key]);
+    if (value != null) clean[key] = value;
   }
   return clean;
 }

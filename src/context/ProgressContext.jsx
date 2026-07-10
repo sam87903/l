@@ -9,7 +9,7 @@ import { pushAutoBackup, readAutoBackups } from "../services/autoBackup.js";
 
 const ProgressContext = createContext(null);
 
-const DEFAULT_SETTINGS = { sound: true, notifications: false };
+const DEFAULT_SETTINGS = { sound: true, notifications: false, reducedMotion: false, highContrast: false };
 
 /**
  * Zentraler Lernfortschritt: abgehakte Tage, Quiz-Bestscores, gewusste
@@ -216,6 +216,16 @@ export function ProgressProvider({ children }) {
     }),
     [startDate, doneDays, quizBest, fcKnown, favorites, recents, activity, settings, wrongPool, mastered, exams, srs]
   );
+
+  // ── Barrierefreiheit: Nutzer-Toggles als Root-Attribute, damit CSS die
+  //    prefers-*-Overrides auch ohne System-Einstellung anwenden kann ──
+  useEffect(() => {
+    const root = document.documentElement;
+    if (settings.reducedMotion) root.dataset.motion = "reduced";
+    else delete root.dataset.motion;
+    if (settings.highContrast) root.dataset.contrast = "more";
+    else delete root.dataset.contrast;
+  }, [settings.reducedMotion, settings.highContrast]);
 
   // ── Automatische, rotierende Backups (jede Minute) ──
   const [autoBackups, setAutoBackups] = useState([]);

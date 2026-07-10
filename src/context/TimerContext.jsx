@@ -90,11 +90,8 @@ export function TimerProvider({ children }) {
             timerRef.current.start();
           } else if (Number.isFinite(snap.endAt)) {
             // Während der Abwesenheit abgelaufen: erst den Snapshot
-            // neutralisieren, dann gutschreiben (keine Doppel-Gutschrift).
-            await storage.set(
-              STORAGE_KEYS.timer,
-              JSON.stringify({ endAt: null, remaining: m * SECONDS_PER_MINUTE, minutes: m, isBreak: false, customMin: custom })
-            );
+            // löschen, dann gutschreiben (keine Doppel-Gutschrift).
+            await storage.remove(STORAGE_KEYS.timer);
             if (brk) {
               push("Pause vorbei – weiter geht's!", "🚀");
             } else {

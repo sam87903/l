@@ -28,4 +28,16 @@ export const storage = {
       localStorage.setItem(key, value);
     } catch { /* Speicher voll oder blockiert – bewusst ignorieren */ }
   },
+
+  async remove(key) {
+    try {
+      if (typeof window !== "undefined" && window.storage?.delete) {
+        await window.storage.delete(key);
+        return;
+      }
+    } catch { /* Artefakt-Storage nicht verfügbar */ }
+    try {
+      localStorage.removeItem(key);
+    } catch { /* blockiert – bewusst ignorieren */ }
+  },
 };

@@ -205,3 +205,7 @@
   .header { background: var(--surface-solid); }
   .navItem { color: var(--text); }
 }
+
+/* Wie die Media-Query, aber per App-Einstellung erzwingbar */
+:global(:root[data-contrast="more"]) .header { background: var(--surface-solid); }
+:global(:root[data-contrast="more"]) .navItem { color: var(--text); }

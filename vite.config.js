@@ -12,6 +12,9 @@ export default defineConfig({
   build: {
     outDir: single ? "dist-single" : "dist",
     target: "es2020",
+    // Sourcemaps fürs Debugging – aber nie in der Single-HTML (inline
+    // Maps würden die Datei vervielfachen).
+    sourcemap: !single,
   },
   test: {
     environment: "jsdom",

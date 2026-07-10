@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Flame, Moon, Settings, Sun, SunMoon } from "lucide-react";
+import MoroccoFlag from "../ui/MoroccoFlag.jsx";
 import { useTheme } from "../../context/ThemeContext.jsx";
 import { useProgress } from "../../context/ProgressContext.jsx";
 import styles from "./layout.module.css";
@@ -21,7 +22,7 @@ const Header = memo(function Header() {
   return (
     <header className={styles.header}>
       <Link to="/" className={styles.brand}>
-        <span className={styles.brandFlag} aria-hidden="true">🇲🇦</span>
+        <span className={styles.brandFlag} aria-hidden="true"><MoroccoFlag size={24} /></span>
         <span style={{ minWidth: 0 }}>
           <h1 className={styles.brandTitle}>Marokko-Lernplan</h1>
           <p className={styles.brandSub}>HRW E-Commerce · Level {stats.level}</p>
