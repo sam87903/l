@@ -324,3 +324,70 @@ button.topItem:active {
   font-weight: 700;
   color: var(--muted);
 }
+
+/* ── Klausur-Simulator ── */
+
+.simClock {
+  font-size: var(--fs-lg);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  color: var(--violet);
+}
+
+.simGradeHero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-1);
+  margin: var(--s-3) 0;
+  text-align: center;
+}
+
+.simGradeNote {
+  font-size: 2.6rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--red);
+}
+
+.simGradeNote[data-passed] {
+  color: var(--teal);
+}
+
+.simGradeLabel {
+  font-size: var(--fs-sm);
+  color: var(--muted);
+}
+
+.openItem {
+  margin-bottom: var(--s-3);
+  padding-bottom: var(--s-3);
+  border-bottom: 1px solid var(--border);
+}
+
+.openItem:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.openPrompt {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--s-1);
+  margin: 0 0 var(--s-2);
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+}
+
+.modelAnswer {
+  margin-top: var(--s-2);
+  padding: var(--s-3);
+  border-radius: var(--r-md);
+  border: 1px solid color-mix(in srgb, var(--teal) 30%, transparent);
+  background: color-mix(in srgb, var(--teal) 8%, transparent);
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+}

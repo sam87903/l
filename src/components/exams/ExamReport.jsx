@@ -13,14 +13,17 @@ import { ACCENT } from "../../constants/theme.js";
 import styles from "./exams.module.css";
 
 /** Vollständiger Analyse-Report einer gespeicherten Altklausur. */
-const ExamReport = memo(function ExamReport({ exam, otherTexts }) {
+const ExamReport = memo(function ExamReport({ exam, otherExams = [] }) {
   const navigate = useNavigate();
   const openTopic = useOpenTopic();
   const { push } = useToast();
-  const analysis = useMemo(() => analyzeExam(exam.text, otherTexts), [exam, otherTexts]);
+  const analysis = useMemo(
+    () => analyzeExam(exam.text, otherExams.map((e) => e.text)),
+    [exam, otherExams]
+  );
 
   const copyAiPrompt = async () => {
-    const ok = await copyText(buildExamPrompt(exam.name, exam.text));
+    const ok = await copyText(buildExamPrompt(exam, otherExams));
     push(ok ? "KI-Prompt kopiert – in ChatGPT/Claude einfügen" : "Kopieren fehlgeschlagen", ok ? "🤖" : "⚠️");
   };
 

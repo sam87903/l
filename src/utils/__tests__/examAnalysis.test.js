@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { analyzeExam, aggregateExams } from "../examAnalysis.js";
+import { analyzeExam, aggregateExams, buildExamPrompt, examSimilarity } from "../examAnalysis.js";
 
 describe("examAnalysis – Wortgrenze (Rausch-Filter)", () => {
   it("filtert das Stoppwort break aus den Top-Themen", () => {
@@ -83,6 +83,69 @@ describe("examAnalysis – aggregateExams (Prüfungsradar)", () => {
 
   it("liefert bei leerer Eingabe ein leeres Ergebnis", () => {
     expect(aggregateExams([])).toEqual({ total: 0, terms: [] });
+  });
+});
+
+describe("examAnalysis – examSimilarity (Kosinus über Fachbegriffe)", () => {
+  const dbText = "ER-Modell, Primärschlüssel und Normalisierung erläutern. SQL JOIN anwenden.";
+  const mktText = "Customer Journey beschreiben, SEO und SEA vergleichen, Conversion berechnen.";
+
+  it("identische Texte sind maximal ähnlich (≈1)", () => {
+    expect(examSimilarity(dbText, dbText)).toBeCloseTo(1, 5);
+  });
+
+  it("thematisch disjunkte Texte sind unähnlich", () => {
+    const sim = examSimilarity(dbText, mktText);
+    expect(sim).toBeLessThan(0.2);
+  });
+
+  it("ist symmetrisch und liefert 0 für leere Texte", () => {
+    expect(examSimilarity(dbText, mktText)).toBeCloseTo(examSimilarity(mktText, dbText), 10);
+    expect(examSimilarity("", dbText)).toBe(0);
+    expect(examSimilarity(dbText, "")).toBe(0);
+  });
+});
+
+describe("examAnalysis – buildExamPrompt (RAG)", () => {
+  const exam = {
+    name: "E-Commerce SS24",
+    addedAt: "2026-01-15T10:00:00.000Z",
+    text: "Erläutern Sie Netzeffekte, die Kritische Masse und das Betreiber-Modell im E-Marketplace.",
+  };
+  const others = [
+    { name: "E-Commerce WS23", addedAt: "2025-07-01T10:00:00.000Z", text: "Netzeffekte und E-Marketplace beschreiben. Kritische Masse definieren." },
+    { name: "Statistik WS23", addedAt: "2025-07-02T10:00:00.000Z", text: "Normalverteilung, Standardabweichung und Hypothesentest berechnen." },
+  ];
+
+  it("enthält Rolle, Modul-Tipp, alle 6 Abschnitte und Schritt-für-Schritt-Anweisung", () => {
+    const prompt = buildExamPrompt(exam, others);
+    expect(prompt).toContain("erfahrener Prüfungsanalyst und Dozent");
+    expect(prompt).toContain("BPO 02.06.2023");
+    expect(prompt).toContain("Das Modul ist");
+    for (const heading of [
+      "Themencluster & Schwerpunkt",
+      "Aufgabentypen & Verteilung",
+      "Schwierigkeitsgrad & Stolperstellen",
+      "Wiederkehrende Muster & Trends",
+      "Top 10 Prüfungswahrscheinlichkeit",
+      "Optimale Lernstrategie",
+    ]) expect(prompt).toContain(heading);
+    expect(prompt).toContain("Denke Schritt für Schritt.");
+  });
+
+  it("bettet historische Klausuren mit Ähnlichkeit in % ein", () => {
+    const prompt = buildExamPrompt(exam, others);
+    expect(prompt).toContain("HISTORISCHER KONTEXT");
+    expect(prompt).toContain("E-Commerce WS23");
+    expect(prompt).toMatch(/Ähnlichkeit: \d+\.\d %/);
+    // die thematisch nähere Klausur steht vor der ferneren
+    expect(prompt.indexOf("E-Commerce WS23")).toBeLessThan(prompt.indexOf("Statistik WS23"));
+  });
+
+  it("funktioniert ohne weitere Klausuren (kein RAG-Kontext)", () => {
+    const prompt = buildExamPrompt(exam, []);
+    expect(prompt).toContain("Keine weiteren Klausuren gespeichert");
+    expect(prompt).toContain(exam.text);
   });
 });
 

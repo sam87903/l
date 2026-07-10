@@ -56,5 +56,5 @@ export function useCountdownTimer(initialSeconds, onComplete) {
     setRemaining(s);
   }, [duration]);
 
-  return { duration, remaining, running, start, pause, reset };
+  return { duration, remaining, running, endAt, start, pause, reset };
 }

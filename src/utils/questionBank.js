@@ -179,18 +179,34 @@ function weightFor(item, { wrongPool = {}, fcKnown = {}, quizBest = {} }) {
 }
 
 /**
- * Stellt ein Smart-Quiz zusammen (gewichtete Ziehung ohne Zurücklegen).
- * @param {object} opts { count, scope: "all"|"weak"|"sem1", progress }
+ * Kombiniertes Zieh-Gewicht: Schwächen-Basis × Modul-Boost (gekappt).
+ * `moduleWeights` (Modul-ID → 0..1) verschiebt die Ziehung Richtung
+ * klausurrelevanter bzw. schwacher Module (Klausur-Simulator, SRS 2.0).
  */
-export function buildSmartQuiz({ count = 10, scope = "all", progress = {} } = {}) {
+export function smartWeight(item, progress, moduleWeights = null) {
+  const base = weightFor(item, progress);
+  const boost = moduleWeights ? 1 + 2 * (moduleWeights[item.modId] ?? 0) : 1;
+  return Math.min(24, base * boost);
+}
+
+/**
+ * Stellt ein Smart-Quiz zusammen (gewichtete Ziehung ohne Zurücklegen).
+ * @param {object} opts { count, scope: "all"|"weak"|"sem1", progress, moduleWeights }
+ */
+export function buildSmartQuiz({ count = 10, scope = "all", progress = {}, moduleWeights = null } = {}) {
   let pool = BANK;
   if (scope === "sem1") {
     const sem1Ids = new Set(ALL_MODULES.filter((m) => m.semNr === 1).map((m) => m.id));
     pool = BANK.filter((item) => sem1Ids.has(item.modId));
   }
-  let weighted = pool.map((item) => ({ item, weight: weightFor(item, progress) }));
+  let weighted = pool.map((item) => ({
+    item,
+    base: weightFor(item, progress),
+    weight: smartWeight(item, progress, moduleWeights),
+  }));
   if (scope === "weak") {
-    const onlyWeak = weighted.filter((w) => w.weight > 1);
+    // „Schwach" bemisst sich am Basis-Gewicht, nicht am Modul-Boost.
+    const onlyWeak = weighted.filter((w) => w.base > 1);
     if (onlyWeak.length >= Math.min(count, 3)) weighted = onlyWeak;
   }
 

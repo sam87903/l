@@ -1,61 +1,28 @@
-import { memo, useCallback, useRef, useState } from "react";
+import { memo, useRef, useState } from "react";
 import { Check, Coffee, Pause, Play, RotateCcw, Timer } from "lucide-react";
 import GlassCard from "../ui/GlassCard.jsx";
 import Button from "../ui/Button.jsx";
 import ProgressBar from "../ui/ProgressBar.jsx";
-import { useCountdownTimer } from "../../hooks/useCountdownTimer.js";
-import { useProgress } from "../../context/ProgressContext.jsx";
-import { useToast } from "../ui/Toast.jsx";
-import { playChime, vibrate } from "../../services/audio.js";
-import { notify } from "../../services/notifications.js";
+import { formatClock, useTimer } from "../../context/TimerContext.jsx";
 import { ACCENT } from "../../constants/theme.js";
 import { BREAK_MINUTES, TIMER_CUSTOM_MAX, TIMER_CUSTOM_MIN, TIMER_PRESETS } from "../../constants/config.js";
 import { cx } from "../../utils/misc.js";
 import styles from "./timer.module.css";
 
-const SECONDS_PER_MINUTE = 60;
-const fmt = (s) =>
-  `${String(Math.floor(s / SECONDS_PER_MINUTE)).padStart(2, "0")}:${String(s % SECONDS_PER_MINUTE).padStart(2, "0")}`;
-
-/** Pomodoro-Timer mit Presets (20/25/45), Pause, vorzeitigem Beenden, Sound & Vibration. */
+/**
+ * Pomodoro-Timer mit Presets (20/25/eigene Dauer), Pause, vorzeitigem
+ * Beenden, Sound & Vibration. Der Zustand lebt im TimerProvider –
+ * die Session läuft beim Seitenwechsel weiter.
+ */
 const FocusTimer = memo(function FocusTimer() {
-  const { addFocusMinutes, settings } = useProgress();
-  const { push } = useToast();
-  const [minutes, setMinutes] = useState(TIMER_PRESETS[0]);
-  const [isBreak, setIsBreak] = useState(false);
-  // Selbst gewählte Fokus-Dauer (dritte, frei wählbare Option statt festem Preset).
-  const [customMin, setCustomMin] = useState(null);
+  const {
+    remaining, running, done, minutes, isBreak, customMin, pct, elapsedSec, canFinish,
+    selectPreset, setCustom, start, pause, resetTimer, startBreak, finishEarly,
+  } = useTimer();
+  // Reines Anzeige-/Eingabe-Verhalten bleibt lokal in der Komponente.
   const [editingCustom, setEditingCustom] = useState(false);
   const [draft, setDraft] = useState("");
   const customInputRef = useRef(null);
-
-  const handleComplete = useCallback(() => {
-    vibrate();
-    if (settings.sound) playChime();
-    if (isBreak) {
-      push("Pause vorbei – weiter geht's!", "🚀");
-      if (settings.notifications) notify("Pause vorbei", "Bereit für die nächste Fokus-Session?");
-    } else {
-      addFocusMinutes(minutes);
-      push(`${minutes} Fokus-Minuten gutgeschrieben!`, "🎉");
-      if (settings.notifications) notify("Session geschafft! 🎉", `${minutes} Minuten fokussiert gelernt.`);
-    }
-  }, [isBreak, minutes, addFocusMinutes, push, settings]);
-
-  const timer = useCountdownTimer(minutes * SECONDS_PER_MINUTE, handleComplete);
-  const total = (isBreak ? BREAK_MINUTES : minutes) * SECONDS_PER_MINUTE;
-  const done = timer.remaining === 0;
-  const pct = Math.round(((total - timer.remaining) / total) * 100);
-  // Vorzeitiges Beenden nur sinnvoll, wenn eine laufende Fokus-Session
-  // (kein Break) mindestens ein Stück fortgeschritten ist.
-  const elapsedSec = total - timer.remaining;
-  const canFinish = !isBreak && !done && elapsedSec > 0;
-
-  const selectPreset = (m) => {
-    setIsBreak(false);
-    setMinutes(m);
-    timer.reset(m * SECONDS_PER_MINUTE);
-  };
 
   // Eingabe der eigenen Dauer öffnen und Fokus aufs Feld setzen.
   const openCustom = () => {
@@ -64,30 +31,9 @@ const FocusTimer = memo(function FocusTimer() {
     requestAnimationFrame(() => customInputRef.current?.focus());
   };
 
-  // Eigene Dauer übernehmen (auf sinnvolle Grenzen begrenzt) und Timer setzen.
   const confirmCustom = () => {
     setEditingCustom(false);
-    const value = parseInt(draft, 10);
-    if (!Number.isFinite(value)) return;
-    const clamped = Math.min(TIMER_CUSTOM_MAX, Math.max(TIMER_CUSTOM_MIN, value));
-    setCustomMin(clamped);
-    selectPreset(clamped);
-  };
-
-  const startBreak = () => {
-    setIsBreak(true);
-    timer.reset(BREAK_MINUTES * SECONDS_PER_MINUTE);
-    timer.start();
-  };
-
-  /** Session vorzeitig beenden und die bisher gelernten Minuten gutschreiben. */
-  const finishEarly = () => {
-    const earned = Math.max(1, Math.round(elapsedSec / SECONDS_PER_MINUTE));
-    addFocusMinutes(earned);
-    push(`${earned} Fokus-Minuten gespeichert – gut gemacht!`, "✅");
-    if (settings.sound) playChime();
-    setIsBreak(false);
-    timer.reset(minutes * SECONDS_PER_MINUTE);
+    setCustom(draft);
   };
 
   return (
@@ -145,7 +91,7 @@ const FocusTimer = memo(function FocusTimer() {
       </div>
 
       <div className={cx(styles.time, done && styles.timeDone)} aria-live="polite">
-        {done ? "Geschafft! 🎉" : fmt(timer.remaining)}
+        {done ? "Geschafft! 🎉" : formatClock(remaining)}
       </div>
       <ProgressBar value={pct} from={ACCENT.blue} to={ACCENT.teal} height={5} label="Timer-Fortschritt" />
 
@@ -161,15 +107,11 @@ const FocusTimer = memo(function FocusTimer() {
           </>
         ) : (
           <>
-            <Button
-              tint={ACCENT.blue}
-              style={{ flex: 2 }}
-              onClick={() => (timer.running ? timer.pause() : done ? (timer.reset(total), timer.start()) : timer.start())}
-            >
-              {timer.running ? <Pause size={15} aria-hidden="true" /> : <Play size={15} aria-hidden="true" />}
-              {timer.running ? "Pause" : "Start"}
+            <Button tint={ACCENT.blue} style={{ flex: 2 }} onClick={() => (running ? pause() : start())}>
+              {running ? <Pause size={15} aria-hidden="true" /> : <Play size={15} aria-hidden="true" />}
+              {running ? "Pause" : "Start"}
             </Button>
-            <Button style={{ flex: 1 }} onClick={() => { setIsBreak(false); timer.reset(minutes * SECONDS_PER_MINUTE); }}>
+            <Button style={{ flex: 1 }} onClick={resetTimer}>
               <RotateCcw size={15} aria-hidden="true" /> Reset
             </Button>
           </>
@@ -179,7 +121,7 @@ const FocusTimer = memo(function FocusTimer() {
       {canFinish && (
         <Button tint={ACCENT.teal} style={{ width: "100%", marginTop: "var(--s-2)" }} onClick={finishEarly}>
           <Check size={15} aria-hidden="true" />
-          Beenden &amp; {Math.max(1, Math.round(elapsedSec / SECONDS_PER_MINUTE))} Min speichern
+          Beenden &amp; {Math.max(1, Math.round(elapsedSec / 60))} Min speichern
         </Button>
       )}
 

@@ -100,3 +100,60 @@
   font-size: var(--fs-xs);
   color: var(--muted);
 }
+
+/* ═══ Schwebende Timer-Pill (läuft auf allen Seiten mit) ═══ */
+
+.pillWrap {
+  position: fixed;
+  right: var(--s-3);
+  bottom: calc(var(--nav-size) + env(safe-area-inset-bottom, 0px) + var(--s-3));
+  z-index: 60; /* über der Navigation (50), unter den Toasts (90) */
+  display: flex;
+  align-items: stretch;
+  border-radius: var(--r-full);
+  border: 1px solid var(--glass-border);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.02)),
+    color-mix(in srgb, var(--bg) 72%, transparent);
+  -webkit-backdrop-filter: var(--blur);
+  backdrop-filter: var(--blur);
+  box-shadow: var(--shadow-float), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.pillMain,
+.pillPause {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+  min-height: 40px;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  transition: background var(--dur) var(--ease);
+}
+
+.pillMain {
+  padding: 0 var(--s-2) 0 var(--s-3);
+  color: var(--blue);
+}
+
+.pillMain:active,
+.pillPause:active {
+  background: color-mix(in srgb, var(--blue) 14%, transparent);
+}
+
+.pillTime {
+  font-size: var(--fs-sm);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.03em;
+  color: var(--text);
+}
+
+.pillPause {
+  padding: 0 var(--s-3) 0 var(--s-2);
+  border-left: 1px solid var(--glass-border);
+  color: var(--muted);
+}

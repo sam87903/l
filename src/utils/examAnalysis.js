@@ -259,23 +259,124 @@ export function aggregateExams(exams = []) {
   };
 }
 
-/** Prompt für die externe KI-Tiefenanalyse einer Altklausur. */
-export function buildExamPrompt(examName, text) {
-  return `Du bist ein Prüfungsanalyse-System für Hochschul-Altklausuren. Der Nutzer lädt eine Klausur (Text oder PDF-Inhalt) hoch. Deine Aufgabe ist es, die Klausur systematisch zu analysieren und prüfungsrelevante Muster zu erkennen.
+/* ═══ Text-Ähnlichkeit für den RAG-Prompt ═══ */
 
-Analysiere:
-1. Themencluster – Welche Themen kommen am häufigsten vor? Welche Kapitel des Moduls werden geprüft?
-2. Aufgabentypen – Rechenaufgaben, Theoriefragen, Fallstudien, Multiple Choice etc.
-3. Schwierigkeitsniveau – leicht / mittel / schwer, typische Stolperstellen
-4. Wiederkehrende Muster – ähnliche Aufgaben aus anderen Jahren, typische Fragestellungen
-5. Lernstrategie – Was sollte der Nutzer priorisiert lernen? Welche Aufgabenarten sollte er üben?
+/* Deduplizierte Begriffsliste als Vektor-Dimensionen. */
+const VECTOR_TERMS = [...new Set(INDEX.map((e) => e.term.toLowerCase()))];
 
-Erstelle außerdem eine "Top 10 Prüfungswahrscheinlichkeit"-Liste von Themen.
-Antworte strukturiert.
+/** Fachbegriff-Zählvektor eines (bereits kleingeschriebenen) Klausurtexts. */
+function termVector(textLower) {
+  const vec = new Map();
+  for (const term of VECTOR_TERMS) {
+    const count = countMatches(textLower, term);
+    if (count > 0) vec.set(term, count);
+  }
+  return vec;
+}
 
-KONTEXT: Studiengang B.Sc. E-Commerce, Hochschule Ruhr West (BPO 02.06.2023).
+/**
+ * Kosinus-Ähnlichkeit zweier Klausurtexte über ihre Fachbegriff-Vektoren
+ * (0..1). Zählt Häufigkeiten (ein 6× geprüftes Thema zieht stärker als ein
+ * 1× erwähntes) und ist längennormalisiert – Klausurtexte variieren stark.
+ */
+export function examSimilarity(textA, textB) {
+  const a = termVector((textA ?? "").toLowerCase());
+  const b = termVector((textB ?? "").toLowerCase());
+  if (a.size === 0 || b.size === 0) return 0;
+  let dot = 0;
+  for (const [term, count] of a) dot += count * (b.get(term) ?? 0);
+  const norm = (v) => Math.sqrt([...v.values()].reduce((s, c) => s + c * c, 0));
+  const denom = norm(a) * norm(b);
+  return denom === 0 ? 0 : dot / denom;
+}
 
-KLAUSUR: ${examName}
+/* Wie viele historische Klausuren maximal in den Prompt eingebettet werden
+   und wie viel Text je Klausur (RAG-Kontext klein genug für jeden Chat). */
+const PROMPT_HISTORY_LIMIT = 5;
+const PROMPT_EXCERPT_CHARS = 1450;
+
+/**
+ * RAG-Prompt für die externe KI-Tiefenanalyse: bettet die ähnlichsten
+ * gespeicherten Altklausuren als historischen Kontext ein (Ähnlichkeit per
+ * Kosinus über Fachbegriff-Vektoren) und ergänzt den lokal erkannten
+ * Modulbezug.
+ * @param {{name:string, text:string, addedAt?:string}} exam
+ * @param {{name:string, text:string, addedAt?:string}[]} otherExams
+ */
+export function buildExamPrompt(exam, otherExams = []) {
+  const analysis = analyzeExam(exam.text, otherExams.map((e) => e.text ?? ""));
+  const top = analysis.modules[0];
+  const moduleTip = top
+    ? `Das Modul ist vermutlich „${top.module.name}" (${top.module.code}, Semester ${top.module.semNr}, Prüfungsform: ${top.module.exam}).`
+    : "Das Modul ist unbekannt – leite es aus dem Klausurinhalt ab.";
+
+  const ranked = otherExams
+    .map((e) => ({ ...e, similarity: examSimilarity(exam.text, e.text ?? "") }))
+    .sort((a, b) => b.similarity - a.similarity)
+    .slice(0, PROMPT_HISTORY_LIMIT);
+
+  const history = ranked.length
+    ? ranked
+        .map((e, i) => {
+          const date = e.addedAt ? new Date(e.addedAt).toLocaleDateString("de-DE") : "";
+          const excerpt = (e.text ?? "").slice(0, PROMPT_EXCERPT_CHARS);
+          const truncated = (e.text ?? "").length > PROMPT_EXCERPT_CHARS ? "…" : "";
+          return `**Klausur ${i + 1}: ${e.name ?? "Unbenannt"}**
+Ähnlichkeit: ${(e.similarity * 100).toFixed(1)} %${date ? `\nHinzugefügt: ${date}` : ""}
 ---
-${text}`;
+${excerpt}${truncated}`;
+        })
+        .join("\n\n---\n\n")
+    : "Keine weiteren Klausuren gespeichert – analysiere auf Basis der aktuellen Klausur.";
+
+  return `Du bist ein **erfahrener Prüfungsanalyst und Dozent** für den Studiengang B.Sc. E-Commerce an der Hochschule Ruhr West (BPO 02.06.2023).
+
+**Deine Aufgabe:**
+Analysiere die **neue Klausur** sehr gründlich unter Berücksichtigung des gesamten historischen Prüfungsverhaltens.
+${moduleTip}
+Denke wie ein strenger Prüfer dieses Moduls.
+
+---
+
+**AKTUELLE KLAUSUR:**
+${exam.name}
+---
+${exam.text}
+
+---
+
+**HISTORISCHER KONTEXT** (ähnlichste gespeicherte Klausuren):
+
+${history}
+
+---
+
+**Analysiere bitte folgende Aspekte strukturiert:**
+
+1. **Themencluster & Schwerpunkt**
+   Welche Themen/Kapitel werden in der neuen Klausur besonders stark geprüft? Wie hat sich der Fokus im Vergleich zu früheren Klausuren entwickelt?
+
+2. **Aufgabentypen & Verteilung**
+   Welche Aufgabentypen dominieren (Rechenaufgaben, Theorie, Fallstudien, Multiple Choice, Diagramme etc.)? Gibt es eine Veränderung gegenüber früher?
+
+3. **Schwierigkeitsgrad & Stolperstellen**
+   Gesamteinschätzung (leicht / mittel / schwer) + konkrete typische Fehlerquellen und Stolperfallen.
+
+4. **Wiederkehrende Muster & Trends**
+   Welche Inhalte, Fragestellungen oder Aufgabentypen tauchen regelmäßig auf? Gibt es „Klassiker" dieses Moduls? Berücksichtige auch die zeitliche Entwicklung der Prüfungen.
+
+5. **Top 10 Prüfungswahrscheinlichkeit (RAG-basiert)**
+   Erstelle eine priorisierte Liste der wichtigsten Themen. Berücksichtige sowohl die aktuelle Klausur als auch die historische Häufigkeit. Gib jeweils eine **geschätzte Wahrscheinlichkeit in %** an.
+
+6. **Optimale Lernstrategie**
+   Was sollte der Student **dringend priorisieren**? Welche Aufgabenarten und Themen muss er besonders intensiv üben? Gib konkrete Empfehlungen und schlage konkrete Lernressourcen oder Übungsarten vor.
+
+**Zusätzliche Anweisungen:**
+- Sei **konkret, ehrlich und praxisnah**
+- Vergleiche explizit mit den historischen Klausuren
+- Hebe **neue Trends** und **besonders wiederkehrende Themen** deutlich hervor
+- Nutze Aufzählungspunkte, Fettschrift und Tabellen wo sinnvoll (Tabelle für die Top-10-Liste)
+- Antworte auf Deutsch
+
+Denke Schritt für Schritt.`;
 }

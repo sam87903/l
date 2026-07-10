@@ -3,6 +3,7 @@ import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "./context/ThemeContext.jsx";
 import { ProgressProvider, useProgress } from "./context/ProgressContext.jsx";
 import { ToastProvider } from "./components/ui/Toast.jsx";
+import { TimerProvider } from "./context/TimerContext.jsx";
 import ErrorBoundary from "./components/ui/ErrorBoundary.jsx";
 import LoadingScreen from "./components/ui/LoadingScreen.jsx";
 import AppLayout from "./components/layout/AppLayout.jsx";
@@ -51,9 +52,11 @@ export default function App() {
       <ThemeProvider>
         <ProgressProvider>
           <ToastProvider>
-            <HashRouter>
-              <AppRoutes />
-            </HashRouter>
+            <TimerProvider>
+              <HashRouter>
+                <AppRoutes />
+              </HashRouter>
+            </TimerProvider>
           </ToastProvider>
         </ProgressProvider>
       </ThemeProvider>

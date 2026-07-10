@@ -7,6 +7,7 @@ import EmptyState from "../components/ui/EmptyState.jsx";
 import ExamUpload from "../components/exams/ExamUpload.jsx";
 import ExamReport from "../components/exams/ExamReport.jsx";
 import ExamRadar from "../components/exams/ExamRadar.jsx";
+import ExamSimulator from "../components/exams/ExamSimulator.jsx";
 import { useProgress } from "../context/ProgressContext.jsx";
 import { useToast } from "../components/ui/Toast.jsx";
 import { ACCENT } from "../constants/theme.js";
@@ -20,8 +21,10 @@ export default function ExamsPage() {
   const { push } = useToast();
   const [openId, setOpenId] = useState(null);
 
-  const otherTextsFor = useMemo(
-    () => (examId) => exams.filter((e) => e.id !== examId).map((e) => e.text),
+  // Volle Klausur-Objekte (Name, Datum, Text) – der RAG-Prompt braucht
+  // mehr als nur die Texte.
+  const otherExamsFor = useMemo(
+    () => (examId) => exams.filter((e) => e.id !== examId),
     [exams]
   );
 
@@ -45,6 +48,8 @@ export default function ExamsPage() {
       </GlassCard>
 
       <ExamRadar exams={exams} />
+
+      <ExamSimulator />
 
       <ExamUpload onAdd={handleAdd} />
 
@@ -75,7 +80,7 @@ export default function ExamsPage() {
             </div>
             <Collapse open={open}>
               <div style={{ padding: "0 var(--s-3) var(--s-3)" }}>
-                <ExamReport exam={exam} otherTexts={otherTextsFor(exam.id)} />
+                <ExamReport exam={exam} otherExams={otherExamsFor(exam.id)} />
               </div>
             </Collapse>
           </GlassCard>

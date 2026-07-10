@@ -24,11 +24,12 @@
   --s-5: 1.5rem;
   --s-6: 2.25rem;
 
-  /* Radius */
-  --r-sm: 12px;
-  --r-md: 16px;
-  --r-lg: 22px;
-  --r-xl: 30px;
+  /* Radius – bewusst etwas kantiger (Nutzerwunsch), Liquid Glass bleibt
+     über Blur/Highlights erhalten. */
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 18px;
+  --r-xl: 24px;
   --r-full: 9999px;
 
   /* Effekte – Liquid Glass: Blur + Sättigung, Feder-Easing.
