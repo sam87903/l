@@ -43,9 +43,12 @@ export const EXAM_TEXT_LIMIT = 120000;
 export const SMART_QUIZ_SIZES = [5, 10, 15];
 export const MISTAKE_POOL_CAP = 80;
 
-/** Timer-Voreinstellungen in Minuten. */
-export const TIMER_PRESETS = [20, 25, 45];
+/** Timer-Voreinstellungen in Minuten (dritte Option ist eine frei wählbare Dauer). */
+export const TIMER_PRESETS = [20, 25];
 export const BREAK_MINUTES = 5;
+/** Grenzen für die selbst gewählte Fokus-Dauer (Minuten). */
+export const TIMER_CUSTOM_MIN = 1;
+export const TIMER_CUSTOM_MAX = 180;
 
 /** XP-Vergabe pro Aktion. */
 export const XP_RULES = {

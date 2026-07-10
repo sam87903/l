@@ -1,4 +1,4 @@
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback, useRef, useState } from "react";
 import { Check, Coffee, Pause, Play, RotateCcw, Timer } from "lucide-react";
 import GlassCard from "../ui/GlassCard.jsx";
 import Button from "../ui/Button.jsx";
@@ -9,7 +9,7 @@ import { useToast } from "../ui/Toast.jsx";
 import { playChime, vibrate } from "../../services/audio.js";
 import { notify } from "../../services/notifications.js";
 import { ACCENT } from "../../constants/theme.js";
-import { BREAK_MINUTES, TIMER_PRESETS } from "../../constants/config.js";
+import { BREAK_MINUTES, TIMER_CUSTOM_MAX, TIMER_CUSTOM_MIN, TIMER_PRESETS } from "../../constants/config.js";
 import { cx } from "../../utils/misc.js";
 import styles from "./timer.module.css";
 
@@ -23,6 +23,11 @@ const FocusTimer = memo(function FocusTimer() {
   const { push } = useToast();
   const [minutes, setMinutes] = useState(TIMER_PRESETS[0]);
   const [isBreak, setIsBreak] = useState(false);
+  // Selbst gewählte Fokus-Dauer (dritte, frei wählbare Option statt festem Preset).
+  const [customMin, setCustomMin] = useState(null);
+  const [editingCustom, setEditingCustom] = useState(false);
+  const [draft, setDraft] = useState("");
+  const customInputRef = useRef(null);
 
   const handleComplete = useCallback(() => {
     vibrate();
@@ -50,6 +55,23 @@ const FocusTimer = memo(function FocusTimer() {
     setIsBreak(false);
     setMinutes(m);
     timer.reset(m * SECONDS_PER_MINUTE);
+  };
+
+  // Eingabe der eigenen Dauer öffnen und Fokus aufs Feld setzen.
+  const openCustom = () => {
+    setDraft(customMin ? String(customMin) : "");
+    setEditingCustom(true);
+    requestAnimationFrame(() => customInputRef.current?.focus());
+  };
+
+  // Eigene Dauer übernehmen (auf sinnvolle Grenzen begrenzt) und Timer setzen.
+  const confirmCustom = () => {
+    setEditingCustom(false);
+    const value = parseInt(draft, 10);
+    if (!Number.isFinite(value)) return;
+    const clamped = Math.min(TIMER_CUSTOM_MAX, Math.max(TIMER_CUSTOM_MIN, value));
+    setCustomMin(clamped);
+    selectPreset(clamped);
   };
 
   const startBreak = () => {
@@ -86,6 +108,39 @@ const FocusTimer = memo(function FocusTimer() {
               {m}′
             </button>
           ))}
+          {editingCustom ? (
+            <input
+              ref={customInputRef}
+              className={styles.customInput}
+              type="number"
+              inputMode="numeric"
+              min={TIMER_CUSTOM_MIN}
+              max={TIMER_CUSTOM_MAX}
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              onBlur={confirmCustom}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") confirmCustom();
+                if (e.key === "Escape") setEditingCustom(false);
+              }}
+              placeholder="Min"
+              aria-label="Eigene Dauer in Minuten"
+            />
+          ) : (
+            <button
+              className={cx(
+                styles.preset,
+                customMin != null && !isBreak && minutes === customMin && styles.presetActive,
+                "hover-pop"
+              )}
+              onClick={openCustom}
+              aria-pressed={customMin != null && !isBreak && minutes === customMin}
+              aria-label={customMin != null ? `Eigene Dauer ${customMin} Minuten – ändern` : "Eigene Dauer wählen"}
+              title="Eigene Dauer"
+            >
+              {customMin != null ? `${customMin}′` : "…"}
+            </button>
+          )}
         </div>
       </div>
 

@@ -52,6 +52,29 @@
   color: var(--blue);
 }
 
+/* Eingabefeld für die selbst gewählte Dauer (ersetzt kurzzeitig den „…"-Knopf) */
+.customInput {
+  width: 3.4rem;
+  min-height: 30px;
+  padding: 0.2rem 0.4rem;
+  border-radius: var(--r-full);
+  border: 1px solid color-mix(in srgb, var(--blue) 55%, transparent);
+  background: color-mix(in srgb, var(--blue) 12%, transparent);
+  color: var(--text);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  text-align: center;
+  outline: none;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.customInput::-webkit-outer-spin-button,
+.customInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 .time {
   margin: var(--s-2) 0 var(--s-3);
   text-align: center;
