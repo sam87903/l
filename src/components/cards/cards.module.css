@@ -209,3 +209,21 @@
   flex-wrap: wrap;
   gap: var(--s-1);
 }
+
+/* ── Link-Kategorien innerhalb von „Links & Ressourcen" ── */
+
+.linkGroup {
+  margin-bottom: var(--s-2);
+}
+
+.linkGroup:last-child {
+  margin-bottom: 0;
+}
+
+.linkGroupLabel {
+  margin-bottom: var(--s-1);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}

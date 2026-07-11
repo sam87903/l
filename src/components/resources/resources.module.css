@@ -114,3 +114,20 @@
   color: var(--c);
   white-space: nowrap;
 }
+
+/* Unterkategorien je Modul (Videos / Üben / Buch / Karten) */
+.subGroup {
+  margin-bottom: var(--s-2);
+}
+
+.subGroup:last-child {
+  margin-bottom: 0;
+}
+
+.subLabel {
+  margin-bottom: var(--s-1);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}

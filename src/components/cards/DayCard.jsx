@@ -1,14 +1,17 @@
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import GlassCard from "../ui/GlassCard.jsx";
 import Collapse from "../ui/Collapse.jsx";
 import Pill from "../ui/Pill.jsx";
 import { fmtDate, dayNum } from "../../utils/dates.js";
+import { groupLinks } from "../../utils/links.js";
 import { cx, kb } from "../../utils/misc.js";
 import styles from "./cards.module.css";
 
 /** Ein Tag im 21-Tage-Plan: aufklappbar, abhakbar, mit Aufgabe + Links. */
 const DayCard = memo(function DayCard({ day, color, startDate, isOpen, isDone, isToday, onToggleOpen, onToggleDone }) {
   const date = fmtDate(startDate, day.nr - 1);
+  // Links sortiert nach Kategorie (Videos → Daten → Buch → Üben → Weitere)
+  const linkGroups = useMemo(() => groupLinks(day.lk), [day.lk]);
 
   return (
     <GlassCard
@@ -52,11 +55,16 @@ const DayCard = memo(function DayCard({ day, color, startDate, isOpen, isDone, i
             <div className={styles.boxText}>{day.a}</div>
           </GlassCard>
           <div className={styles.linkKicker}>🔗 Links & Ressourcen</div>
-          <div className={styles.pillRow}>
-            {day.lk.map((link, i) => (
-              <Pill key={i} label={link.l} href={link.u} color={color} />
-            ))}
-          </div>
+          {linkGroups.map((group) => (
+            <div key={group.id} className={styles.linkGroup}>
+              <div className={styles.linkGroupLabel}>{group.label}</div>
+              <div className={styles.pillRow}>
+                {group.links.map((link, i) => (
+                  <Pill key={i} label={link.l} href={link.u} color={color} />
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </Collapse>
     </GlassCard>
