@@ -125,11 +125,21 @@ const DIFFICULTY = [
   { id: "schwer", label: "schwer", re: /\b(berechnen|analysieren|bewerten|beurteilen|entwickeln|diskutieren|begründen|interpretieren)\b/gi },
 ];
 
+/* Ergebnis-Cache für die Einzelanalyse (ohne Vergleichsklausuren): Radar,
+   Heatmap und Simulator-Profil analysieren dieselben Texte mehrfach über den
+   ~2000-Einträge-Index – einmal rechnen genügt. Klein gedeckelt (FIFO). */
+const ANALYSIS_CACHE = new Map();
+const ANALYSIS_CACHE_MAX = 24;
+
 /**
  * @param {string} text        Klausurtext
  * @param {string[]} otherTexts Texte weiterer gespeicherter Klausuren (Musteranalyse)
  */
 export function analyzeExam(text, otherTexts = []) {
+  // Nur die (teure, häufig wiederholte) Einzelanalyse cachen.
+  const cacheable = otherTexts.length === 0;
+  if (cacheable && ANALYSIS_CACHE.has(text)) return ANALYSIS_CACHE.get(text);
+
   const lower = text.toLowerCase();
   const othersLower = otherTexts.map((t) => t.toLowerCase());
 
@@ -184,7 +194,7 @@ export function analyzeExam(text, otherTexts = []) {
   // 6) Stolperstellen: schwere Verben + gewichtige Themen
   const heavyShare = Math.round(((difficulty.find((d) => d.id === "schwer")?.count ?? 0) / diffTotal) * 100);
 
-  return {
+  const result = {
     words: text.split(/\s+/).length,
     modules,
     taskTypes,
@@ -202,6 +212,12 @@ export function analyzeExam(text, otherTexts = []) {
     })),
     recurring,
   };
+
+  if (cacheable) {
+    if (ANALYSIS_CACHE.size >= ANALYSIS_CACHE_MAX) ANALYSIS_CACHE.delete(ANALYSIS_CACHE.keys().next().value);
+    ANALYSIS_CACHE.set(text, result);
+  }
+  return result;
 }
 
 /**

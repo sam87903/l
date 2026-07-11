@@ -132,13 +132,6 @@
   color: var(--muted);
 }
 
-/* Eingeklapptes Modul: dezenter Hinweis statt leerer Fläche */
-.collapsedHint {
-  margin: 0;
-  font-size: 0.62rem;
-  color: var(--dim);
-}
-
 /* Zähler-Chip auf eingeklapptem Modul (Anzahl Links) */
 .collapsedCount {
   flex-shrink: 0;
