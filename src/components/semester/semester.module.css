@@ -216,11 +216,11 @@
   min-height: 48px; /* ≥44px Touch-Target */
   flex-shrink: 0;
   border-radius: var(--r-md);
-  border: 1px solid color-mix(in srgb, var(--c, var(--blue)) 32%, var(--glass-border));
+  border: 1px solid color-mix(in srgb, var(--c, var(--blue)) 14%, var(--glass-border));
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.02) 55%),
-    radial-gradient(120% 100% at 50% 115%, color-mix(in srgb, var(--c, var(--blue)) 16%, transparent) 0%, transparent 60%),
-    color-mix(in srgb, var(--c, var(--blue)) 6%, transparent);
+    radial-gradient(120% 100% at 50% 115%, color-mix(in srgb, var(--c, var(--blue)) 7%, transparent) 0%, transparent 60%),
+    color-mix(in srgb, var(--c, var(--blue)) 3%, transparent);
   backdrop-filter: var(--blur);
   -webkit-backdrop-filter: var(--blur);
   color: var(--muted);
@@ -233,7 +233,7 @@
 
 /* Ziffer trägt die Semesterfarbe – auch im Ruhezustand */
 .pagerBtn .pagerNum {
-  color: color-mix(in srgb, var(--c, var(--blue)) 78%, var(--text));
+  color: color-mix(in srgb, var(--c, var(--blue)) 42%, var(--text));
 }
 
 /* Helles Theme: weicher Navy-Schatten statt Schwarz */
