@@ -138,3 +138,16 @@
   font-size: 0.62rem;
   color: var(--dim);
 }
+
+/* Zähler-Chip auf eingeklapptem Modul (Anzahl Links) */
+.collapsedCount {
+  flex-shrink: 0;
+  min-width: 1.4rem;
+  padding: 0.05rem 0.4rem;
+  border-radius: var(--r-full);
+  background: color-mix(in srgb, var(--c) 18%, transparent);
+  color: var(--c);
+  font-size: 0.6rem;
+  font-weight: 800;
+  text-align: center;
+}

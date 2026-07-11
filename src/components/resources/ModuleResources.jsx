@@ -11,9 +11,9 @@ import styles from "./resources.module.css";
 const CAT_ORDER = { video: 0, web: 1, book: 2, table: 3, card: 4 };
 const CAT_LABEL = new Map(CATS.map((c) => [c.id, `${c.e} ${c.label}`]));
 
-/** Ein Modul als einklappbare Kategorie (standardmäßig offen). */
+/** Ein Modul als einklappbare Kategorie (standardmäßig eingeklappt). */
 const ModuleGroup = memo(function ModuleGroup({ mod }) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const toggle = () => setOpen((v) => !v);
   const linkCount = mod.catGroups.reduce((n, g) => n + g.links.length, 0);
 
@@ -29,6 +29,7 @@ const ModuleGroup = memo(function ModuleGroup({ mod }) {
         <span aria-hidden="true">{mod.e}</span>
         <span className={styles.catLabel}>{mod.name}</span>
         <span className={styles.catCode}>{mod.label}</span>
+        {!open && <span className={styles.collapsedCount}>{linkCount}</span>}
         {open
           ? <ChevronUp size={14} aria-hidden="true" style={{ flexShrink: 0, color: "var(--muted)" }} />
           : <ChevronDown size={14} aria-hidden="true" style={{ flexShrink: 0, color: "var(--muted)" }} />}
@@ -47,9 +48,6 @@ const ModuleGroup = memo(function ModuleGroup({ mod }) {
           ))}
         </div>
       </Collapse>
-      {!open && (
-        <p className={styles.collapsedHint}>{linkCount} Links eingeklappt</p>
-      )}
     </div>
   );
 });
