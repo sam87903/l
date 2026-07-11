@@ -71,6 +71,15 @@ describe("insights – bridgeTerms (Brücken-Themen)", () => {
       expect(bridges[i - 1].modules.length).toBeGreaterThanOrEqual(bridges[i].modules.length);
     }
   });
+
+  it("blendet Organisations-Module aus (kein Wahlpflichtbereich-Rauschen)", () => {
+    for (const b of bridgeTerms()) {
+      expect(b.term.toLowerCase()).not.toBe("wahlpflichtbereich");
+      for (const m of b.modules) {
+        expect(m.code).not.toMatch(/^(Wahlmodul|Praxis)/);
+      }
+    }
+  });
 });
 
 describe("insights – deckLabel", () => {

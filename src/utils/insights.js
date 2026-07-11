@@ -135,17 +135,27 @@ export function smartModuleWeights({ wrongPool, quizBest, srs, fcKnown, exams } 
   return weights;
 }
 
+/* Organisations-Module (Wahlmodul-Platzhalter, Praxisphasen, Abschluss)
+   tragen keine echten Lerninhalte – für Brücken-Themen ausblenden, sonst
+   gewinnt Rauschen wie „Wahlpflichtbereich" über 5 Wahlmodule. */
+const isContentModule = (module) =>
+  !/^(Wahlmodul|Praxis)/.test(module.code) && !["BA", "Kolloq."].includes(module.code);
+
 /**
- * Brücken-Themen: Begriffe, die in ≥ 2 Modulen vorkommen (Themen, Karten,
- * kuratierte Prüfungsvokabeln). Sortiert nach Modulanzahl, dann Gewicht.
+ * Brücken-Themen: Begriffe, die in ≥ 2 (Inhalts-)Modulen vorkommen –
+ * Themen, Karten, kuratierte Prüfungsvokabeln. Sortiert nach Modulanzahl,
+ * dann Gewicht.
  */
 export function bridgeTerms(limit = 12) {
   const byTerm = new Map();
   for (const { term, module, weight } of termModuleEntries()) {
     const key = term.toLowerCase();
     const cur = byTerm.get(key) ?? { term, modules: new Map(), weight: 0, inGlossary: false };
-    if (module) cur.modules.set(module.id, module);
-    else cur.inGlossary = true; // Eintrag ohne Modul = Glossarbegriff
+    if (module) {
+      if (isContentModule(module)) cur.modules.set(module.id, module);
+    } else {
+      cur.inGlossary = true; // Eintrag ohne Modul = Glossarbegriff
+    }
     cur.weight = Math.max(cur.weight, weight);
     byTerm.set(key, cur);
   }
