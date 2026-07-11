@@ -1,18 +1,64 @@
-import { memo, useMemo } from "react";
+import { memo, useMemo, useState } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import Disclosure from "../ui/Disclosure.jsx";
+import Collapse from "../ui/Collapse.jsx";
 import Pill from "../ui/Pill.jsx";
 import { CATS, MODS, RES } from "../../data/resources.js";
+import { kb } from "../../utils/misc.js";
 import styles from "./resources.module.css";
 
 /* Videos zuerst, dann Übungen, Buchstellen, Tabellen, Karteikarten. */
 const CAT_ORDER = { video: 0, web: 1, book: 2, table: 3, card: 4 };
 const CAT_LABEL = new Map(CATS.map((c) => [c.id, `${c.e} ${c.label}`]));
 
+/** Ein Modul als einklappbare Kategorie (standardmäßig offen). */
+const ModuleGroup = memo(function ModuleGroup({ mod }) {
+  const [open, setOpen] = useState(true);
+  const toggle = () => setOpen((v) => !v);
+  const linkCount = mod.catGroups.reduce((n, g) => n + g.links.length, 0);
+
+  return (
+    <div className={styles.group}>
+      <div
+        className={`${styles.groupHead} hover-pop`}
+        style={{ "--c": mod.c, cursor: "pointer" }}
+        onClick={toggle}
+        {...kb(toggle)}
+        aria-expanded={open}
+      >
+        <span aria-hidden="true">{mod.e}</span>
+        <span className={styles.catLabel}>{mod.name}</span>
+        <span className={styles.catCode}>{mod.label}</span>
+        {open
+          ? <ChevronUp size={14} aria-hidden="true" style={{ flexShrink: 0, color: "var(--muted)" }} />
+          : <ChevronDown size={14} aria-hidden="true" style={{ flexShrink: 0, color: "var(--muted)" }} />}
+      </div>
+      <Collapse open={open}>
+        <div>
+          {mod.catGroups.map((g) => (
+            <div key={g.cat} className={styles.subGroup}>
+              <div className={styles.subLabel}>{CAT_LABEL.get(g.cat) ?? g.cat}</div>
+              <div className={styles.pills}>
+                {g.links.map((link, i) => (
+                  <Pill key={i} label={link.l} href={link.u} color={mod.c} />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </Collapse>
+      {!open && (
+        <p className={styles.collapsedHint}>{linkCount} Links eingeklappt</p>
+      )}
+    </div>
+  );
+});
+
 /**
  * Lernmaterial kategorisiert im Plan: pro Semester eine aufklappbare
- * Sektion, darin jedes Modul als eigene Kategorie („Einführung in die
- * BWL", „Grundlagen des Handelsmanagements", …) – und die Links darunter
- * sortiert nach Art (Videos, Übungen, Buchstellen, Karteikarten).
+ * Sektion, darin jedes Modul als eigene, einklappbare Kategorie
+ * („Einführung in die BWL", „Grundlagen des Handelsmanagements", …) –
+ * die Links darunter sortiert nach Art (Videos, Übungen, Buch, Karten).
  */
 const ModuleResources = memo(function ModuleResources() {
   const semesters = useMemo(() => {
@@ -58,23 +104,7 @@ const ModuleResources = memo(function ModuleResources() {
           defaultOpen={sem === 1}
         >
           {mods.map((mod) => (
-            <div key={mod.id} className={styles.group}>
-              <div className={styles.groupHead} style={{ "--c": mod.c }}>
-                <span aria-hidden="true">{mod.e}</span>
-                <span className={styles.catLabel}>{mod.name}</span>
-                <span className={styles.catCode}>{mod.label}</span>
-              </div>
-              {mod.catGroups.map((g) => (
-                <div key={g.cat} className={styles.subGroup}>
-                  <div className={styles.subLabel}>{CAT_LABEL.get(g.cat) ?? g.cat}</div>
-                  <div className={styles.pills}>
-                    {g.links.map((link, i) => (
-                      <Pill key={i} label={link.l} href={link.u} color={mod.c} />
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
+            <ModuleGroup key={mod.id} mod={mod} />
           ))}
         </Disclosure>
       ))}
