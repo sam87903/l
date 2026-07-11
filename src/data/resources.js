@@ -4,35 +4,35 @@ import { ACCENT } from "../constants/theme.js";
 
 export const MODS=[
   // Semester 1
-  {id:"BWL", label:"BWL EC",   desc:"Sem. 1 · Einführung in die BWL",              e:"📊",c:ACCENT.red},
-  {id:"HBL", label:"HBL",      desc:"Sem. 1 · Grundlagen Handelsmanagement",        e:"🏬",c:ACCENT.teal},
-  {id:"ECM", label:"B EC",     desc:"Sem. 1 · Grundlagen des E-Commerce",           e:"🌐",c:ACCENT.teal},
-  {id:"GIP", label:"GIP EC",   desc:"Sem. 1 · Informatik & Java-Programmierung",    e:"💻",c:ACCENT.violet},
-  {id:"ENG", label:"ENGECom",  desc:"Sem. 1 · English",                             e:"🇬🇧",c:ACCENT.blue},
+  {id:"BWL", label:"BWL EC",   sem:1, name:"Einführung in die BWL",                       e:"📊",c:ACCENT.red},
+  {id:"HBL", label:"HBL",      sem:1, name:"Grundlagen des Handelsmanagements",            e:"🏬",c:ACCENT.teal},
+  {id:"ECM", label:"B EC",     sem:1, name:"Grundlagen des E-Commerce",                    e:"🌐",c:ACCENT.teal},
+  {id:"GIP", label:"GIP EC",   sem:1, name:"Grundlagen der Informatik und Programmierung", e:"💻",c:ACCENT.violet},
+  {id:"ENG", label:"ENGECom",  sem:1, name:"English",                                      e:"🇬🇧",c:ACCENT.blue},
   // Semester 2
-  {id:"DAT", label:"DAT",      desc:"Sem. 2 · Datenbanken",                         e:"🗄️",c:ACCENT.violet},
-  {id:"MKT", label:"M EC",     desc:"Sem. 2 · Marketing",                           e:"📣",c:ACCENT.red},
-  {id:"MAT", label:"MAT 1",    desc:"Sem. 2 · Mathematik 1",                        e:"📐",c:ACCENT.blue},
-  {id:"PME", label:"PME",      desc:"Sem. 2 · Prozessmanagement im E-Commerce",     e:"🔄",c:ACCENT.teal},
-  {id:"LAW", label:"ECLAW",    desc:"Sem. 2 · Rechtliche Grundlagen",               e:"⚖️",c:ACCENT.orange},
+  {id:"DAT", label:"DAT",      sem:2, name:"Datenbanken",                                  e:"🗄️",c:ACCENT.violet},
+  {id:"MKT", label:"M EC",     sem:2, name:"Marketing",                                    e:"📣",c:ACCENT.red},
+  {id:"MAT", label:"MAT 1",    sem:2, name:"Mathematik 1 (Ingenieurmathematik)",           e:"📐",c:ACCENT.blue},
+  {id:"PME", label:"PME",      sem:2, name:"Prozessmanagement im E-Commerce",              e:"🔄",c:ACCENT.teal},
+  {id:"LAW", label:"ECLAW",    sem:2, name:"Rechtliche Grundlagen des E-Commerce",         e:"⚖️",c:ACCENT.orange},
   // Semester 3
-  {id:"STAT",label:"Ang.Stat.",desc:"Sem. 3 · Angewandte Statistik",                e:"📈",c:ACCENT.blue},
-  {id:"BWL2",label:"BWL II",   desc:"Sem. 3 · Bilanz und Erfolgsrechnung",          e:"🧾",c:ACCENT.red},
-  {id:"CRM", label:"CRM",      desc:"Sem. 3 · CRM und Web Controlling",             e:"🤝",c:ACCENT.teal},
-  {id:"BWL6",label:"BWL VI",   desc:"Sem. 3 · Investition und Finanzierung",        e:"💰",c:ACCENT.orange},
-  {id:"SWT", label:"SWT EC",   desc:"Sem. 3 · Softwaretechnik",                     e:"🛠️",c:ACCENT.violet},
+  {id:"STAT",label:"Ang.Stat.",sem:3, name:"Angewandte Statistik",                         e:"📈",c:ACCENT.blue},
+  {id:"BWL2",label:"BWL II",   sem:3, name:"Bilanz und Erfolgsrechnung",                   e:"🧾",c:ACCENT.red},
+  {id:"CRM", label:"CRM",      sem:3, name:"CRM und Web Controlling",                      e:"🤝",c:ACCENT.teal},
+  {id:"BWL6",label:"BWL VI",   sem:3, name:"Investition und Finanzierung",                 e:"💰",c:ACCENT.orange},
+  {id:"SWT", label:"SWT EC",   sem:3, name:"Softwaretechnik",                              e:"🛠️",c:ACCENT.violet},
   // Semester 4
-  {id:"ENT", label:"ENT",      desc:"Sem. 4 · Entrepreneurship",                    e:"🚀",c:ACCENT.red},
-  {id:"MMI", label:"MMI EC",   desc:"Sem. 4 · MMI und GUI Programmierung",          e:"🎨",c:ACCENT.violet},
-  {id:"OSCM",label:"OSCM",     desc:"Sem. 4 · Operations und Supply Chain",         e:"📦",c:ACCENT.teal},
-  {id:"SWW", label:"SWW",      desc:"Sem. 4 · Shop- und Warenwirtschaftssysteme",   e:"🛒",c:ACCENT.orange},
-  {id:"APP", label:"APP",      desc:"Sem. 4 · Webtechnologien & mobile Anwendungen",e:"📱",c:ACCENT.blue},
+  {id:"ENT", label:"ENT",      sem:4, name:"Entrepreneurship",                             e:"🚀",c:ACCENT.red},
+  {id:"MMI", label:"MMI EC",   sem:4, name:"MMI und GUI Programmierung",                   e:"🎨",c:ACCENT.violet},
+  {id:"OSCM",label:"OSCM",     sem:4, name:"Operations und Supply Chain Management",       e:"📦",c:ACCENT.teal},
+  {id:"SWW", label:"SWW",      sem:4, name:"Shop- und Warenwirtschaftssysteme",            e:"🛒",c:ACCENT.orange},
+  {id:"APP", label:"APP",      sem:4, name:"Webtechnologien und mobile Anwendungen",       e:"📱",c:ACCENT.blue},
   // Semester 5
-  {id:"EBM", label:"EBM",      desc:"Sem. 5 · Geschäftsmodelle im E-Commerce",      e:"💡",c:ACCENT.teal},
-  {id:"EDV", label:"EDV I",    desc:"Sem. 5 · Marktforschung mit SPSS",             e:"🧮",c:ACCENT.blue},
-  {id:"SCSM",label:"SCSM",     desc:"Sem. 5 · Social Commerce & Social Media",      e:"💬",c:ACCENT.red},
+  {id:"EBM", label:"EBM",      sem:5, name:"Geschäftsmodelle im E-Commerce",               e:"💡",c:ACCENT.teal},
+  {id:"EDV", label:"EDV I",    sem:5, name:"Marktforschung mit SPSS",                      e:"🧮",c:ACCENT.blue},
+  {id:"SCSM",label:"SCSM",     sem:5, name:"Social Commerce und Social Media",             e:"💬",c:ACCENT.red},
   // Übergreifend
-  {id:"ALL", label:"Allgemein",desc:"Studium allgemein (inkl. Bachelorarbeit)",     e:"📚",c:"#8a96b8"},
+  {id:"ALL", label:"Allgemein",sem:0, name:"Studium allgemein (inkl. Bachelorarbeit)",     e:"📚",c:"#8a96b8"},
 ];
 
 export const CATS=[

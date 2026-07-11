@@ -5,6 +5,13 @@ const MOD_IDS = new Set(MODS.map((m) => m.id));
 const CAT_IDS = new Set(CATS.map((c) => c.id));
 
 describe("resources – Datenintegrität", () => {
+  it("jedes Modul trägt Semester (0–5) und vollen Namen", () => {
+    for (const mod of MODS) {
+      expect(Number.isInteger(mod.sem) && mod.sem >= 0 && mod.sem <= 5, mod.id).toBe(true);
+      expect(typeof mod.name === "string" && mod.name.length > 3, mod.id).toBe(true);
+    }
+  });
+
   it("jeder Eintrag verweist auf existierendes Modul und Kategorie", () => {
     for (const r of RES) {
       expect(MOD_IDS.has(r.mod), `Modul ${r.mod} fehlt (${r.l})`).toBe(true);
@@ -18,7 +25,7 @@ describe("resources – Datenintegrität", () => {
     const withVideo = new Set(RES.filter((r) => r.cat === "video").map((r) => r.mod));
     for (const mod of MODS) {
       if (mod.id === "ALL") continue;
-      expect(withVideo.has(mod.id), `${mod.id} (${mod.desc}) ohne Video`).toBe(true);
+      expect(withVideo.has(mod.id), `${mod.id} (${mod.name}) ohne Video`).toBe(true);
     }
   });
 

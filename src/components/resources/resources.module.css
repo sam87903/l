@@ -93,3 +93,24 @@
   flex-wrap: wrap;
   gap: var(--s-1);
 }
+
+/* Modul-Kategorien im Plan: voller Modulname gut lesbar (kein Versal-Kicker) */
+.catLabel {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.35;
+}
+
+.catCode {
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  padding: 0.12rem 0.5rem;
+  border-radius: var(--r-full);
+  border: 1px solid color-mix(in srgb, var(--c) 45%, transparent);
+  color: var(--c);
+  white-space: nowrap;
+}

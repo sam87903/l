@@ -8,6 +8,7 @@ import QuizDirectory from "../components/quiz/QuizDirectory.jsx";
 import MistakeTrainer from "../components/quiz/MistakeTrainer.jsx";
 import SmartQuizCard from "../components/quiz/SmartQuizCard.jsx";
 import DueTrainer from "../components/flashcards/DueTrainer.jsx";
+import ModuleResources from "../components/resources/ModuleResources.jsx";
 import { PLAN, WOCHEN } from "../data/plan.js";
 import { WEEK_COLORS } from "../constants/theme.js";
 import { todayPlanDay } from "../utils/dates.js";
@@ -119,6 +120,8 @@ export default function PlanPage() {
           </section>
         );
       })}
+
+      <ModuleResources />
 
       <SmartQuizCard />
 
