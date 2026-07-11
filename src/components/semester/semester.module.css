@@ -216,24 +216,30 @@
   min-height: 48px; /* ≥44px Touch-Target */
   flex-shrink: 0;
   border-radius: var(--r-md);
-  border: 1px solid color-mix(in srgb, var(--c, var(--blue)) 14%, var(--glass-border));
+  border: 1px solid color-mix(in srgb, var(--c, var(--blue)) 70%, transparent);
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.02) 55%),
-    radial-gradient(120% 100% at 50% 115%, color-mix(in srgb, var(--c, var(--blue)) 7%, transparent) 0%, transparent 60%),
-    color-mix(in srgb, var(--c, var(--blue)) 3%, transparent);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.03) 55%),
+    radial-gradient(120% 110% at 50% 115%, color-mix(in srgb, var(--c, var(--blue)) 45%, transparent) 0%, transparent 70%),
+    color-mix(in srgb, var(--c, var(--blue)) 22%, transparent);
   backdrop-filter: var(--blur);
   -webkit-backdrop-filter: var(--blur);
   color: var(--muted);
   cursor: pointer;
   position: relative;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 4px 16px color-mix(in srgb, var(--c, var(--blue)) 30%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
   transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease),
     background var(--dur) var(--ease), border-color var(--dur) var(--ease);
 }
 
 /* Ziffer trägt die Semesterfarbe – auch im Ruhezustand */
 .pagerBtn .pagerNum {
-  color: color-mix(in srgb, var(--c, var(--blue)) 42%, var(--text));
+  color: var(--c, var(--blue));
+}
+
+.pagerBtn .pagerLabel {
+  color: color-mix(in srgb, var(--c, var(--blue)) 55%, var(--muted));
 }
 
 /* Helles Theme: weicher Navy-Schatten statt Schwarz */
@@ -249,16 +255,18 @@
   transform: scale(0.94);
 }
 
-/* Aktiver Semester-Knopf: satter Farbton + Schein in der Semesterfarbe */
+/* Aktiver Semester-Knopf: volle Sättigung, leuchtet wie eine Neon-Linse */
 .pagerBtnActive {
-  border-color: color-mix(in srgb, var(--c, var(--blue)) 65%, transparent);
+  border-color: color-mix(in srgb, var(--c, var(--blue)) 90%, white);
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.03) 60%),
-    color-mix(in srgb, var(--c, var(--blue)) 26%, transparent);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.05) 60%),
+    radial-gradient(130% 120% at 50% -10%, color-mix(in srgb, var(--c, var(--blue)) 70%, transparent) 0%, color-mix(in srgb, var(--c, var(--blue)) 40%, transparent) 100%);
   color: var(--text);
   box-shadow:
-    0 6px 20px color-mix(in srgb, var(--c, var(--blue)) 38%, transparent),
-    inset 0 1px 0 rgba(255, 255, 255, 0.30);
+    0 10px 32px color-mix(in srgb, var(--c, var(--blue)) 65%, transparent),
+    0 2px 8px color-mix(in srgb, var(--c, var(--blue)) 45%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -8px 16px color-mix(in srgb, var(--c, var(--blue)) 35%, transparent);
 }
 
 /* Auswahl zusätzlich über Form: Unterstreichungs-Balken (WCAG 1.4.1) */
@@ -280,7 +288,17 @@
 }
 
 .pagerBtnActive .pagerNum {
-  color: color-mix(in srgb, var(--c, var(--blue)) 60%, var(--text));
+  color: #fff;
+  text-shadow: 0 1px 6px color-mix(in srgb, var(--c, var(--blue)) 80%, transparent);
+}
+
+.pagerBtnActive .pagerLabel {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+/* Auswahl-Balken hell, damit er auf der satten Fläche sichtbar bleibt */
+.pagerBtnActive::after {
+  background: #fff;
 }
 
 .pagerLabel {
