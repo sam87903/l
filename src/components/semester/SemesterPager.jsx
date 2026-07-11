@@ -1,14 +1,19 @@
 import { memo } from "react";
 import { SEMESTERS } from "../../data/semesters/index.js";
-import { ACCENT } from "../../constants/theme.js";
 import { cx } from "../../utils/misc.js";
 import styles from "./semester.module.css";
 
-/* Jedes Semester hat seinen eigenen Akzentton – macht die Reihe lebendig
-   und gibt jedem Semester eine wiedererkennbare Farbe. */
-const SEM_COLORS = [
-  ACCENT.red, ACCENT.teal, ACCENT.violet, ACCENT.blue,
-  ACCENT.orange, "#ec6bae", "#4cc3f7",
+/* Gradient-Stil: jedes Semester bekommt einen zweifarbigen Verlauf –
+   Ziffer und Oberkanten-Streifen tragen ihn, der aktive Knopf füllt
+   sich damit. */
+const SEM_GRADIENTS = [
+  ["#ff6b6b", "#f0a24b"], // 1 · Sonnenuntergang
+  ["#2dd4a8", "#4cc3f7"], // 2 · Lagune
+  ["#a78bfa", "#ec6bae"], // 3 · Violett–Pink
+  ["#5b7cfa", "#2dd4a8"], // 4 · Blau–Türkis
+  ["#f0a24b", "#ec6bae"], // 5 · Gold–Pink
+  ["#ec6bae", "#a78bfa"], // 6 · Pink–Violett
+  ["#4cc3f7", "#5b7cfa"], // 7 · Himmel–Blau
 ];
 
 /**
@@ -25,7 +30,7 @@ const SemesterPager = memo(function SemesterPager({ selected, onSelect }) {
           <button
             key={sem.nr}
             className={cx(styles.pagerBtn, active && styles.pagerBtnActive, "hover-pop")}
-            style={{ "--c": SEM_COLORS[(sem.nr - 1) % SEM_COLORS.length] }}
+            style={(([c1, c2]) => ({ "--c": c1, "--c1": c1, "--c2": c2 }))(SEM_GRADIENTS[(sem.nr - 1) % SEM_GRADIENTS.length])}
             onClick={() => onSelect(sem.nr)}
             aria-pressed={active}
             aria-label={`Semester ${sem.nr}: ${sem.title}`}
