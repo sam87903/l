@@ -129,6 +129,27 @@ await page.fill('input[type="search"], input[placeholder*="uch"]', "Netzeffekte"
 await page.waitForTimeout(700);
 check("Glossar-Suche findet Netzeffekte", await page.locator("text=Netzeffekte").first().isVisible());
 
+/* ── Glossar: Alpha-Sprung rendert auch noch nicht geladene Gruppen ── */
+await page.fill('input[type="search"], input[placeholder*="uch"]', "");
+await page.waitForTimeout(700);
+const lastLetterBtn = page.locator('[class*="alphaBtn"]').last();
+const lastLetter = (await lastLetterBtn.textContent()).trim();
+await lastLetterBtn.click();
+const jumped = await page
+  .waitForFunction(
+    (letter) => {
+      const el = document.getElementById(`glos-${letter}`);
+      if (!el) return false;
+      const r = el.getBoundingClientRect();
+      return r.top >= -80 && r.top < window.innerHeight * 0.8;
+    },
+    lastLetter,
+    { timeout: 6000 }
+  )
+  .then(() => true)
+  .catch(() => false);
+check(`Alpha-Sprung erreicht Gruppe ${lastLetter} trotz Lazy-Rendering`, jumped);
+
 /* ── Klausuren: Analyse, Radar, Heatmap, Insights, Simulator, Löschen ── */
 await page.click('a[href="#/klausuren"]');
 await page.waitForSelector('input[placeholder^="Name"]', { timeout: 5000 });

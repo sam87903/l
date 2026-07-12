@@ -39,6 +39,11 @@ export function TimerProvider({ children }) {
   // Frei gewählte Fokus-Dauer (dritte Preset-Option).
   const [customMin, setCustomMin] = useState(null);
   const [hydrated, setHydrated] = useState(false);
+  // true, sobald der Nutzer die Session selbst bedient hat (Start/Pause).
+  // Nur solche Sessions schreiben beim Ablauf in Abwesenheit Minuten gut –
+  // sonst gäbe es geschenkte Fokus-Zeit, bloß weil die App per Auto-Start
+  // kurz geöffnet war.
+  const [manual, setManual] = useState(false);
 
   const handleComplete = useCallback(() => {
     vibrate();
@@ -51,6 +56,7 @@ export function TimerProvider({ children }) {
       push(`${minutes} Fokus-Minuten gutgeschrieben!`, "🎉");
       if (settings.notifications) notify("Session geschafft! 🎉", `${minutes} Minuten fokussiert gelernt.`);
     }
+    setManual(false);
   }, [isBreak, minutes, addFocusMinutes, push, settings]);
 
   const timer = useCountdownTimer(minutes * SECONDS_PER_MINUTE, handleComplete);
@@ -88,16 +94,19 @@ export function TimerProvider({ children }) {
           const totalSec = (brk ? BREAK_MINUTES : m) * SECONDS_PER_MINUTE;
           if (Number.isFinite(snap.endAt) && snap.endAt > now) {
             // Session läuft noch – nahtlos weiterzählen.
+            setManual(snap.manual === true);
             timerRef.current.reset(Math.max(1, Math.round((snap.endAt - now) / 1000)));
             timerRef.current.start();
             didResume = true;
           } else if (Number.isFinite(snap.endAt)) {
             // Während der Abwesenheit abgelaufen: erst den Snapshot
             // löschen, dann gutschreiben (keine Doppel-Gutschrift).
+            // Gutschrift gibt es nur für selbst bediente Sessions –
+            // eine rein automatisch gestartete verfällt still.
             await storage.remove(STORAGE_KEYS.timer);
             if (brk) {
               push("Pause vorbei – weiter geht's!", "🚀");
-            } else {
+            } else if (snap.manual === true) {
               addFocusMinutes(m);
               push(`Session im Hintergrund beendet – ${m} Fokus-Minuten gutgeschrieben!`, "🎉");
             }
@@ -106,6 +115,7 @@ export function TimerProvider({ children }) {
           } else if (Number.isFinite(snap.remaining) && snap.remaining > 0 && snap.remaining < totalSec) {
             // Mitten in der Session pausiert – Rest übernehmen; der
             // Auto-Start unten lässt sie weiterlaufen.
+            setManual(snap.manual === true);
             timerRef.current.reset(Math.round(snap.remaining));
           } else {
             timerRef.current.reset(totalSec);
@@ -136,9 +146,21 @@ export function TimerProvider({ children }) {
     if (!hydrated) return;
     storage.set(
       STORAGE_KEYS.timer,
-      JSON.stringify({ endAt: timer.endAt, remaining: remainingRef.current, minutes, isBreak, customMin })
+      JSON.stringify({ endAt: timer.endAt, remaining: remainingRef.current, minutes, isBreak, customMin, manual })
     );
-  }, [hydrated, timer.endAt, minutes, isBreak, customMin]);
+  }, [hydrated, timer.endAt, minutes, isBreak, customMin, manual]);
+
+  /** Start per Nutzer-Klick: markiert die Session als selbst bedient. */
+  const startManual = useCallback(() => {
+    setManual(true);
+    timerRef.current.start();
+  }, []);
+
+  /** Pause per Nutzer-Klick zählt ebenfalls als aktive Bedienung. */
+  const pauseManual = useCallback(() => {
+    setManual(true);
+    timerRef.current.pause();
+  }, []);
 
   const selectPreset = useCallback(
     (m) => {
@@ -162,12 +184,14 @@ export function TimerProvider({ children }) {
 
   const startBreak = useCallback(() => {
     setIsBreak(true);
+    setManual(true);
     timerRef.current.reset(BREAK_MINUTES * SECONDS_PER_MINUTE);
     timerRef.current.start();
   }, []);
 
   const resetTimer = useCallback(() => {
     setIsBreak(false);
+    setManual(false);
     timerRef.current.reset(minutes * SECONDS_PER_MINUTE);
   }, [minutes]);
 
@@ -183,6 +207,7 @@ export function TimerProvider({ children }) {
     push(`${earned} Fokus-Minuten gespeichert – gut gemacht!`, "✅");
     if (settings.sound) playChime();
     setIsBreak(false);
+    setManual(false);
     timerRef.current.reset(minutes * SECONDS_PER_MINUTE);
   }, [elapsedSec, minutes, addFocusMinutes, push, settings]);
 
@@ -200,13 +225,13 @@ export function TimerProvider({ children }) {
       canFinish,
       selectPreset,
       setCustom,
-      start: timer.start,
-      pause: timer.pause,
+      start: startManual,
+      pause: pauseManual,
       resetTimer,
       startBreak,
       finishEarly,
     }),
-    [timer.remaining, timer.running, timer.start, timer.pause, done, minutes, isBreak, customMin, total, elapsedSec, canFinish, selectPreset, setCustom, resetTimer, startBreak, finishEarly]
+    [timer.remaining, timer.running, done, minutes, isBreak, customMin, total, elapsedSec, canFinish, selectPreset, setCustom, startManual, pauseManual, resetTimer, startBreak, finishEarly]
   );
 
   return <TimerContext.Provider value={value}>{children}</TimerContext.Provider>;

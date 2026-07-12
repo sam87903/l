@@ -1,4 +1,4 @@
-import { memo, useMemo } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import GlossaryEntry from "./GlossaryEntry.jsx";
 import AlphaNav from "./AlphaNav.jsx";
 import EmptyState from "../ui/EmptyState.jsx";
@@ -12,7 +12,9 @@ const groupLetter = (term) => {
 
 /** Gruppierte, inkrementell gerenderte Glossarliste mit Alpha-Navigation. */
 const GlossaryList = memo(function GlossaryList({ terms, openTerms, favorites, onToggleOpen, onToggleFavorite, showAlphaNav }) {
-  const { visible, sentinelRef, done } = useIncrementalList(terms);
+  const { visible, sentinelRef, done, expandTo } = useIncrementalList(terms);
+  // Sprungziel, dessen Buchstaben-Gruppe erst noch gerendert werden muss.
+  const [pendingLetter, setPendingLetter] = useState(null);
 
   const groups = useMemo(() => {
     const map = new Map();
@@ -29,13 +31,39 @@ const GlossaryList = memo(function GlossaryList({ terms, openTerms, favorites, o
     [terms]
   );
 
+  // Alpha-Sprung: liegt der Buchstabe hinter dem bisher gerenderten Teil,
+  // erst genug Einträge nachladen und nach dem Rendern springen.
+  const jumpToLetter = useCallback(
+    (letter) => {
+      const el = document.getElementById(`glos-${letter}`);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
+      const idx = terms.findIndex((t) => groupLetter(t) === letter);
+      if (idx === -1) return;
+      expandTo(idx + 1);
+      setPendingLetter(letter);
+    },
+    [terms, expandTo]
+  );
+
+  useEffect(() => {
+    if (!pendingLetter) return;
+    const el = document.getElementById(`glos-${pendingLetter}`);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      setPendingLetter(null);
+    }
+  }, [pendingLetter, visible]);
+
   if (terms.length === 0) {
     return <EmptyState icon="🤷">Kein Begriff gefunden – probiere einen anderen Suchbegriff.</EmptyState>;
   }
 
   return (
     <>
-      {showAlphaNav && <AlphaNav letters={allLetters} />}
+      {showAlphaNav && <AlphaNav letters={allLetters} onJump={jumpToLetter} />}
       {groups.map(([letter, groupTerms]) => (
         <section key={letter} aria-label={`Begriffe mit ${letter}`}>
           <div className={styles.groupHead} id={`glos-${letter}`}>

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { LIST_CHUNK } from "../constants/config.js";
 
 /**
@@ -8,6 +8,13 @@ import { LIST_CHUNK } from "../constants/config.js";
 export function useIncrementalList(items, chunk = LIST_CHUNK) {
   const [count, setCount] = useState(chunk);
   const sentinelRef = useRef(null);
+
+  // Für Sprungziele (z. B. Alpha-Navigation): sofort so viele Einträge
+  // rendern, dass Index `n-1` sichtbar wird – nie wieder schrumpfen.
+  const expandTo = useCallback(
+    (n) => setCount((c) => Math.max(c, Math.min(items.length, n))),
+    [items.length]
+  );
 
   useEffect(() => setCount(chunk), [items, chunk]);
 
@@ -30,5 +37,5 @@ export function useIncrementalList(items, chunk = LIST_CHUNK) {
     return () => io.disconnect();
   }, [count, items, chunk]);
 
-  return { visible: items.slice(0, count), sentinelRef, done: count >= items.length };
+  return { visible: items.slice(0, count), sentinelRef, done: count >= items.length, expandTo };
 }
