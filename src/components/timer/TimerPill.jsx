@@ -1,23 +1,21 @@
 import { memo } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { Coffee, Pause, Timer } from "lucide-react";
 import { formatClock, useTimer } from "../../context/TimerContext.jsx";
 import styles from "./timer.module.css";
 
 /**
- * Schwebende Mini-Anzeige des laufenden Timers auf allen Seiten außer
- * dem Dashboard. Klick springt zum vollen Timer, Pause pausiert direkt.
+ * Schwebende Mini-Anzeige des laufenden Timers – auf allen Seiten sichtbar,
+ * sobald die Zeit läuft. Klick springt zum vollen Timer, Pause pausiert direkt.
  */
 const TimerPill = memo(function TimerPill() {
   const { remaining, running, isBreak, pause } = useTimer();
   const navigate = useNavigate();
-  const { pathname } = useLocation();
-  const visible = running && pathname !== "/";
 
   return (
     <AnimatePresence>
-      {visible && (
+      {running && (
         <motion.div
           className={styles.pillWrap}
           initial={{ opacity: 0, y: 14, scale: 0.92 }}
