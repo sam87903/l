@@ -76,10 +76,10 @@ await page.locator('button[aria-label="Timer pausieren"]').click();
 /* ── Semester: Pager-Farben, Ketten, Brücken ── */
 const pagerCount = await page.locator('[class*="pagerBtn"]').count();
 check("Semester-Pager: 7 Knöpfe", pagerCount === 7, `${pagerCount}`);
-const numGrads = await page.$$eval('[class*="pagerNum"]', (els) =>
-  els.map((el) => getComputedStyle(el).backgroundImage)
+const numColors = await page.$$eval('[class*="pagerNum"]', (els) =>
+  els.map((el) => getComputedStyle(el).color)
 );
-check("Jeder Knopf hat eigenen Farbverlauf", new Set(numGrads).size >= 6, `${new Set(numGrads).size} Verläufe`);
+check("Jeder Knopf hat eigene Semesterfarbe", new Set(numColors).size >= 6, `${new Set(numColors).size} Farben`);
 
 await page.locator('[class*="pagerBtn"]').nth(2).click();
 await page.waitForTimeout(700);

@@ -232,25 +232,27 @@
     background var(--dur) var(--ease), border-color var(--dur) var(--ease);
 }
 
-/* Verlaufs-Streifen an der Oberkante – die Signatur jedes Semesters */
+/* Gradient-Ring als Signatur jedes Semesters (Masken-Trick: Verlauf nur
+   im 1,5-px-Rand sichtbar, runde Ecken bleiben erhalten) */
 .pagerBtn::before {
   content: "";
   position: absolute;
-  top: 0;
-  left: 18%;
-  right: 18%;
-  height: 3px;
-  border-radius: 0 0 var(--r-full) var(--r-full);
-  background: linear-gradient(90deg, var(--c1, var(--blue)), var(--c2, var(--teal)));
-  opacity: 0.6;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(135deg, var(--c1, var(--blue)), var(--c2, var(--teal)));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0.55;
+  pointer-events: none;
+  transition: opacity var(--dur) var(--ease);
 }
 
-/* Ziffer als Farbverlauf (background-clip: text) */
+/* Ziffer in klarer Vollfarbe des Semesters (gut lesbar) */
 .pagerBtn .pagerNum {
-  background: linear-gradient(135deg, var(--c1, var(--blue)), var(--c2, var(--teal)));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: color-mix(in srgb, var(--c1, var(--blue)) 72%, var(--text));
 }
 
 /* Helles Theme: weicher Navy-Schatten statt Schwarz */
@@ -266,19 +268,20 @@
   transform: scale(0.94);
 }
 
-/* Aktiver Semester-Knopf: füllt sich mit seinem Verlauf */
+/* Aktiver Semester-Knopf: füllt sich mit seinem Verlauf, Ring leuchtet auf */
 .pagerBtnActive {
-  border-color: color-mix(in srgb, var(--c1, var(--blue)) 60%, transparent);
+  border-color: transparent;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.03) 60%),
-    linear-gradient(135deg, color-mix(in srgb, var(--c1, var(--blue)) 34%, transparent), color-mix(in srgb, var(--c2, var(--teal)) 34%, transparent));
+    linear-gradient(135deg, color-mix(in srgb, var(--c1, var(--blue)) 38%, transparent), color-mix(in srgb, var(--c2, var(--teal)) 38%, transparent));
   color: var(--text);
   box-shadow:
-    0 6px 20px color-mix(in srgb, var(--c1, var(--blue)) 35%, transparent),
+    0 6px 22px color-mix(in srgb, var(--c1, var(--blue)) 38%, transparent),
     inset 0 1px 0 rgba(255, 255, 255, 0.30);
 }
 
 .pagerBtnActive::before {
+  padding: 2px;
   opacity: 1;
 }
 
