@@ -16,7 +16,12 @@ export function useCountdownTimer(initialSeconds, onComplete) {
 
   useEffect(() => {
     if (!running) return;
-    const tick = () => {
+    let cancelled = false;
+    let timeoutId;
+    let rafId;
+
+    // Verbleibende Zeit neu berechnen; true, sobald die Session vorbei ist.
+    const compute = () => {
       const rest = Math.max(0, Math.round((endAt - Date.now()) / 1000));
       setRemaining(rest);
       if (rest === 0) {
@@ -25,11 +30,42 @@ export function useCountdownTimer(initialSeconds, onComplete) {
           completedRef.current = true;
           onCompleteRef.current?.();
         }
+        return true;
       }
+      return false;
     };
-    tick();
-    const id = setInterval(tick, 300);
-    return () => clearInterval(id);
+
+    // Nächsten Tick planen (immer nur einer gleichzeitig). requestAnimation-
+    // Frame läuft im Vordergrund zuverlässig – auch dort, wo iOS Safari
+    // setInterval drosselt; setTimeout begrenzt auf ~4×/Sekunde.
+    const schedule = () => {
+      clearTimeout(timeoutId);
+      if (rafId) cancelAnimationFrame(rafId);
+      timeoutId = setTimeout(() => {
+        rafId = requestAnimationFrame(loop);
+      }, 250);
+    };
+
+    const loop = () => {
+      if (cancelled) return;
+      if (!compute()) schedule();
+    };
+    loop();
+
+    // Rückkehr aus dem Hintergrund/Tab-Wechsel: sofort korrekt nachziehen.
+    const onVisible = () => {
+      if (!cancelled && document.visibilityState === "visible") loop();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    window.addEventListener("focus", onVisible);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timeoutId);
+      if (rafId) cancelAnimationFrame(rafId);
+      document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener("focus", onVisible);
+    };
   }, [endAt, running]);
 
   const start = useCallback(() => {
