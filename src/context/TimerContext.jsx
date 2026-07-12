@@ -73,6 +73,10 @@ export function TimerProvider({ children }) {
         setHydrated(true);
         return;
       }
+      // Merker: Läuft schon etwas / wurde bewusst pausiert? Dann NICHT
+      // automatisch (neu) starten.
+      let didResume = false;
+      let didPause = false;
       try {
         const snap = JSON.parse(raw || "null");
         if (snap && typeof snap === "object") {
@@ -88,6 +92,7 @@ export function TimerProvider({ children }) {
             // Session läuft noch – nahtlos weiterzählen.
             timerRef.current.reset(Math.max(1, Math.round((snap.endAt - now) / 1000)));
             timerRef.current.start();
+            didResume = true;
           } else if (Number.isFinite(snap.endAt)) {
             // Während der Abwesenheit abgelaufen: erst den Snapshot
             // löschen, dann gutschreiben (keine Doppel-Gutschrift).
@@ -101,14 +106,22 @@ export function TimerProvider({ children }) {
             setIsBreak(false);
             timerRef.current.reset(m * SECONDS_PER_MINUTE);
           } else if (Number.isFinite(snap.remaining) && snap.remaining > 0 && snap.remaining < totalSec) {
-            // Mitten in der Session pausiert.
+            // Mitten in der Session pausiert – bewusste Pause respektieren.
             timerRef.current.reset(Math.round(snap.remaining));
+            didPause = true;
           } else {
             timerRef.current.reset(totalSec);
           }
         }
       } catch {
         /* defekter Snapshot – frisch starten */
+      }
+      // Auto-Start beim App-Öffnen: frische Fokus-Session automatisch
+      // beginnen, sofern nicht ohnehin schon eine läuft oder bewusst
+      // pausiert wurde (Einstellung, standardmäßig an).
+      if (!cancelled && !didResume && !didPause && settings.autoStartTimer !== false) {
+        setIsBreak(false);
+        timerRef.current.start();
       }
       setHydrated(true);
     })();
