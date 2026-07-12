@@ -17,6 +17,7 @@ const SemesterAccordion = memo(function SemesterAccordion({ semester, open, onTo
     <GlassCard
       tint={color}
       id={`semester-${semester.nr}`}
+      className={styles.ringCard}
       style={{ "--c": color, marginBottom: "var(--s-2)", overflow: "hidden", scrollMarginTop: "150px" }}
     >
       <div className={`${styles.semHead} hover-pop`} onClick={toggle} {...kb(toggle)} aria-expanded={open}>

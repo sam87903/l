@@ -8,19 +8,49 @@
   cursor: pointer;
 }
 
+/* Semester-Zahl im Pager-Look: Glas-Chip mit Blau-Türkis-Ring */
 .semNum {
-  width: 38px;
-  height: 38px;
+  position: relative;
+  width: 40px;
+  height: 40px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 11px;
-  border: 1px solid color-mix(in srgb, var(--c) 45%, transparent);
-  background: linear-gradient(135deg, color-mix(in srgb, var(--c) 22%, transparent), color-mix(in srgb, var(--c) 9%, transparent));
-  color: var(--c);
+  border-radius: var(--r-sm);
+  border: 1px solid var(--glass-border);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.02) 55%),
+    var(--glass-bg);
+  color: color-mix(in srgb, var(--blue) 72%, var(--text));
   font-size: 1rem;
   font-weight: 900;
+}
+
+/* Gemeinsamer Verlaufs-Ring: Chips voll, Karten-Umrandung dezenter */
+.semNum::before,
+.modCode::before,
+.ringCard::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(135deg, var(--blue), var(--teal));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.ringCard {
+  position: relative;
+}
+
+.ringCard::before {
+  opacity: 0.4;
 }
 
 .semKicker {
@@ -59,17 +89,26 @@
   cursor: pointer;
 }
 
+/* Modul-Kürzel als kleiner Ring-Chip im selben Look */
 .modCode {
+  position: relative;
   min-width: 48px;
   flex-shrink: 0;
-  padding: 0.2rem 0.45rem;
-  border-radius: 7px;
-  border: 1px solid color-mix(in srgb, var(--c) 40%, transparent);
-  background: color-mix(in srgb, var(--c) 13%, transparent);
-  color: var(--c);
+  padding: 0.24rem 0.45rem;
+  border-radius: 8px;
+  border: 1px solid var(--glass-border);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.02) 55%),
+    var(--glass-bg);
+  color: color-mix(in srgb, var(--blue) 72%, var(--text));
   font-size: 0.62rem;
   font-weight: 800;
   text-align: center;
+}
+
+.modCode::before {
+  padding: 1.25px;
+  opacity: 0.5;
 }
 
 .modName {

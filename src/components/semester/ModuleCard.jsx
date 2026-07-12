@@ -29,6 +29,7 @@ const ModuleCard = memo(function ModuleCard({ module, color, autoOpen = false })
     <GlassCard
       id={`modul-${module.id}`}
       tint={open ? color : undefined}
+      className={styles.ringCard}
       style={{ "--c": color, borderRadius: "var(--r-md)", scrollMarginTop: "84px" }}
     >
       <div className={`${styles.modHead} hover-pop`} onClick={toggle} {...kb(toggle)} aria-expanded={open}>
