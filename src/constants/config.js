@@ -23,6 +23,7 @@ export const STORAGE_KEYS = {
   srs: "mrk7-sr",
   quizView: "mrk7-qview",
   timer: "mrk7-tm",
+  chainsDone: "mrk7-ch",
 };
 
 /** Leitner-System: Wiederholungsintervall in Tagen je Box (1–5). */

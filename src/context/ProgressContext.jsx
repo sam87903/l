@@ -28,8 +28,9 @@ export function ProgressProvider({ children }) {
   const [mastered, setMastered, l10] = useStoredState(STORAGE_KEYS.mastered, 0);
   const [exams, setExams, l11] = useStoredState(STORAGE_KEYS.exams, []);
   const [srs, setSrs, l12] = useStoredState(STORAGE_KEYS.srs, {});
+  const [chainsDone, setChainsDone, l13] = useStoredState(STORAGE_KEYS.chainsDone, {});
 
-  const ready = l1 && l2 && l3 && l4 && l5 && l6 && l7 && l8 && l9 && l10 && l11 && l12;
+  const ready = l1 && l2 && l3 && l4 && l5 && l6 && l7 && l8 && l9 && l10 && l11 && l12 && l13;
 
   const logActivity = useCallback(
     (minutes) => {
@@ -48,6 +49,11 @@ export function ProgressProvider({ children }) {
       });
     },
     [setDoneDays, logActivity]
+  );
+
+  const toggleChainDone = useCallback(
+    (chainId) => setChainsDone((c) => ({ ...c, [chainId]: !c[chainId] })),
+    [setChainsDone]
   );
 
   const saveQuizResult = useCallback(
@@ -212,9 +218,9 @@ export function ProgressProvider({ children }) {
       version: 3,
       exportedAt: new Date().toISOString(),
       startDate, doneDays, quizBest, fcKnown, favorites, recents, activity, settings,
-      wrongPool, mastered, exams, srs,
+      wrongPool, mastered, exams, srs, chainsDone,
     }),
-    [startDate, doneDays, quizBest, fcKnown, favorites, recents, activity, settings, wrongPool, mastered, exams, srs]
+    [startDate, doneDays, quizBest, fcKnown, favorites, recents, activity, settings, wrongPool, mastered, exams, srs, chainsDone]
   );
 
   // ── Barrierefreiheit: Nutzer-Toggles als Root-Attribute, damit CSS die
@@ -260,8 +266,9 @@ export function ProgressProvider({ children }) {
       if (typeof data.mastered === "number") setMastered(data.mastered);
       if (Array.isArray(data.exams)) setExams(data.exams);
       if (data.srs) setSrs(data.srs);
+      if (data.chainsDone) setChainsDone(data.chainsDone);
     },
-    [setStartDate, setDoneDays, setQuizBest, setFcKnown, setFavorites, setRecents, setActivity, setSettings, setWrongPool, setMastered, setExams, setSrs]
+    [setStartDate, setDoneDays, setQuizBest, setFcKnown, setFavorites, setRecents, setActivity, setSettings, setWrongPool, setMastered, setExams, setSrs, setChainsDone]
   );
 
   const restoreAutoBackup = useCallback(
@@ -285,7 +292,8 @@ export function ProgressProvider({ children }) {
     setMastered(0);
     setExams([]);
     setSrs({});
-  }, [setDoneDays, setQuizBest, setFcKnown, setFavorites, setRecents, setActivity, setSettings, setStartDate, setWrongPool, setMastered, setExams, setSrs]);
+    setChainsDone({});
+  }, [setDoneDays, setQuizBest, setFcKnown, setFavorites, setRecents, setActivity, setSettings, setStartDate, setWrongPool, setMastered, setExams, setSrs, setChainsDone]);
 
   const value = useMemo(
     () => ({
@@ -301,13 +309,14 @@ export function ProgressProvider({ children }) {
       wrongPool, recordAnswer,
       exams, addExam, removeExam,
       srs, reviewCard,
+      chainsDone, toggleChainDone,
       autoBackups, restoreAutoBackup,
       exportData, importData, resetAll,
     }),
     [ready, stats, doneDays, toggleDay, startDate, setStartDate, quizBest, saveQuizResult,
      fcKnown, setKnownCard, favorites, toggleFavorite, recents, pushRecent, activity,
      addFocusMinutes, settings, setSettings, wrongPool, recordAnswer, exams, addExam,
-     removeExam, srs, reviewCard, autoBackups, restoreAutoBackup, exportData, importData, resetAll]
+     removeExam, srs, reviewCard, chainsDone, toggleChainDone, autoBackups, restoreAutoBackup, exportData, importData, resetAll]
   );
 
   return <ProgressContext.Provider value={value}>{children}</ProgressContext.Provider>;

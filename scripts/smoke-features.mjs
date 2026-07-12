@@ -87,7 +87,19 @@ await page.locator('[class*="pagerBtn"]').nth(2).click();
 await page.waitForTimeout(700);
 check("Pager-Klick öffnet Semester 3", await page.locator("#semester-3 [aria-expanded]").first().getAttribute("aria-expanded") === "true");
 
+// Lernketten sind standardmäßig eingeklappt → erst aufklappen
+await page.locator("text=Lernketten").click();
+await page.waitForTimeout(500);
 check("4 Lernketten sichtbar", (await page.locator('[class*="chainHead"]').count()) === 4);
+
+// Kette abhaken → Zähler steigt, überlebt implizit den Storage
+const chainCb = page.locator('[role="checkbox"][aria-label*="Kette"]').first();
+await chainCb.click();
+await page.waitForTimeout(300);
+check("Kette abhaken funktioniert", (await chainCb.getAttribute("aria-checked")) === "true");
+await chainCb.click(); // wieder zurück, damit der Modul-Klick sichtbar bleibt
+await page.waitForTimeout(200);
+
 await page.locator('button[title*="Datenbanken"]').first().click();
 await page.waitForTimeout(900);
 check("Ketten-Klick öffnet Modul DAT", await page.locator('#modul-s2-dat [aria-expanded]').first().getAttribute("aria-expanded") === "true");

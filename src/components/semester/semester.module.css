@@ -357,7 +357,7 @@
 
 .chainHead {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   flex-wrap: wrap;
   gap: var(--s-1);
   margin-bottom: var(--s-2);
@@ -365,8 +365,41 @@
 }
 
 .chainDesc {
+  flex: 1;
+  min-width: 0;
   font-size: var(--fs-xs);
   color: var(--dim);
+}
+
+/* Abhak-Checkbox je Kette */
+.chainCheck {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--r-sm);
+  border: 1.5px solid var(--glass-border);
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+
+.chainCheckOn {
+  border-color: color-mix(in srgb, var(--teal) 70%, transparent);
+  background: var(--teal);
+}
+
+/* Erledigte Kette: dezent zurückgenommen */
+.chainDone {
+  opacity: 0.62;
+}
+
+.chainDone .chainHead strong {
+  text-decoration: line-through;
+  text-decoration-color: color-mix(in srgb, var(--text) 45%, transparent);
 }
 
 .chainSteps {
