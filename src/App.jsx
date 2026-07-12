@@ -1,5 +1,6 @@
 import { lazy, Suspense } from "react";
 import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
+import { MotionConfig } from "framer-motion";
 import { ThemeProvider } from "./context/ThemeContext.jsx";
 import { ProgressProvider, useProgress } from "./context/ProgressContext.jsx";
 import { ToastProvider } from "./components/ui/Toast.jsx";
@@ -48,15 +49,20 @@ function AppRoutes() {
 export default function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider>
-        <ProgressProvider>
-          <ToastProvider>
-            <HashRouter>
-              <AppRoutes />
-            </HashRouter>
-          </ToastProvider>
-        </ProgressProvider>
-      </ThemeProvider>
+      {/* reducedMotion="user": alle Framer-Animationen respektieren die
+          System-Präferenz „Bewegung reduzieren" (deaktiviert transform-/
+          Layout-Bewegung, Ein-/Ausblenden bleibt) – WCAG 2.3.3. */}
+      <MotionConfig reducedMotion="user">
+        <ThemeProvider>
+          <ProgressProvider>
+            <ToastProvider>
+              <HashRouter>
+                <AppRoutes />
+              </HashRouter>
+            </ToastProvider>
+          </ProgressProvider>
+        </ThemeProvider>
+      </MotionConfig>
     </ErrorBoundary>
   );
 }

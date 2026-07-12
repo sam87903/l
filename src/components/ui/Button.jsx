@@ -6,9 +6,10 @@ import styles from "./ui.module.css";
  * Basis-Button. `tint` erzeugt eine eingefärbte Variante,
  * `ghost` eine rahmenlose.
  */
-const Button = memo(function Button({ tint, ghost, className, style, children, ...rest }) {
+const Button = memo(function Button({ tint, ghost, className, style, children, ref, ...rest }) {
   return (
     <button
+      ref={ref}
       className={cx(styles.btn, tint && styles.btnTinted, ghost && styles.btnGhost, "hover-pop", className)}
       style={tint ? { ...style, "--c": tint } : style}
       {...rest}

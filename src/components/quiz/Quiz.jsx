@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import GlassCard from "../ui/GlassCard.jsx";
 import Button from "../ui/Button.jsx";
@@ -16,6 +16,12 @@ const isCorrectAnswer = (question, optionIndex) =>
     ? question.corrects.includes(optionIndex)
     : question.correct === optionIndex;
 
+/** Text der richtigen Antwort(en) – für die Screenreader-Rückmeldung. */
+const correctAnswerText = (question) =>
+  (Array.isArray(question.corrects) ? question.corrects : [question.correct])
+    .map((i) => question.options[i])
+    .join(", ");
+
 /**
  * Komplettes Quiz mit Sofort-Feedback, Bestscore, Retry und Lernanalyse.
  * Zwei Ansichten (global gemerkt): Einzelmodus – eine Frage pro Schritt,
@@ -27,6 +33,9 @@ const Quiz = memo(function Quiz({ questions: rawQuestions, color = ACCENT.teal, 
   const [view, setView] = useStoredState(STORAGE_KEYS.quizView, "single", { raw: true });
   // Im Einzelmodus: beantwortete Frage bis „Weiter" festhalten (Feedback lesen).
   const [reviewIndex, setReviewIndex] = useState(null);
+  // Höfliche Rückmeldung für Screenreader (richtig/falsch + Erklärung).
+  const [srFeedback, setSrFeedback] = useState("");
+  const nextRef = useRef(null);
   // Bei aktiviertem Shuffle: Optionen je Runde neu mischen (kein
   // Auswendiglernen der Antwort-Position möglich).
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -48,11 +57,21 @@ const Quiz = memo(function Quiz({ questions: rawQuestions, color = ACCENT.teal, 
     (qi, oi) => {
       setAnswers((prev) => {
         if (prev[qi] !== undefined) return prev;
-        onAnswer?.(qi, isCorrectAnswer(questions[qi], oi));
+        const q = questions[qi];
+        const wasCorrect = isCorrectAnswer(q, oi);
+        onAnswer?.(qi, wasCorrect);
+        setSrFeedback(
+          [
+            wasCorrect ? "Richtig." : `Falsch. Richtige Antwort: ${correctAnswerText(q)}.`,
+            q.explain,
+          ]
+            .filter(Boolean)
+            .join(" ")
+        );
         const next = { ...prev, [qi]: oi };
         if (Object.keys(next).length === questions.length && onDone) {
           const correct = Object.entries(next).filter(
-            ([q, o]) => isCorrectAnswer(questions[q], o)
+            ([q2, o]) => isCorrectAnswer(questions[q2], o)
           ).length;
           onDone(correct, questions.length);
         }
@@ -65,8 +84,34 @@ const Quiz = memo(function Quiz({ questions: rawQuestions, color = ACCENT.teal, 
   const retry = () => {
     setAnswers({});
     setReviewIndex(null);
+    setSrFeedback("");
     setRound((r) => r + 1);
   };
+
+  // Einzelmodus: „Weiter" nach dem Antworten fokussieren, damit Enter
+  // sofort weiterblättert (das gerade angeklickte Options-Feld ist deaktiviert).
+  const answeredCurrent = currentIndex !== null && answers[currentIndex] !== undefined;
+  useEffect(() => {
+    if (single && answeredCurrent) nextRef.current?.focus();
+  }, [single, answeredCurrent, currentIndex]);
+
+  // Einzelmodus: Zifferntasten 1–9 wählen die passende Antwortoption.
+  useEffect(() => {
+    if (!single || currentIndex === null) return;
+    const onKey = (e) => {
+      const el = e.target;
+      if (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable)) return;
+      if (answers[currentIndex] !== undefined || !/^[1-9]$/.test(e.key)) return;
+      const oi = Number(e.key) - 1;
+      if (oi < questions[currentIndex].options.length) {
+        e.preventDefault();
+        setReviewIndex(currentIndex);
+        pick(currentIndex, oi);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [single, currentIndex, answers, questions, pick]);
 
   return (
     <GlassCard tint={color} className={styles.card} style={{ "--c": color }}>
@@ -82,10 +127,14 @@ const Quiz = memo(function Quiz({ questions: rawQuestions, color = ACCENT.teal, 
           className={styles.viewToggle}
           onClick={() => setView(single ? "list" : "single")}
           title="Ansicht wechseln"
+          aria-label={single ? "Zur Listenansicht wechseln" : "Zur Einzelansicht wechseln"}
         >
           {single ? "☰ Liste" : "1️⃣ Einzeln"}
         </button>
       </div>
+
+      {/* Für Screenreader: kündigt nach jeder Antwort richtig/falsch an. */}
+      <span className="visually-hidden" role="status" aria-live="polite">{srFeedback}</span>
 
       {single && currentIndex !== null && (
         <>
@@ -101,7 +150,8 @@ const Quiz = memo(function Quiz({ questions: rawQuestions, color = ACCENT.teal, 
             onPick={(oi) => { setReviewIndex(currentIndex); pick(currentIndex, oi); }}
           />
           {answers[currentIndex] !== undefined && (
-            <Button tint={color} style={{ width: "100%" }} onClick={() => setReviewIndex(null)}>
+            <Button ref={nextRef} tint={color} style={{ width: "100%" }}
+              onClick={() => { setSrFeedback(""); setReviewIndex(null); }}>
               Weiter <ArrowRight size={14} aria-hidden="true" />
             </Button>
           )}

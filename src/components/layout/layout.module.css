@@ -82,6 +82,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
+  min-height: 32px;
   padding: 0.28rem 0.6rem;
   border-radius: var(--r-full);
   border: 1px solid color-mix(in srgb, var(--red) 40%, transparent);
@@ -89,6 +90,7 @@
   color: var(--red);
   font-size: var(--fs-xs);
   font-weight: 800;
+  text-decoration: none;
 }
 
 .main {

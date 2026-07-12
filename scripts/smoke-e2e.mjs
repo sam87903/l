@@ -27,7 +27,7 @@ for (const [label, marker] of [
   ["Plan", "21-Tage-Plan"],
   ["Semester", "Gesamtes Curriculum"],
   ["Glossar", "Fachbegriffe von A bis Z"],
-  ["Statistik", "Lernfortschritt im Überblick"],
+  ["Statistik", "Streak-Kalender"],
   ["Klausuren", "Altklausuren analysieren"],
 ]) {
   await page.click(`nav >> text=${label}`);

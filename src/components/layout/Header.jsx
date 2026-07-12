@@ -29,10 +29,15 @@ const Header = memo(function Header() {
       </Link>
       <div className={styles.headerActions}>
         {stats.streak > 0 && (
-          <span className={styles.streakChip} title={`${stats.streak} Tage Lern-Streak`}>
+          <Link
+            to="/statistik"
+            className={`${styles.streakChip} hover-pop`}
+            title={`${stats.streak} Tage Lern-Streak – zur Statistik`}
+            aria-label={`${stats.streak} Tage Lern-Streak. Zur Statistik`}
+          >
             <Flame size={12} aria-hidden="true" />
             {stats.streak}
-          </span>
+          </Link>
         )}
         {/* Stabiles aria-label (APG); aktueller Zustand via title + Icon */}
         <button
