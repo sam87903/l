@@ -21,11 +21,10 @@ const DayCard = memo(function DayCard({ day, color, startDate, isOpen, isDone, i
       style={{ "--c": color }}
     >
       <div className={`${styles.head} hover-pop`} onClick={onToggleOpen} {...kb(onToggleOpen)} aria-expanded={isOpen}>
-        <div className={styles.dayNum}>
-          <div className={cx(styles.dayNumBig, isDone && styles.dayNumDone)}>{dayNum(day.nr)}</div>
+        <div className={cx(styles.dayNum, isDone && styles.dayNumFilled, !isDone && isToday && styles.dayNumToday)}>
+          <div className={styles.dayNumBig}>{dayNum(day.nr)}</div>
           <div className={styles.dayDate}>{date || "Tag"}</div>
         </div>
-        <div className={styles.dayDivider} />
         <div className={styles.dayBody}>
           <div className={cx(styles.dayTitle, isOpen && styles.dayTitleOpen, isDone && styles.dayTitleDone)}>
             {isToday && <span className={styles.todayBadge}>HEUTE</span>}

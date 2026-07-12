@@ -17,7 +17,57 @@
 }
 
 .weekEmoji {
-  font-size: 1.3rem;
+  font-size: 1.25rem;
+}
+
+/* Wochen-Emoji im Pager-Look: Glas-Chip mit Blau-Türkis-Ring */
+.weekChip {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--glass-border);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.02) 55%),
+    var(--glass-bg);
+}
+
+/* Gemeinsamer Verlaufs-Ring (identisches Rezept wie der Semester-Pager) */
+.weekChip::before,
+.dayNum::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(135deg, var(--blue), var(--teal));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0.55;
+  pointer-events: none;
+  transition: opacity var(--dur) var(--ease), padding var(--dur) var(--ease);
+}
+
+/* Woche komplett: Chip füllt sich mit dem Verlauf */
+.weekChipDone {
+  border-color: transparent;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.03) 60%),
+    linear-gradient(135deg, color-mix(in srgb, var(--blue) 38%, transparent), color-mix(in srgb, var(--teal) 38%, transparent));
+  box-shadow:
+    0 4px 16px color-mix(in srgb, var(--blue) 30%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.30);
+}
+
+.weekChipDone::before {
+  padding: 2px;
+  opacity: 1;
 }
 
 .weekKicker {
@@ -62,36 +112,79 @@
   box-shadow: 0 8px 28px color-mix(in srgb, var(--c) 18%, transparent);
 }
 
+/* Tages-Chip im Look des Semester-Pagers: Glas + Blau-Türkis-Ring */
 .dayNum {
-  width: 36px;
+  position: relative;
+  width: 48px;
+  min-height: 46px;
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  padding: 5px 3px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--glass-border);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.02) 55%),
+    var(--glass-bg);
   text-align: center;
+  transition: background var(--dur), box-shadow var(--dur);
 }
 
 .dayNumBig {
-  font-size: 1.1rem;
+  font-size: 1.02rem;
   font-weight: 900;
-  color: var(--c);
-  line-height: 1;
-}
-
-.dayNumDone {
-  opacity: 0.6;
-  text-decoration: line-through;
+  color: color-mix(in srgb, var(--blue) 72%, var(--text));
+  line-height: 1.1;
 }
 
 .dayDate {
-  font-size: 0.62rem;
+  font-size: 0.58rem;
   font-weight: 600;
   color: var(--muted);
 }
 
-.dayDivider {
-  width: 2px;
-  height: 36px;
-  flex-shrink: 0;
-  border-radius: 1px;
-  background: color-mix(in srgb, var(--c) 30%, transparent);
+/* Heute: Ring leuchtet voll auf */
+.dayNumToday {
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--blue) 28%, transparent);
+}
+
+.dayNumToday::before {
+  padding: 2px;
+  opacity: 1;
+}
+
+/* Erledigt: füllt sich mit dem Verlauf – wie der aktive Semester-Knopf */
+.dayNumFilled {
+  border-color: transparent;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.03) 60%),
+    linear-gradient(135deg, color-mix(in srgb, var(--blue) 38%, transparent), color-mix(in srgb, var(--teal) 38%, transparent));
+  box-shadow:
+    0 4px 16px color-mix(in srgb, var(--blue) 30%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.30);
+}
+
+.dayNumFilled::before {
+  padding: 2px;
+  opacity: 1;
+}
+
+.dayNumFilled .dayNumBig {
+  color: #fff;
+  text-shadow: 0 1px 5px color-mix(in srgb, var(--blue) 60%, transparent);
+}
+
+.dayNumFilled .dayDate {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Helles Theme: weicher Navy-Schatten wie beim Pager */
+:global(:root[data-theme="light"]) .dayNum:not(.dayNumFilled),
+:global(:root[data-theme="light"]) .weekChip:not(.weekChipDone) {
+  box-shadow: 0 2px 8px rgba(30, 35, 60, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
 .dayBody {

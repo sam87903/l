@@ -39,11 +39,10 @@ const DetailDayCard = memo(function DetailDayCard({ day, color, startDate, isDon
   return (
     <GlassCard tint={open || isDone ? color : undefined} className={cardStyles.day} style={{ "--c": color }}>
       <div className={`${cardStyles.head} hover-pop`} onClick={toggle} {...kb(toggle)} aria-expanded={open}>
-        <div className={cardStyles.dayNum}>
+        <div className={cx(cardStyles.dayNum, isDone && cardStyles.dayNumFilled)}>
           <div className={cardStyles.dayNumBig}>{dayNum(day.nr)}</div>
           <div className={cardStyles.dayDate}>{fmtDate(startDate, day.nr - 1) || "Tag"}</div>
         </div>
-        <div className={cardStyles.dayDivider} />
         <div className={cardStyles.dayBody}>
           <div className={cx(cardStyles.dayTitle, isDone && cardStyles.dayTitleDone)}>
             {day.e} {day.t}
