@@ -1,368 +1,185 @@
 /**
- * Podcast-Skripte: lange, rein informative Hör-Episoden zu den
+ * Podcast-Skripte: sehr ausführliche, rein informative Hör-Episoden zu den
  * Themenblöcken des Studiengangs. Jede Episode besteht aus vielen Kapiteln
  * ({ heading, text }), die nacheinander vorgelesen werden (Web Speech API)
  * und gleichzeitig als mitlesbares Skript erscheinen.
  *
  * Bewusst ohne Begrüßung, Überleitung oder Füllsätze – jedes Kapitel liefert
- * direkt Fachinhalt. Zahlenangaben sind mit aktuellen Quellen abgeglichen
- * (E-Commerce-Umsätze bevh/HDE 2024/2025, GmbH-Recht, DSGVO Art. 5/83,
- * Marketing-Benchmarks). `text` ist emoji- und abkürzungsarm für saubere
- * Sprachausgabe.
+ * direkt Fachinhalt mit Definitionen, Beispielen und Zahlen. Angaben sind mit
+ * aktuellen Quellen abgeglichen (E-Commerce-Umsätze bevh/HDE 2024/2025,
+ * GmbH-Recht, DSGVO Art. 5/83, Marketing-Benchmarks). `text` ist emoji- und
+ * abkürzungsarm für saubere Sprachausgabe.
  */
 export const PODCASTS = [
   {
     id: "pod-bwl",
     icon: "🏛️",
-    title: "BWL-Grundlagen: Wirtschaften mit knappen Mitteln",
+    title: "BWL-Grundlagen: Wirtschaften, Ziele, Rechtsformen",
     sem: 1,
-    topic: "Ökonomisches Prinzip, Produktionsfaktoren, Zielsystem, Rechtsformen",
+    topic: "Ökonomisches Prinzip, Produktionsfaktoren, Kennzahlen, Rechtsformen",
     segments: [
-      {
-        heading: "Gegenstand der BWL",
-        text: "Die Betriebswirtschaftslehre untersucht die Entscheidungen einzelner Betriebe, während die Volkswirtschaftslehre die gesamtwirtschaftlichen Zusammenhänge betrachtet. Ausgangspunkt allen Wirtschaftens ist die Knappheit: Menschliche Bedürfnisse sind praktisch unbegrenzt, die Mittel zu ihrer Befriedigung aber begrenzt. Ein Bedürfnis wird zum Bedarf, wenn Kaufkraft dahintersteht, und trifft am Markt als Nachfrage auf ein Angebot. Genau dieses Spannungsfeld zu managen, ist die Aufgabe der Betriebswirtschaft.",
-      },
-      {
-        heading: "Das ökonomische Prinzip",
-        text: "Die zentrale Entscheidungsregel ist das ökonomische Prinzip, auch Wirtschaftlichkeitsprinzip genannt. Beim Minimalprinzip ist ein Ziel vorgegeben, etwa eine Produktionsmenge, und der Mitteleinsatz soll minimal sein. Beim Maximalprinzip ist der Mitteleinsatz fix, etwa ein Budget, und der Ertrag soll maximal werden. Ein häufiger Denkfehler ist das Optimalprinzip als angebliche dritte Variante, bei dem gleichzeitig Aufwand minimiert und Ertrag maximiert werden soll. Das ist logisch nicht möglich, weil man immer nur eine Größe fixieren und die andere optimieren kann.",
-      },
-      {
-        heading: "Produktionsfaktoren der Volkswirtschaft",
-        text: "Die Volkswirtschaftslehre kennt drei klassische Produktionsfaktoren: Boden, also alle natürlichen Ressourcen; Arbeit, also die menschliche Leistung; und Kapital, also Maschinen, Gebäude und Geldmittel. Manche Ökonomen ergänzen das Wissen oder den technischen Fortschritt als vierten Faktor. Diese Faktoren werden im Produktionsprozess kombiniert, um Güter und Dienstleistungen zu erzeugen.",
-      },
-      {
-        heading: "Produktionsfaktoren nach Gutenberg",
-        text: "Die Betriebswirtschaftslehre nutzt die feinere Einteilung von Erich Gutenberg. Er unterscheidet Elementarfaktoren und den dispositiven Faktor. Zu den Elementarfaktoren zählen die objektbezogene ausführende Arbeit, die Betriebsmittel wie Maschinen und Gebäude sowie die Werkstoffe, also Roh-, Hilfs- und Betriebsstoffe. Der dispositive Faktor umfasst die leitende, planende, organisierende und kontrollierende Tätigkeit der Geschäftsführung. Er kombiniert die Elementarfaktoren sinnvoll und ist damit der eigentliche Motor der Wertschöpfung.",
-      },
-      {
-        heading: "Betriebliche Funktionen und Wertschöpfung",
-        text: "Ein Betrieb gliedert sich in Funktionsbereiche, die eine Wertschöpfungskette bilden: Beschaffung, Produktion oder Leistungserstellung, Absatz und Marketing, dazu die Querschnittsfunktionen Finanzierung, Personal, Rechnungswesen und Organisation. Jede Stufe soll den Wert des Produkts erhöhen. Die Differenz zwischen dem Wert der eingekauften Vorleistungen und dem Wert der verkauften Leistung ist die Wertschöpfung des Betriebs.",
-      },
-      {
-        heading: "Das Zielsystem",
-        text: "Unternehmen verfolgen ein ganzes Bündel von Zielen. Sachziele legen fest, was produziert wird, also Produkte, Märkte und Qualität. Formalziele beschreiben den wirtschaftlichen Erfolg: Gewinn, Rentabilität, Liquidität, Produktivität, Marktanteil und Wachstum. Dazu kommen soziale und ökologische Ziele wie faire Arbeitsbedingungen, Mitarbeiterzufriedenheit und Umweltschutz. Zwischen den Zielen bestehen Beziehungen: Sie können komplementär sein und sich gegenseitig fördern, konkurrierend im Konflikt stehen oder indifferent nebeneinander liegen.",
-      },
-      {
-        heading: "Betriebswirtschaftliche Kennzahlen",
-        text: "Erfolg wird über Kennzahlen messbar. Die Produktivität setzt Output ins Verhältnis zum Input in Mengeneinheiten, etwa Stück pro Arbeitsstunde. Die Wirtschaftlichkeit vergleicht Ertrag und Aufwand in Geldeinheiten; ein Wert über eins bedeutet Gewinn. Die Rentabilität misst den Erfolg im Verhältnis zum eingesetzten Kapital, etwa die Eigenkapitalrentabilität als Gewinn geteilt durch Eigenkapital. Die Liquidität schließlich beschreibt die Fähigkeit, jederzeit zahlungsfähig zu bleiben. Merke: Ein Unternehmen kann profitabel und trotzdem zahlungsunfähig sein, wenn die Liquidität fehlt.",
-      },
-      {
-        heading: "Rechtsformen im Überblick",
-        text: "Bei der Gründung ist die Wahl der Rechtsform eine der wichtigsten konstitutiven Entscheidungen. Sie bestimmt Haftung, Kapitalaufbringung, Leitungsbefugnis, Gewinnverteilung, Steuerbelastung und Publizitätspflichten. Grob unterscheidet man Einzelunternehmen, Personengesellschaften und Kapitalgesellschaften. Es gibt keine ideale Rechtsform, nur die für die jeweilige Situation passende.",
-      },
-      {
-        heading: "Einzelunternehmen und Personengesellschaften",
-        text: "Das Einzelunternehmen gehört einer Person, die allein entscheidet und unbeschränkt mit ihrem gesamten Privatvermögen haftet. Bei den Personengesellschaften schließen sich mehrere zusammen. Die Gesellschaft bürgerlichen Rechts eignet sich für kleinere gemeinsame Zwecke. Die offene Handelsgesellschaft ist für Kaufleute gedacht, alle Gesellschafter haften voll. Bei der Kommanditgesellschaft haftet der Komplementär unbeschränkt, während die Kommanditisten nur mit ihrer Einlage haften. Gemeinsam ist Personengesellschaften die enge Verbindung von Eigentum und persönlicher Haftung.",
-      },
-      {
-        heading: "Kapitalgesellschaften",
-        text: "Kapitalgesellschaften sind eigene juristische Personen. Die Gesellschaft mit beschränkter Haftung ist die beliebteste Form; sie verlangt ein Mindeststammkapital von fünfundzwanzigtausend Euro, von dem bei der Anmeldung mindestens die Hälfte eingezahlt sein muss. Die Unternehmergesellschaft, umgangssprachlich Mini-GmbH, lässt sich schon ab einem Euro gründen, muss aber Gewinne ansparen, bis sie das Stammkapital einer GmbH erreicht. Die Aktiengesellschaft benötigt fünfzigtausend Euro Grundkapital, ist in Aktien zerlegt und für die Kapitalbeschaffung an der Börse gedacht.",
-      },
-      {
-        heading: "Das Prinzip der Haftungsbeschränkung",
-        text: "Der Kern der Kapitalgesellschaft ist die Haftungsbeschränkung: Es haftet nur das Gesellschaftsvermögen, nicht das Privatvermögen der Gesellschafter. Dieser Schutz senkt das persönliche Risiko und erleichtert das Einsammeln von Kapital. Der Preis dafür sind Mindestkapital, notarielle Gründung, Eintragung ins Handelsregister und strengere Offenlegungs- und Buchführungspflichten. Haftungsbeschränkung ist also kein Geschenk, sondern ein Tausch von persönlichem Risiko gegen mehr Formalität und Transparenz.",
-      },
-      {
-        heading: "Standort und konstitutive Entscheidungen",
-        text: "Neben der Rechtsform gehören Standortwahl und mögliche Unternehmenszusammenschlüsse zu den grundlegenden, schwer umkehrbaren Entscheidungen. Standortfaktoren sind zum Beispiel Nähe zu Beschaffungs- und Absatzmärkten, Arbeitskräfte, Infrastruktur, Steuern und Fördermittel. Zusammenschlüsse reichen von loser Kooperation über Kartelle, die den Wettbewerb beschränken und daher rechtlich streng geregelt sind, bis zur vollständigen Fusion. Solche Weichenstellungen prägen ein Unternehmen langfristig und lassen sich nur mit großem Aufwand korrigieren.",
-      },
+      { heading: "Gegenstand der BWL", text: "Die Betriebswirtschaftslehre ist eine Wirtschaftswissenschaft, die das Handeln einzelner Betriebe untersucht: wie sie Güter beschaffen, erstellen, absetzen und finanzieren. Die Volkswirtschaftslehre betrachtet dagegen die gesamtwirtschaftlichen Zusammenhänge wie Konjunktur, Inflation und Arbeitsmarkt. Beide gehören zu den Wirtschaftswissenschaften und ergänzen sich. Die BWL will das Verhalten von Betrieben erklären, gestalten und verbessern; sie ist damit zugleich Erklärungs- und Entscheidungslehre." },
+      { heading: "Das Grundproblem der Knappheit", text: "Ausgangspunkt allen Wirtschaftens ist die Knappheit. Menschliche Bedürfnisse sind praktisch unbegrenzt, die Mittel zu ihrer Befriedigung aber begrenzt. Deshalb muss gewählt werden, und jede Wahl hat Opportunitätskosten, also den entgangenen Nutzen der nächstbesten Alternative. Wer sein Geld für das eine ausgibt, kann es nicht für das andere verwenden. Wirtschaften heißt, mit knappen Mitteln bewusst und planvoll umzugehen." },
+      { heading: "Bedürfnisse, Bedarf und Nachfrage", text: "Ein Bedürfnis ist ein empfundener Mangel mit dem Wunsch, ihn zu beseitigen. Man unterscheidet Existenzbedürfnisse wie Essen und Wohnen, Kulturbedürfnisse wie Bildung und Luxusbedürfnisse. Wird ein Bedürfnis mit Kaufkraft hinterlegt, entsteht Bedarf. Trifft der Bedarf am Markt auf ein Angebot und äußert sich in konkreten Kaufabsichten, spricht man von Nachfrage. Diese Kette vom Bedürfnis zur Nachfrage ist der Ausgangspunkt jeder Marktanalyse." },
+      { heading: "Güterarten", text: "Güter sind Mittel zur Bedürfnisbefriedigung. Freie Güter wie Luft sind unbegrenzt verfügbar und kosten nichts; knappe oder wirtschaftliche Güter sind begrenzt und haben einen Preis. Man unterscheidet weiter Sachgüter und Dienstleistungen, Konsumgüter für den Endverbraucher und Produktionsgüter für die Herstellung, sowie Verbrauchsgüter, die bei der Nutzung aufgezehrt werden, und Gebrauchsgüter, die länger dienen. Nur mit knappen Gütern befasst sich die Wirtschaftslehre." },
+      { heading: "Das ökonomische Prinzip", text: "Die zentrale Entscheidungsregel ist das ökonomische Prinzip. Beim Minimalprinzip ist ein Ziel vorgegeben, etwa eine Produktionsmenge, und der Mitteleinsatz soll minimal sein. Beim Maximalprinzip ist der Mitteleinsatz fix, etwa ein Budget, und der Ertrag soll maximal werden. Ein verbreiteter Denkfehler ist das sogenannte Optimalprinzip, bei dem gleichzeitig Aufwand minimiert und Ertrag maximiert werden soll. Das ist logisch unmöglich, weil man immer nur eine Größe festlegen und die andere optimieren kann." },
+      { heading: "Betrieb, Unternehmen, Firma", text: "Diese drei Begriffe werden oft verwechselt. Der Betrieb ist die technisch-organisatorische Einheit, in der Leistungen erstellt werden. Das Unternehmen ist die rechtlich-finanzielle Einheit, die am Markt auftritt und das Risiko trägt. Die Firma schließlich ist nur der im Handelsregister eingetragene Name des Kaufmanns, unter dem er seine Geschäfte betreibt. Die Firma ist also nicht das Unternehmen selbst, sondern lediglich sein Name." },
+      { heading: "Produktionsfaktoren der Volkswirtschaft", text: "Die Volkswirtschaftslehre kennt drei klassische Produktionsfaktoren. Boden umfasst alle natürlichen Ressourcen und Standorte. Arbeit ist die körperliche und geistige menschliche Leistung. Kapital meint die produzierten Produktionsmittel wie Maschinen, Werkzeuge und Gebäude sowie das Geldkapital. Manche Ökonomen ergänzen den technischen Fortschritt oder das Wissen als vierten Faktor. Diese Faktoren werden kombiniert, um neue Güter zu erzeugen." },
+      { heading: "Produktionsfaktoren nach Gutenberg", text: "Die Betriebswirtschaft nutzt die feinere Einteilung von Erich Gutenberg. Er trennt Elementarfaktoren und den dispositiven Faktor. Zu den Elementarfaktoren zählen die objektbezogene ausführende Arbeit, die Betriebsmittel wie Maschinen und Gebäude sowie die Werkstoffe, also Roh-, Hilfs- und Betriebsstoffe. Der dispositive Faktor umfasst die leitende, planende, organisierende und kontrollierende Tätigkeit der Geschäftsführung. Er kombiniert die Elementarfaktoren sinnvoll und ist der eigentliche Motor der Wertschöpfung." },
+      { heading: "Wie Faktoren zusammenwirken", text: "Faktoren lassen sich unterschiedlich kombinieren. Bei limitationaler Kombination ist das Verhältnis fest vorgegeben, etwa vier Räder pro Auto; mehr Räder ohne mehr Karosserien bringen nichts. Bei substitutionaler Kombination lassen sich Faktoren teilweise gegeneinander tauschen, etwa Maschinen statt Handarbeit. Ein zentrales Ziel ist die optimale Faktorkombination, bei der ein gegebener Output mit möglichst geringem Faktoreinsatz erreicht wird. Das ist die Produktionsseite des ökonomischen Prinzips." },
+      { heading: "Betriebliche Funktionen und Wertschöpfung", text: "Ein Betrieb gliedert sich in Funktionsbereiche, die eine Wertschöpfungskette bilden. Die Hauptfunktionen sind Beschaffung, Produktion oder Leistungserstellung und Absatz. Dazu kommen Querschnittsfunktionen wie Finanzierung, Personal, Rechnungswesen, Organisation und Forschung. Jede Stufe soll den Wert des Produkts erhöhen. Die Wertschöpfung ist die Differenz zwischen dem Wert der eingekauften Vorleistungen und dem Wert der verkauften Leistung; sie zeigt, was der Betrieb selbst zum Wert beigetragen hat." },
+      { heading: "Das Zielsystem", text: "Unternehmen verfolgen ein Bündel von Zielen. Sachziele legen fest, was produziert wird, also Produkte, Märkte und Qualität. Formalziele beschreiben den wirtschaftlichen Erfolg: Gewinn, Rentabilität, Liquidität, Produktivität, Marktanteil und Wachstum. Dazu kommen soziale Ziele wie faire Arbeitsbedingungen und ökologische Ziele wie Umweltschutz. Ziele haben zudem Dimensionen wie Inhalt, Ausmaß und Zeitbezug; ein Ziel sollte konkret und messbar formuliert sein, um überprüfbar zu sein." },
+      { heading: "Beziehungen zwischen Zielen", text: "Ziele stehen zueinander in Beziehung. Komplementäre Ziele fördern sich gegenseitig, etwa bessere Qualität und höhere Kundenzufriedenheit. Konkurrierende Ziele stehen im Konflikt, etwa hohe Löhne und niedrige Kosten. Indifferente Ziele beeinflussen sich nicht. Das Management muss zwischen konkurrierenden Zielen abwägen und Prioritäten setzen. Der Umgang mit solchen Zielkonflikten ist eine der wichtigsten Führungsaufgaben überhaupt." },
+      { heading: "Kennzahl Produktivität", text: "Erfolg wird über Kennzahlen messbar. Die Produktivität setzt die Ausbringungsmenge ins Verhältnis zum Faktoreinsatz, gemessen in Mengeneinheiten, etwa Stück pro Arbeitsstunde. Sie ist eine technische Größe und sagt nichts über Geldwerte aus. Die Arbeitsproduktivität ist die bekannteste Teilproduktivität. Steigende Produktivität bedeutet, mit demselben Einsatz mehr zu produzieren, und ist ein zentraler Treiber von Wohlstand." },
+      { heading: "Kennzahl Wirtschaftlichkeit", text: "Die Wirtschaftlichkeit vergleicht Ertrag und Aufwand in Geldeinheiten. Sie berechnet sich als Ertrag geteilt durch Aufwand; ein Wert über eins bedeutet, dass mehr erwirtschaftet als eingesetzt wurde. Alternativ betrachtet man Leistung geteilt durch Kosten. Anders als die Produktivität ist die Wirtschaftlichkeit eine wertmäßige Größe und damit über verschiedene Bereiche hinweg vergleichbar." },
+      { heading: "Kennzahl Rentabilität", text: "Die Rentabilität misst den Erfolg im Verhältnis zum eingesetzten Kapital. Die Eigenkapitalrentabilität ist Gewinn geteilt durch Eigenkapital und zeigt die Verzinsung des eingesetzten Eigenkapitals. Die Gesamtkapitalrentabilität bezieht auch das Fremdkapital ein. Die Umsatzrentabilität ist Gewinn geteilt durch Umsatz und zeigt, wie viel von jedem Euro Umsatz als Gewinn bleibt. Diese Kennzahlen machen Unternehmen unterschiedlicher Größe vergleichbar." },
+      { heading: "Liquidität und der Leverage-Effekt", text: "Die Liquidität ist die Fähigkeit, jederzeit fällige Zahlungen leisten zu können. Ein Unternehmen kann profitabel und trotzdem zahlungsunfähig sein, wenn ihm liquide Mittel fehlen; Zahlungsunfähigkeit ist ein Insolvenzgrund. Interessant ist der Leverage-Effekt: Solange die Gesamtkapitalrentabilität über dem Fremdkapitalzins liegt, steigert zusätzliches Fremdkapital die Eigenkapitalrentabilität. Dreht sich das Verhältnis, wirkt der Hebel jedoch nach unten und erhöht das Risiko." },
+      { heading: "Shareholder und Stakeholder", text: "Zwei Sichtweisen prägen die Unternehmensführung. Der Shareholder-Value-Ansatz stellt den Wert für die Eigentümer in den Mittelpunkt. Der Stakeholder-Ansatz berücksichtigt alle Anspruchsgruppen: Eigentümer, Mitarbeiter, Kunden, Lieferanten, Staat und Gesellschaft. Moderne Unternehmensführung versucht, die Interessen dieser Gruppen auszubalancieren, weil langfristiger Erfolg ohne zufriedene Mitarbeiter, Kunden und ein tragfähiges Umfeld kaum möglich ist." },
+      { heading: "Rechtsformen und der Kaufmannsbegriff", text: "Bei der Gründung ist die Wahl der Rechtsform eine grundlegende, schwer umkehrbare Entscheidung. Sie bestimmt Haftung, Kapitalaufbringung, Leitung, Gewinnverteilung, Steuern und Publizität. Rechtlich wichtig ist der Kaufmannsbegriff des Handelsgesetzbuchs: Wer ein Handelsgewerbe betreibt, ist Kaufmann und unterliegt besonderen Pflichten wie der Buchführung und der Eintragung ins Handelsregister. Man unterscheidet Einzelunternehmen, Personengesellschaften und Kapitalgesellschaften." },
+      { heading: "Einzelunternehmen", text: "Das Einzelunternehmen gehört einer einzigen Person, die allein entscheidet und den gesamten Gewinn erhält. Der Preis dafür ist die unbeschränkte Haftung mit dem gesamten Geschäfts- und Privatvermögen. Die Gründung ist einfach und ohne Mindestkapital möglich. Diese Rechtsform ist bei Kleingewerbetreibenden, Freiberuflern und Handwerkern verbreitet. Ihr Vorteil ist die volle Kontrolle, ihr Nachteil das volle persönliche Risiko." },
+      { heading: "Personengesellschaften", text: "Bei Personengesellschaften schließen sich mehrere Personen zusammen. Die Gesellschaft bürgerlichen Rechts eignet sich für kleinere gemeinsame Zwecke; alle Gesellschafter haften persönlich. Die offene Handelsgesellschaft ist für Kaufleute gedacht, alle haften unbeschränkt und gesamtschuldnerisch. Bei der Kommanditgesellschaft haftet mindestens ein Komplementär unbeschränkt, während die Kommanditisten nur mit ihrer Einlage haften. Gemeinsam ist ihnen die enge Verbindung von Eigentum, Leitung und persönlicher Haftung." },
+      { heading: "Die GmbH", text: "Die Gesellschaft mit beschränkter Haftung ist die beliebteste Kapitalgesellschaft in Deutschland. Sie ist eine eigene juristische Person und verlangt ein Mindeststammkapital von fünfundzwanzigtausend Euro, von dem bei der Anmeldung mindestens die Hälfte, also zwölftausendfünfhundert Euro, eingezahlt sein muss. Die Gründung erfolgt notariell mit Gesellschaftsvertrag und Eintragung ins Handelsregister. Es haftet grundsätzlich nur das Gesellschaftsvermögen, nicht das Privatvermögen der Gesellschafter." },
+      { heading: "UG und Aktiengesellschaft", text: "Die Unternehmergesellschaft, umgangssprachlich Mini-GmbH, lässt sich schon ab einem Euro Stammkapital gründen, muss aber jährlich einen Teil des Gewinns ansparen, bis sie das Stammkapital einer regulären GmbH erreicht. Die Aktiengesellschaft benötigt ein Grundkapital von fünfzigtausend Euro, das in Aktien zerlegt ist. Sie ist für große Unternehmen und die Kapitalbeschaffung an der Börse gedacht und hat mit Vorstand, Aufsichtsrat und Hauptversammlung drei Organe." },
+      { heading: "Mischformen und Genossenschaft", text: "In der Praxis gibt es Mischformen. Die GmbH und Compagnie Kommanditgesellschaft verbindet die Haftungsbeschränkung der GmbH mit der Flexibilität der Kommanditgesellschaft, indem eine GmbH die Rolle des voll haftenden Gesellschafters übernimmt. Die Genossenschaft dient der Förderung ihrer Mitglieder, etwa im Handel oder Wohnungswesen, und beruht auf dem Prinzip ein Mitglied, eine Stimme. Diese Formen zeigen, wie sich Haftung, Steuern und Mitsprache flexibel kombinieren lassen." },
+      { heading: "Das Prinzip der Haftungsbeschränkung", text: "Der Kern der Kapitalgesellschaft ist die Haftungsbeschränkung: Es haftet nur das Gesellschaftsvermögen, nicht das Privatvermögen der Gesellschafter. Das senkt das persönliche Risiko und erleichtert das Einsammeln von Kapital. Der Preis dafür sind Mindestkapital, notarielle Gründung, Registereintragung sowie strengere Buchführungs- und Offenlegungspflichten. Haftungsbeschränkung ist also kein Geschenk, sondern ein Tausch von persönlichem Risiko gegen mehr Formalität und Transparenz." },
+      { heading: "Standortwahl", text: "Die Standortwahl gehört zu den grundlegenden Entscheidungen und ist später kaum korrigierbar. Beschaffungsorientierte Faktoren sind Nähe zu Rohstoffen, Arbeitskräften und Zulieferern. Absatzorientierte Faktoren sind Nähe zu Kunden und Kaufkraft im Einzugsgebiet. Dazu kommen Infrastruktur, Energie, Steuern, Fördermittel und rechtliche Rahmenbedingungen. Für digitale Geschäftsmodelle verlieren physische Standortfaktoren an Gewicht, während Datenanbindung und Fachkräfte wichtiger werden." },
+      { heading: "Unternehmenszusammenschlüsse", text: "Unternehmen können kooperieren oder sich konzentrieren. Kooperationen sind lose Zusammenarbeit bei rechtlicher Selbstständigkeit, etwa in Einkaufsverbünden. Konzentration bedeutet den Verlust wirtschaftlicher oder rechtlicher Selbstständigkeit. Ein Kartell ist eine Absprache zur Wettbewerbsbeschränkung und daher rechtlich streng verboten oder genehmigungspflichtig. Ein Konzern fasst mehrere rechtlich selbstständige Unternehmen unter einheitlicher Leitung zusammen. Bei einer Fusion verschmelzen Unternehmen vollständig zu einer Einheit." },
+      { heading: "Insolvenz und Grenzen des Wirtschaftens", text: "Nicht jedes Unternehmen ist erfolgreich. Eine Insolvenz droht bei Zahlungsunfähigkeit, drohender Zahlungsunfähigkeit oder Überschuldung. Das Insolvenzverfahren soll die Gläubiger geordnet befriedigen und dem Unternehmen möglichst eine Sanierung ermöglichen. Für die Rechtsformwahl ist das bedeutsam, weil die Haftung entscheidet, ob im Ernstfall auch das Privatvermögen der Eigentümer betroffen ist. Damit schließt sich der Kreis zur ersten großen Gründungsentscheidung." },
     ],
   },
   {
     id: "pod-rewe",
     icon: "📊",
-    title: "Rechnungswesen: Bilanz, Buchführung und GuV",
+    title: "Rechnungswesen: Bilanz, Buchführung, GuV, Kosten",
     sem: 1,
-    topic: "Inventur, Bilanz, doppelte Buchführung, GuV, Abschreibungen, Umsatzsteuer",
+    topic: "Inventur, Bilanz, doppelte Buchführung, GuV, Abschreibungen, KLR",
     segments: [
-      {
-        heading: "Aufgaben des Rechnungswesens",
-        text: "Das Rechnungswesen erfasst, dokumentiert und wertet alle Geld- und Leistungsströme eines Betriebs aus. Es erfüllt vier Aufgaben: die Dokumentation aller Geschäftsvorfälle, die Rechenschaft und Information gegenüber außen, die Kontrolle von Wirtschaftlichkeit und Liquidität sowie die Bereitstellung von Zahlen für Planung und Entscheidung. Ohne verlässliche Zahlen ist Steuerung unmöglich.",
-      },
-      {
-        heading: "Internes und externes Rechnungswesen",
-        text: "Man trennt zwei Bereiche. Das externe Rechnungswesen, die Finanzbuchhaltung mit Bilanz und Gewinn- und Verlustrechnung, richtet sich an Außenstehende wie Finanzamt, Banken und Investoren und ist durch das Handelsgesetzbuch und das Steuerrecht streng geregelt. Das interne Rechnungswesen, vor allem die Kosten- und Leistungsrechnung, dient der Steuerung im Inneren und ist weitgehend frei gestaltbar. Dazu kommen betriebliche Statistik und Planungsrechnung.",
-      },
-      {
-        heading: "Inventur und Inventar",
-        text: "Am Anfang steht die Inventur, die mengen- und wertmäßige Bestandsaufnahme aller Vermögensgegenstände und Schulden. Bei der Stichtagsinventur wird zu einem festen Termin gezählt, bei der permanenten Inventur laufend über das Jahr. Das Ergebnis ist das Inventar, ein ausführliches Verzeichnis in Staffelform, das Vermögen und Schulden einzeln auflistet und das Reinvermögen als Differenz ausweist.",
-      },
-      {
-        heading: "Die Bilanz",
-        text: "Aus dem Inventar wird die Bilanz in Kontenform verdichtet. Links stehen die Aktiva, die Mittelverwendung: das Anlagevermögen, das dem Betrieb langfristig dient, und das Umlaufvermögen wie Vorräte, Forderungen und Kasse. Rechts stehen die Passiva, die Mittelherkunft: das Eigenkapital und das Fremdkapital, also die Schulden. Die Aktivseite zeigt, wofür das Geld verwendet wurde, die Passivseite, woher es stammt.",
-      },
-      {
-        heading: "Die Bilanzgleichung",
-        text: "Weil jeder Vermögenswert irgendwie finanziert sein muss, sind beide Bilanzseiten immer exakt gleich groß. Das ist die Bilanzgleichung: Summe der Aktiva gleich Summe der Passiva. Geschäftsvorfälle verändern die Bilanz auf vier Arten. Beim Aktivtausch wechselt Vermögen die Form, etwa Ware gegen Kasse. Beim Passivtausch verschiebt sich die Kapitalstruktur. Eine Bilanzverlängerung tritt ein, wenn beide Seiten gleichzeitig wachsen, eine Bilanzverkürzung, wenn beide schrumpfen. Die Gleichheit bleibt in allen Fällen erhalten.",
-      },
-      {
-        heading: "Bestandskonten und Soll und Haben",
-        text: "Für die laufende Buchung wird die Bilanz in Konten aufgelöst. Jedes Konto hat zwei Seiten: Soll links und Haben rechts. Aktivkonten mehren sich im Soll und mindern sich im Haben, Passivkonten genau umgekehrt. Soll und Haben sind dabei reine Fachbegriffe für links und rechts, sie bedeuten nicht Schuld oder Guthaben. Diese Verwechslung ist ein Klassiker in der Klausur.",
-      },
-      {
-        heading: "Die doppelte Buchführung",
-        text: "Das System heißt doppelt, weil jeder Geschäftsvorfall auf mindestens zwei Konten gebucht wird, einmal im Soll und einmal im Haben, in gleicher Höhe. Der Buchungssatz lautet immer Soll an Haben. Kaufst du zum Beispiel Ware bar, so buchst du Waren an Kasse. So bleibt die Bilanz stets ausgeglichen, und Fehler fallen auf, weil die Summe aller Sollbuchungen der Summe aller Habenbuchungen entsprechen muss.",
-      },
-      {
-        heading: "Erfolgskonten und die GuV",
-        text: "Nicht jeder Vorgang ist bloßer Vermögenstausch; manche verändern das Eigenkapital erfolgswirksam. Dafür gibt es Erfolgskonten: Aufwendungen mindern das Eigenkapital, Erträge mehren es. Am Jahresende werden sie in der Gewinn- und Verlustrechnung gegenübergestellt. Überwiegen die Erträge, entsteht Gewinn, überwiegen die Aufwendungen, Verlust. Während die Bilanz einen Stichtag zeigt, bildet die Gewinn- und Verlustrechnung einen ganzen Zeitraum ab.",
-      },
-      {
-        heading: "Stromgrößen sauber trennen",
-        text: "Eine häufige Fehlerquelle sind die Strombegriffe. Einzahlung und Auszahlung betreffen den Zahlungsmittelbestand, also Bargeld und Bankguthaben. Einnahme und Ausgabe betreffen das Geldvermögen einschließlich Forderungen und Verbindlichkeiten. Ertrag und Aufwand betreffen das Reinvermögen und damit den Erfolg. Ein Beispiel: Der Kauf einer Maschine ist sofort eine Auszahlung, der Aufwand entsteht aber erst später und verteilt über die Nutzungsdauer.",
-      },
-      {
-        heading: "Abschreibungen",
-        text: "Abschreibungen verteilen die Anschaffungskosten eines Anlageguts über seine Nutzungsdauer und bilden so den Wertverlust ab. Bei der linearen Abschreibung wird jedes Jahr der gleiche Betrag abgeschrieben; eine Maschine für zehntausend Euro mit fünf Jahren Nutzungsdauer verliert also zweitausend Euro pro Jahr. Bei der degressiven Abschreibung sinkt der Betrag von Jahr zu Jahr, weil ein fester Prozentsatz auf den Restwert angewandt wird. Abschreibungen sind Aufwand, mindern also den Gewinn, ohne dass Geld abfließt.",
-      },
-      {
-        heading: "Die Umsatzsteuer",
-        text: "Beim Verkauf fällt Umsatzsteuer an, in Deutschland meist neunzehn Prozent, ermäßigt sieben Prozent. Das Unternehmen zieht die Steuer für den Staat ein. Die beim Einkauf gezahlte Steuer heißt Vorsteuer und kann verrechnet werden. Die Zahllast an das Finanzamt ist die vereinnahmte Umsatzsteuer minus der gezahlten Vorsteuer. Für das Unternehmen ist die Umsatzsteuer damit ein durchlaufender Posten; wirtschaftlich getragen wird sie vom Endverbraucher.",
-      },
-      {
-        heading: "Kosten- und Leistungsrechnung",
-        text: "Das interne Rechnungswesen fragt, wo im Betrieb welche Kosten entstehen und was einzelne Produkte kosten. Die Kostenartenrechnung erfasst, welche Kosten anfallen, etwa Material und Personal. Die Kostenstellenrechnung verteilt sie auf die Bereiche, in denen sie entstehen. Die Kostenträgerrechnung ordnet sie schließlich den einzelnen Produkten zu. Wichtig ist die Trennung in fixe Kosten, die unabhängig von der Menge anfallen, und variable Kosten, die mit der Ausbringung steigen. Daraus lassen sich Preisuntergrenzen und der Break-even-Punkt berechnen.",
-      },
+      { heading: "Aufgaben des Rechnungswesens", text: "Das Rechnungswesen erfasst, dokumentiert und wertet alle Geld- und Leistungsströme eines Betriebs aus. Es erfüllt vier Aufgaben: die Dokumentation aller Geschäftsvorfälle, die Rechenschaft und Information gegenüber außen, die Kontrolle von Wirtschaftlichkeit und Liquidität sowie die Bereitstellung von Zahlen für Planung und Entscheidung. Ohne verlässliche Zahlen ist Steuerung unmöglich; das Rechnungswesen ist deshalb das Gedächtnis und das Cockpit des Unternehmens zugleich." },
+      { heading: "Die Teilbereiche", text: "Das Rechnungswesen hat vier Teilbereiche. Die Finanzbuchhaltung mit Bilanz und Gewinn- und Verlustrechnung richtet sich nach außen. Die Kosten- und Leistungsrechnung dient der internen Steuerung. Die betriebswirtschaftliche Statistik wertet Zahlen im Zeit- und Betriebsvergleich aus. Die Planungsrechnung schaut nach vorn und schätzt künftige Entwicklungen. Extern ist streng geregelt, intern weitgehend frei gestaltbar." },
+      { heading: "Gesetzliche Grundlagen", text: "Die Buchführungspflicht ergibt sich vor allem aus dem Handelsgesetzbuch und dem Steuerrecht. Kaufleute müssen Bücher führen und einen Jahresabschluss erstellen. Dabei gelten die Grundsätze ordnungsmäßiger Buchführung, etwa Vollständigkeit, Richtigkeit, Klarheit und das Belegprinzip: keine Buchung ohne Beleg. Das Vorsichtsprinzip verlangt, Risiken und Verluste früh, Gewinne aber erst bei Realisierung auszuweisen. Diese Grundsätze sichern die Verlässlichkeit der Zahlen." },
+      { heading: "Inventur und Inventar", text: "Am Anfang steht die Inventur, die mengen- und wertmäßige Bestandsaufnahme aller Vermögensgegenstände und Schulden. Bei der Stichtagsinventur wird zu einem festen Termin gezählt, gemessen und gewogen, bei der permanenten Inventur laufend über das Jahr mithilfe der Lagerbuchführung. Das Ergebnis ist das Inventar, ein ausführliches Staffelverzeichnis, das Vermögen und Schulden einzeln aufführt und das Reinvermögen als Differenz ausweist." },
+      { heading: "Die Bilanz", text: "Aus dem Inventar wird die Bilanz in Kontenform verdichtet. Links stehen die Aktiva, die Mittelverwendung: das Anlagevermögen, das dem Betrieb dauerhaft dient, wie Grundstücke und Maschinen, und das Umlaufvermögen wie Vorräte, Forderungen und Kasse. Rechts stehen die Passiva, die Mittelherkunft: das Eigenkapital und das Fremdkapital, also Verbindlichkeiten. Die Aktivseite zeigt, wofür das Geld verwendet wurde, die Passivseite, woher es stammt." },
+      { heading: "Die Bilanzgleichung", text: "Weil jeder Vermögenswert finanziert sein muss, sind beide Bilanzseiten immer exakt gleich groß. Das ist die Bilanzgleichung: Summe der Aktiva gleich Summe der Passiva. Das Eigenkapital ergibt sich als Vermögen minus Schulden und ist damit eine Restgröße. Steigt das Vermögen stärker als die Schulden, wächst das Eigenkapital; das ist der buchhalterische Ausdruck von Gewinn." },
+      { heading: "Die vier Grundfälle der Bilanzänderung", text: "Jeder Geschäftsvorfall verändert die Bilanz auf eine von vier Arten. Beim Aktivtausch wechselt Vermögen die Form, etwa Ware gegen Kasse; die Bilanzsumme bleibt gleich. Beim Passivtausch verschiebt sich die Kapitalstruktur, etwa Umwandlung einer Lieferantenschuld in ein Darlehen. Eine Bilanzverlängerung liegt vor, wenn Aktiva und Passiva zugleich wachsen, etwa Wareneinkauf auf Ziel. Eine Bilanzverkürzung liegt vor, wenn beide schrumpfen, etwa Tilgung einer Schuld per Bank. Die Gleichheit bleibt stets erhalten." },
+      { heading: "Bestandskonten und Soll und Haben", text: "Für die laufende Buchung wird die Bilanz in Konten aufgelöst. Jedes Konto hat zwei Seiten: Soll links und Haben rechts. Aktivkonten mehren sich im Soll und mindern sich im Haben; Passivkonten genau umgekehrt. Soll und Haben sind reine Fachbegriffe für links und rechts und bedeuten nicht Schuld oder Guthaben. Diese Verwechslung ist ein Klassiker in der Klausur und sollte unbedingt vermieden werden." },
+      { heading: "Die doppelte Buchführung", text: "Das System heißt doppelt, weil jeder Geschäftsvorfall auf mindestens zwei Konten gebucht wird, einmal im Soll und einmal im Haben, in gleicher Höhe. Der Buchungssatz lautet immer Soll an Haben. Kaufst du zum Beispiel Ware für tausend Euro bar, buchst du Waren an Kasse tausend Euro. So bleibt die Bilanz stets ausgeglichen. Fehler fallen auf, weil die Summe aller Sollbuchungen der Summe aller Habenbuchungen entsprechen muss." },
+      { heading: "Eröffnung und Abschluss der Konten", text: "Zu Beginn des Jahres werden die Bestandskonten über das Eröffnungsbilanzkonto eröffnet, am Ende über das Schlussbilanzkonto abgeschlossen. Die Salden der Konten bilden dann die neue Schlussbilanz. Dieser geschlossene Kreislauf aus Eröffnung, laufender Buchung und Abschluss stellt sicher, dass keine Werte verloren gehen und die Buchführung jederzeit prüfbar bleibt." },
+      { heading: "Erfolgskonten und die GuV", text: "Nicht jeder Vorgang ist bloßer Vermögenstausch; manche verändern das Eigenkapital erfolgswirksam. Dafür gibt es Erfolgskonten: Aufwendungen mindern das Eigenkapital, Erträge mehren es. Am Jahresende werden sie in der Gewinn- und Verlustrechnung gegenübergestellt. Überwiegen die Erträge, entsteht Gewinn, überwiegen die Aufwendungen, Verlust. Der Saldo wird auf das Eigenkapitalkonto übertragen. Während die Bilanz einen Stichtag zeigt, bildet die Gewinn- und Verlustrechnung einen ganzen Zeitraum ab." },
+      { heading: "Stromgrößen sauber trennen", text: "Eine häufige Fehlerquelle sind die Strombegriffe. Einzahlung und Auszahlung betreffen den Zahlungsmittelbestand, also Bargeld und Bankguthaben. Einnahme und Ausgabe betreffen das Geldvermögen einschließlich Forderungen und Verbindlichkeiten. Ertrag und Aufwand betreffen das Reinvermögen und damit den Erfolg. Kosten und Leistung schließlich sind die betrieblichen, auf den eigentlichen Betriebszweck bezogenen Größen der internen Rechnung. Diese Begriffe genau zu trennen, ist prüfungsentscheidend." },
+      { heading: "Ein Beispiel zu den Strombegriffen", text: "Der Kauf einer Maschine für zehntausend Euro per Überweisung ist sofort eine Auszahlung und Ausgabe, aber noch kein Aufwand. Der Aufwand entsteht erst später, verteilt über die Nutzungsdauer als Abschreibung. Umgekehrt ist die Aufnahme eines Kredits eine Einzahlung, aber kein Ertrag, weil ihr eine gleich hohe Schuld gegenübersteht. Wer diese Unterschiede versteht, vermeidet die häufigsten Denkfehler im Rechnungswesen." },
+      { heading: "Abschreibungen: die lineare Methode", text: "Abschreibungen verteilen die Anschaffungskosten eines Anlageguts über seine Nutzungsdauer und bilden den Wertverlust ab. Bei der linearen Abschreibung wird jedes Jahr der gleiche Betrag abgeschrieben. Eine Maschine für zehntausend Euro mit fünf Jahren Nutzungsdauer verliert also jährlich zweitausend Euro; nach fünf Jahren ist sie auf einen Erinnerungswert abgeschrieben. Die lineare Methode ist einfach und in der Praxis am weitesten verbreitet." },
+      { heading: "Abschreibungen: die degressive Methode", text: "Bei der degressiven Abschreibung wird jedes Jahr ein fester Prozentsatz auf den jeweiligen Restwert angewandt. Die Beträge sind am Anfang hoch und sinken von Jahr zu Jahr. Das bildet den oft rascheren anfänglichen Wertverlust vieler Güter besser ab. In beiden Fällen gilt: Abschreibungen sind Aufwand, mindern also den Gewinn, ohne dass Geld abfließt. Sie sind damit ein wichtiger Bestandteil der Innenfinanzierung." },
+      { heading: "Die Umsatzsteuer", text: "Beim Verkauf fällt Umsatzsteuer an, in Deutschland meist neunzehn Prozent, ermäßigt sieben Prozent. Das Unternehmen zieht die Steuer für den Staat ein und schuldet sie dem Finanzamt. Die beim Einkauf gezahlte Steuer heißt Vorsteuer und kann verrechnet werden. Die Zahllast ist die vereinnahmte Umsatzsteuer minus der gezahlten Vorsteuer. Für das Unternehmen ist die Umsatzsteuer ein durchlaufender Posten; wirtschaftlich getragen wird sie vom Endverbraucher." },
+      { heading: "Der Jahresabschluss", text: "Am Ende des Geschäftsjahres steht der Jahresabschluss. Er besteht bei Kaufleuten mindestens aus Bilanz und Gewinn- und Verlustrechnung, bei Kapitalgesellschaften zusätzlich aus einem Anhang und oft einem Lagebericht. Größere Gesellschaften müssen ihren Abschluss prüfen lassen und offenlegen. Der Jahresabschluss informiert Eigentümer, Gläubiger und Öffentlichkeit über die Vermögens-, Finanz- und Ertragslage des Unternehmens." },
+      { heading: "Kosten- und Leistungsrechnung", text: "Das interne Rechnungswesen fragt, wo im Betrieb welche Kosten entstehen und was einzelne Produkte kosten. Die Kostenartenrechnung erfasst, welche Kosten anfallen, etwa Material-, Personal- und Abschreibungskosten. Die Kostenstellenrechnung verteilt sie auf die Bereiche, in denen sie entstehen, mithilfe des Betriebsabrechnungsbogens. Die Kostenträgerrechnung ordnet sie schließlich den einzelnen Produkten zu und liefert so die Grundlage für Kalkulation und Preisbildung." },
+      { heading: "Fixe und variable Kosten", text: "Zentral ist die Unterscheidung nach dem Beschäftigungsverhalten. Fixe Kosten fallen unabhängig von der Ausbringungsmenge an, etwa Miete und Gehälter. Variable Kosten steigen mit der Menge, etwa Materialverbrauch. Die Stückkosten sinken mit steigender Menge, weil sich die Fixkosten auf mehr Stück verteilen; das nennt man Fixkostendegression oder Kostenremanenz. Diese Kostenstruktur bestimmt, wie empfindlich der Gewinn auf Mengenschwankungen reagiert." },
+      { heading: "Deckungsbeitrag und Break-even", text: "Der Deckungsbeitrag ist der Verkaufspreis minus die variablen Stückkosten; er trägt zur Deckung der Fixkosten bei. Sind die Fixkosten gedeckt, beginnt die Gewinnzone. Der Break-even-Punkt ist die Menge, bei der Erlöse und Gesamtkosten genau gleich sind, also weder Gewinn noch Verlust entsteht. Er berechnet sich als Fixkosten geteilt durch den Stückdeckungsbeitrag. Diese Rechnung zeigt, ab welcher Absatzmenge sich ein Produkt lohnt." },
     ],
   },
   {
     id: "pod-handel",
     icon: "🛍️",
-    title: "Handel: Funktionen, Betriebsformen und Kalkulation",
+    title: "Handel: Funktionen, Betriebsformen, Kalkulation",
     sem: 1,
     topic: "Handelsfunktionen, Groß- und Einzelhandel, Handelsspanne, Omnichannel",
     segments: [
-      {
-        heading: "Was Handel ist",
-        text: "Handel bedeutet, Waren zu beschaffen und ohne wesentliche Be- oder Verarbeitung weiterzuverkaufen. Man unterscheidet den Handel im funktionellen Sinn, also die Tätigkeit des Handeltreibens, die auch ein Industriebetrieb ausüben kann, und den Handel im institutionellen Sinn, also die Handelsbetriebe selbst. Der Handel steht als Mittler zwischen Produktion und Konsum.",
-      },
-      {
-        heading: "Großhandel und Einzelhandel",
-        text: "Der Großhandel verkauft an gewerbliche Abnehmer wie Wiederverkäufer, Weiterverarbeiter oder Großverbraucher, nicht an private Endkunden. Der Einzelhandel dagegen verkauft an die privaten Endverbraucher. Dazwischen kann der Handel mehrstufig sein, wenn Ware über mehrere Handelsstufen läuft, oder direkt, wenn der Hersteller unmittelbar an den Kunden liefert.",
-      },
-      {
-        heading: "Die Handelsfunktionen",
-        text: "Der oft gehörte Vorwurf, der Handel verteuere die Ware nur, verkennt seine Leistungen. Die Raumüberbrückungsfunktion bringt Ware vom Erzeuger zum Verbraucher. Die Zeitüberbrückungsfunktion lagert Ware, bis sie gebraucht wird. Die Quantitätsfunktion teilt große Mengen in kundengerechte Portionen. Die Sortimentsfunktion bündelt Waren vieler Hersteller zu einem passenden Angebot. Dazu kommen die Qualitätsfunktion durch Prüfung und Auswahl sowie Kredit-, Beratungs- und Werbefunktion. Erst diese Leistungen rechtfertigen die Handelsspanne.",
-      },
-      {
-        heading: "Betriebsformen des Einzelhandels",
-        text: "Der Einzelhandel tritt in vielen Betriebsformen auf. Das Fachgeschäft bietet ein schmales, tiefes Sortiment mit viel Beratung. Das Warenhaus führt ein breites Sortiment in Innenstadtlagen. Der Supermarkt und der Verbrauchermarkt setzen auf Selbstbedienung. Der Discounter arbeitet mit schmalem Sortiment, niedrigen Preisen und schlanken Prozessen. Dazu kommen Fachmarkt, Versandhandel und der Online-Handel. Jede Form hat ihre eigene Logik aus Sortiment, Preis, Standort und Servicegrad.",
-      },
-      {
-        heading: "Sortiment: Breite und Tiefe",
-        text: "Das Sortiment ist die Gesamtheit aller angebotenen Artikel. Die Sortimentsbreite bezeichnet die Zahl unterschiedlicher Warengruppen, die Sortimentstiefe die Zahl der Varianten innerhalb einer Gruppe. Ein Discounter hat ein breites, aber flaches Sortiment, ein Fachgeschäft ein schmales, aber tiefes. Die Sortimentspolitik ist eine strategische Kernentscheidung, weil sie Zielgruppe, Lagerkosten und Wettbewerbsposition zugleich bestimmt.",
-      },
-      {
-        heading: "Handelsspanne und Kalkulation",
-        text: "Die Handelsspanne ist die Differenz zwischen Einkaufs- und Verkaufspreis; sie muss die Handlungskosten decken und den Gewinn ermöglichen. In der Handelskalkulation rechnet man vom Listeneinkaufspreis über Rabatte zum Zieleinkaufspreis, zieht Skonto ab, addiert Bezugskosten zum Einstandspreis, schlägt Handlungskosten und Gewinn auf und gelangt so zum Verkaufspreis. Wer die Spanne zu knapp ansetzt, macht Verlust; wer sie zu hoch ansetzt, verliert Kunden.",
-      },
-      {
-        heading: "Standort und Einzugsgebiet",
-        text: "Für den stationären Handel ist der Standort oft entscheidend. Wichtige Faktoren sind Passantenfrequenz, Kaufkraft im Einzugsgebiet, Erreichbarkeit, Parkmöglichkeiten und die Nähe zu Magnetbetrieben, die Kundenströme anziehen. Das Einzugsgebiet beschreibt den räumlichen Bereich, aus dem die Kunden kommen. Eine Fehlentscheidung beim Standort lässt sich später kaum korrigieren.",
-      },
-      {
-        heading: "Dynamik der Betriebsformen",
-        text: "Betriebsformen sind nicht statisch. Das Modell vom Rad des Einzelhandels beschreibt, wie neue Anbieter oft als günstige, schlichte Formate starten, mit der Zeit Leistungen und Preise erhöhen und so selbst wieder Raum für neue Billiganbieter schaffen. Der Discounter von gestern wird zum Vollsortimenter von morgen. Dieser ständige Wandel erklärt, warum der Handel eine der dynamischsten Branchen überhaupt ist.",
-      },
-      {
-        heading: "Vom Multichannel zum Omnichannel",
-        text: "Kunden nutzen heute mehrere Kanäle gleichzeitig. Beim Multichannel betreibt ein Händler mehrere getrennte Absatzkanäle nebeneinander. Beim Omnichannel greifen alle Kanäle nahtlos ineinander: Der Kunde informiert sich online und kauft im Laden, bestellt im Netz und holt in der Filiale ab, oder gibt online Gekauftes im Geschäft zurück. Ziel ist ein durchgängiges Einkaufserlebnis über alle Berührungspunkte hinweg.",
-      },
-      {
-        heading: "Category Management und Handelsmarken",
-        text: "Moderner Handel steuert das Sortiment in Warengruppen, den Kategorien, oft in enger Zusammenarbeit mit Herstellern. Das nennt man Category Management. Zunehmend wichtig sind Handelsmarken, also Eigenmarken der Händler, die höhere Spannen ermöglichen und die Kunden an den Händler binden. Der Handel ist damit längst nicht mehr nur Absatzmittler, sondern gestaltet Angebot und Marke aktiv mit.",
-      },
-      {
-        heading: "Der Handel in Zahlen",
-        text: "Der Einzelhandel ist eine tragende Säule der Volkswirtschaft und einer der größten Arbeitgeber. Ein wachsender Teil des Umsatzes verlagert sich ins Netz, doch der stationäre Handel bleibt der weitaus größere Kanal. Der stationäre Handel reagiert, indem er sich als Erlebnis- und Serviceort neu erfindet, während der Online-Handel mit Auswahl und Bequemlichkeit punktet. Genau an dieser Schnittstelle von Handel und Digitalisierung setzt dein Studiengang an.",
-      },
+      { heading: "Was Handel ist", text: "Handel bedeutet, Waren zu beschaffen und ohne wesentliche Be- oder Verarbeitung weiterzuverkaufen. Man unterscheidet den Handel im funktionellen Sinn, also die Tätigkeit des Handeltreibens, die auch ein Industriebetrieb ausüben kann, und den Handel im institutionellen Sinn, also die Handelsbetriebe selbst. Der Handel steht als Mittler zwischen Produktion und Konsum und schafft dadurch volkswirtschaftlichen Nutzen." },
+      { heading: "Großhandel und Einzelhandel", text: "Der Großhandel verkauft an gewerbliche Abnehmer wie Wiederverkäufer, Weiterverarbeiter oder Großverbraucher, nicht an private Endkunden. Er bündelt große Mengen und beliefert den Einzelhandel. Der Einzelhandel dagegen verkauft an die privaten Endverbraucher in haushaltsüblichen Mengen. Dazwischen kann der Handel mehrstufig sein, wenn Ware über mehrere Handelsstufen läuft, oder direkt, wenn der Hersteller unmittelbar an den Kunden liefert." },
+      { heading: "Warum es den Handel gibt", text: "Ohne Handel müsste jeder Hersteller jeden Kunden einzeln beliefern und jeder Kunde jeden Hersteller einzeln aufsuchen. Die Zahl der nötigen Kontakte wäre riesig. Der Handel bündelt Angebot und Nachfrage an einer Stelle und senkt so die Zahl der Transaktionen und die Transaktionskosten drastisch. Diese Bündelungs- oder Baligkeitsfunktion ist der ökonomische Kern seiner Existenzberechtigung." },
+      { heading: "Die Überbrückungsfunktionen", text: "Der Handel überbrückt Spannungen zwischen Produktion und Konsum. Die Raumüberbrückung bringt Ware vom Erzeuger zum Verbraucher. Die Zeitüberbrückung lagert Ware, bis sie gebraucht wird, und gleicht saisonale Schwankungen aus. Die Quantitätsüberbrückung teilt große Produktionsmengen in kundengerechte Portionen. So sorgt der Handel dafür, dass die richtige Ware zur richtigen Zeit in der richtigen Menge am richtigen Ort verfügbar ist." },
+      { heading: "Die Warenfunktionen", text: "Neben der Überbrückung erfüllt der Handel warenbezogene Funktionen. Die Sortimentsfunktion bündelt Waren vieler Hersteller zu einem passenden Angebot aus einer Hand. Die Qualitätsfunktion prüft, sortiert und sichert die Güte der Ware. Dazu kommen Dienstleistungsfunktionen wie Beratung, Kreditgewährung durch Zahlungsziele und Werbung. Erst diese Leistungen rechtfertigen die Handelsspanne, die der Handel für seine Tätigkeit beansprucht." },
+      { heading: "Betriebsformen des Einzelhandels", text: "Der Einzelhandel tritt in vielen Betriebsformen auf. Das Fachgeschäft bietet ein schmales, tiefes Sortiment mit viel Beratung. Das Warenhaus führt ein breites Sortiment in Innenstadtlagen. Der Supermarkt und der Verbrauchermarkt setzen auf Selbstbedienung mit breitem Sortiment. Der Discounter arbeitet mit schmalem Sortiment, niedrigen Preisen und schlanken Prozessen. Dazu kommen Fachmarkt, Boutique, Versandhandel und Online-Handel. Jede Form hat ihre eigene Logik aus Sortiment, Preis, Standort und Servicegrad." },
+      { heading: "Betriebsformen des Großhandels", text: "Auch der Großhandel kennt verschiedene Formen. Der Zustellgroßhandel liefert die Ware zum Kunden, der Abholgroßhandel wie ein Cash-and-Carry-Markt lässt den Kunden selbst abholen. Der Sortimentsgroßhandel führt ein breites Angebot, der Spezialgroßhandel konzentriert sich auf wenige Warengruppen. Der Streckengroßhandel handelt mit Ware, ohne sie selbst zu lagern, und leitet sie direkt vom Hersteller zum Kunden weiter." },
+      { heading: "Sortiment: Breite und Tiefe", text: "Das Sortiment ist die Gesamtheit aller angebotenen Artikel. Die Sortimentsbreite bezeichnet die Zahl unterschiedlicher Warengruppen, die Sortimentstiefe die Zahl der Varianten innerhalb einer Gruppe. Ein Discounter hat ein breites, aber flaches Sortiment, ein Fachgeschäft ein schmales, aber tiefes. Die Sortimentspolitik ist eine strategische Kernentscheidung, weil sie Zielgruppe, Lagerkosten, Flächenbedarf und Wettbewerbsposition zugleich bestimmt." },
+      { heading: "Die Handelskalkulation", text: "Die Handelskalkulation berechnet den Verkaufspreis Schritt für Schritt. Vom Listeneinkaufspreis werden Lieferrabatte abgezogen, das ergibt den Zieleinkaufspreis. Nach Abzug von Skonto und dem Zuschlag der Bezugskosten erhält man den Einstandspreis oder Bezugspreis. Darauf werden Handlungskosten und Gewinnzuschlag addiert, was den Barverkaufspreis ergibt. Nach Aufschlag von Kundenskonto, Vertreterprovision und Rabatt entsteht schließlich der Listenverkaufspreis." },
+      { heading: "Handelsspanne und Kalkulationsaufschlag", text: "Die Handelsspanne ist die Differenz zwischen Verkaufs- und Einkaufspreis, meist als Prozentsatz des Verkaufspreises ausgedrückt. Der Kalkulationsaufschlag bezieht dieselbe Differenz dagegen auf den Einkaufspreis. Beide beschreiben denselben Sachverhalt aus unterschiedlicher Sicht und dürfen nicht verwechselt werden. Wer die Spanne zu knapp ansetzt, deckt seine Kosten nicht; wer sie zu hoch ansetzt, verliert Kunden an die Konkurrenz." },
+      { heading: "Standort und Einzugsgebiet", text: "Für den stationären Handel ist der Standort oft entscheidend. Wichtige Faktoren sind Passantenfrequenz, Kaufkraft im Einzugsgebiet, Erreichbarkeit, Parkmöglichkeiten und die Nähe zu Magnetbetrieben, die Kundenströme anziehen. Das Einzugsgebiet beschreibt den räumlichen Bereich, aus dem die Kunden kommen. Modelle wie das Gravitationsmodell schätzen, wie sich Kaufkraft zwischen konkurrierenden Standorten verteilt. Eine Fehlentscheidung beim Standort lässt sich später kaum korrigieren." },
+      { heading: "Dynamik der Betriebsformen", text: "Betriebsformen sind nicht statisch. Das Modell vom Rad des Einzelhandels beschreibt, wie neue Anbieter oft als günstige, schlichte Formate starten, mit der Zeit Leistungen und Preise erhöhen und so selbst Raum für neue Billiganbieter schaffen. Der Discounter von gestern wird zum Vollsortimenter von morgen. Dieser ständige Wandel erklärt, warum der Handel eine der dynamischsten Branchen überhaupt ist." },
+      { heading: "Vom Multichannel zum Omnichannel", text: "Kunden nutzen heute mehrere Kanäle gleichzeitig. Beim Multichannel betreibt ein Händler mehrere getrennte Absatzkanäle nebeneinander. Beim Cross-Channel sind einzelne Kanäle verknüpft. Beim Omnichannel greifen alle Kanäle nahtlos ineinander: Der Kunde informiert sich online und kauft im Laden, bestellt im Netz und holt in der Filiale ab, oder gibt online Gekauftes im Geschäft zurück. Ziel ist ein durchgängiges Einkaufserlebnis über alle Berührungspunkte hinweg." },
+      { heading: "Category Management und Handelsmarken", text: "Moderner Handel steuert das Sortiment in Warengruppen, den Kategorien, oft in enger Zusammenarbeit mit den Herstellern; das nennt man Category Management. Zunehmend wichtig sind Handelsmarken, also Eigenmarken der Händler. Sie ermöglichen höhere Spannen, grenzen den Händler vom Wettbewerb ab und binden die Kunden. Der Handel ist damit längst nicht mehr nur Absatzmittler, sondern gestaltet Angebot, Preis und Marke aktiv mit." },
+      { heading: "Digitalisierung des Handels", text: "Die Digitalisierung verändert den Handel tiefgreifend. Kassensysteme, Warenwirtschaft und Kundendaten fließen zusammen und ermöglichen datenbasierte Entscheidungen über Sortiment, Preise und Werbung. Technologien wie elektronische Preisschilder, Self-Checkout und personalisierte Angebote verbinden die physische und die digitale Welt. Der stationäre Handel reagiert, indem er sich als Erlebnis- und Serviceort neu erfindet, während der Online-Handel mit Auswahl und Bequemlichkeit punktet. Genau an dieser Schnittstelle setzt dein Studiengang an." },
     ],
   },
   {
     id: "pod-ecommerce",
     icon: "🛒",
-    title: "E-Commerce: Geschäftsmodelle, Plattformen, Kennzahlen",
+    title: "E-Commerce: Modelle, Plattformen, Kennzahlen",
     sem: 1,
     topic: "B2B/B2C/D2C, Plattformökonomie, Netzeffekte, Conversion, Zahlungen",
     segments: [
-      {
-        heading: "E-Commerce und E-Business",
-        text: "E-Business bezeichnet die gesamte Abwicklung von Geschäftsprozessen über digitale Netze. E-Commerce ist der Teil davon, der sich auf den elektronischen Kauf und Verkauf von Waren und Dienstleistungen bezieht. Er umfasst nicht nur den eigentlichen Kaufakt, sondern die ganze Kette von der Information über die Anbahnung und Bestellung bis zu Bezahlung und Lieferung.",
-      },
-      {
-        heading: "Die Marktbeziehungen",
-        text: "E-Commerce ordnet sich nach den Beteiligten. B2C, Business-to-Consumer, meint den Verkauf an Endkunden. B2B, Business-to-Business, ist der Handel zwischen Unternehmen und mengenmäßig der mit Abstand größte Bereich. C2C, Consumer-to-Consumer, ist der Handel zwischen Privatpersonen auf Plattformen. D2C, Direct-to-Consumer, meint Hersteller, die den Handel überspringen und direkt verkaufen. Dazu kommen Beziehungen zur Verwaltung, etwa im Bereich Behördengänge.",
-      },
-      {
-        heading: "Der Markt in Zahlen",
-        text: "Der deutsche E-Commerce mit Waren erreichte im Jahr zweitausendvierundzwanzig einen Bruttoumsatz von rund achtzig Komma sechs Milliarden Euro und wuchs zweitausendfünfundzwanzig auf etwa dreiundachtzig Komma eins Milliarden Euro, ein Plus von rund drei Prozent. Auffällig ist die Marktmacht der Plattformen: Über Online-Marktplätze werden inzwischen mehr als die Hälfte aller Onlineumsätze abgewickelt. Der Markt ist also wieder auf moderatem Wachstumskurs und stark plattformgetrieben.",
-      },
-      {
-        heading: "Geschäftsmodelle im Netz",
-        text: "Der klassische Online-Shop verkauft eigene Ware auf eigene Rechnung. Marktplätze bringen viele Anbieter und Käufer zusammen und verdienen an Provisionen, ohne selbst Ware zu besitzen. Abo-Modelle liefern regelmäßig gegen wiederkehrende Zahlung und schaffen planbare Umsätze. Vermittlungs- und Werbemodelle verdienen an der Zusammenführung von Angebot und Nachfrage. Viele erfolgreiche Anbieter kombinieren mehrere Modelle.",
-      },
-      {
-        heading: "Der Long Tail",
-        text: "Ein digitales Grundprinzip ist der Long Tail, der lange Schwanz. Im stationären Handel ist Regalplatz teuer, deshalb führt man nur Bestseller. Online ist Regalplatz praktisch unbegrenzt, sodass sich auch seltene Nischenprodukte anbieten lassen. Die Summe der vielen kleinen Nischenverkäufe kann den Umsatz mit den wenigen Bestsellern übertreffen. Dieses Prinzip erklärt den Erfolg großer Sortimentsplattformen.",
-      },
-      {
-        heading: "Plattformökonomie",
-        text: "Plattformen schaffen keinen eigenen Warenwert, sondern vermitteln zwischen mehreren Nutzergruppen; man spricht von mehrseitigen Märkten. Sie stellen die Infrastruktur, setzen Regeln und senken die Transaktionskosten zwischen Angebot und Nachfrage. Weil sie an jeder Transaktion mitverdienen und kaum eigenes Warenrisiko tragen, sind Plattformen extrem skalierbar. Das macht sie zum prägenden Geschäftsmodell der digitalen Wirtschaft.",
-      },
-      {
-        heading: "Netzeffekte",
-        text: "Der stärkste Hebel der Plattformökonomie sind Netzeffekte. Bei direkten Netzeffekten steigt der Nutzen mit der Zahl der Nutzer derselben Gruppe, etwa bei einem Messenger. Bei indirekten Netzeffekten profitieren zwei Gruppen voneinander: Mehr Käufer ziehen mehr Verkäufer an und umgekehrt. Dadurch verstärkt sich Wachstum selbst. Solche Märkte tendieren zu wenigen großen Gewinnern, weil der Größte für alle am attraktivsten ist.",
-      },
-      {
-        heading: "Kritische Masse und Henne-Ei-Problem",
-        text: "Am Anfang steht jede Plattform vor dem Henne-Ei-Problem: Ohne Verkäufer keine Käufer, ohne Käufer keine Verkäufer. Erst wenn eine kritische Masse an Nutzern erreicht ist, kippt das Wachstum ins Selbstläuferische. Deshalb subventionieren junge Plattformen oft eine Seite des Marktes, etwa durch Gratisangebote, um überhaupt in Gang zu kommen. Wer die kritische Masse zuerst erreicht, sichert sich einen schwer einholbaren Vorsprung.",
-      },
-      {
-        heading: "Wechselkosten und Lock-in",
-        text: "Ist ein Kunde erst einmal auf einer Plattform, entstehen Wechselkosten: gespeicherte Daten, gesammelte Bewertungen, gelernte Bedienung, aufgebautes Vertrauen. Diese Bindung nennt man Lock-in-Effekt. Zusammen mit den Netzeffekten führt sie dazu, dass sich Marktführer stabilisieren. Für neue Wettbewerber ist es deshalb schwer, etablierte Plattformen anzugreifen, selbst mit besserer Technik.",
-      },
-      {
-        heading: "Die Customer Journey",
-        text: "Der Weg des Kunden bis zum Kauf und darüber hinaus heißt Customer Journey. Ein einfaches Trichtermodell führt von Aufmerksamkeit über Interesse und Erwägung zur Kaufentscheidung und schließlich zur Bindung und Weiterempfehlung. An jedem Berührungspunkt kann der Kunde abspringen. Im E-Commerce lässt sich jeder Schritt genau messen, was gezielte Verbesserung ermöglicht.",
-      },
-      {
-        heading: "Conversion Rate und Warenkorbabbruch",
-        text: "Die wichtigste Kennzahl ist die Conversion Rate, der Anteil der Besucher, die tatsächlich kaufen. Im deutschen E-Commerce liegt sie im Schnitt nur bei knapp zwei Prozent, je nach Branche und Trafficquelle deutlich darüber oder darunter. Ebenso wichtig ist die Warenkorbabbruchrate: Rund sieben von zehn gefüllten Warenkörben werden nicht bis zum Kauf gebracht. Häufige Gründe sind unerwartete Versandkosten, ein Zwang zur Kontoanlage oder ein umständlicher Bezahlvorgang.",
-      },
-      {
-        heading: "Bezahlverfahren und Vertrauen",
-        text: "In Deutschland sind Kauf auf Rechnung, Lastschrift und digitale Bezahldienste besonders beliebt, weil Kunden erst nach Erhalt der Ware zahlen wollen. Das fehlende Anfassen der Ware macht Vertrauen zur härtesten Währung im Online-Handel. Gütesiegel, echte Kundenbewertungen, transparente Preise, klare Rückgaberegeln und sichere Bezahlung senken die Kaufhemmung. Fehlt eine bevorzugte Zahlart im Checkout, ist der Abbruch oft programmiert.",
-      },
-      {
-        heading: "Personalisierung und Mobile Commerce",
-        text: "Datengetriebene Empfehlungssysteme schlagen passende Produkte vor und erhöhen so den Warenkorbwert. Personalisierung reicht von Produktvorschlägen bis zu individuellen Angeboten. Zugleich verschiebt sich der Handel auf das Smartphone; ein wachsender Anteil der Umsätze entsteht im Mobile Commerce. Deshalb ist ein reaktionsschnelles, für kleine Bildschirme optimiertes Design kein Zusatz, sondern Grundvoraussetzung.",
-      },
-      {
-        heading: "Erfolgsfaktoren",
-        text: "Im E-Commerce gewinnt selten das billigste, sondern das reibungsloseste Angebot. Schnelle Ladezeiten, klare Nutzerführung, ein kurzer Checkout, verlässliche Lieferung und einfacher Kundenservice entscheiden. Jeder zusätzliche Klick, jede unklare Angabe und jede versteckte Gebühr kostet Kunden. Die konsequente Optimierung der Nutzererfahrung ist damit der wichtigste Dauerauftrag im Onlinehandel.",
-      },
+      { heading: "E-Commerce und E-Business", text: "E-Business bezeichnet die gesamte Abwicklung von Geschäftsprozessen über digitale Netze, einschließlich interner Abläufe und der Zusammenarbeit mit Partnern. E-Commerce ist der Teil davon, der sich auf den elektronischen Kauf und Verkauf von Waren und Dienstleistungen bezieht. Er umfasst nicht nur den eigentlichen Kaufakt, sondern die ganze Kette von der Information über die Anbahnung und Bestellung bis zu Bezahlung, Lieferung und Kundenservice." },
+      { heading: "Die Marktbeziehungen", text: "E-Commerce ordnet sich nach den Beteiligten. B2C, Business-to-Consumer, meint den Verkauf an Endkunden. B2B, Business-to-Business, ist der Handel zwischen Unternehmen und mengenmäßig der mit Abstand größte Bereich. C2C, Consumer-to-Consumer, ist der Handel zwischen Privatpersonen auf Plattformen. D2C, Direct-to-Consumer, meint Hersteller, die den Handel überspringen und direkt verkaufen. Dazu kommen Beziehungen zur Verwaltung, etwa bei Behördengängen und Ausschreibungen." },
+      { heading: "Der Markt in Zahlen", text: "Der deutsche E-Commerce mit Waren erreichte im Jahr zweitausendvierundzwanzig einen Bruttoumsatz von rund achtzig Komma sechs Milliarden Euro und wuchs zweitausendfünfundzwanzig auf etwa dreiundachtzig Komma eins Milliarden Euro, ein Plus von rund drei Prozent. Rechnet man digitale Dienstleistungen hinzu, liegt der Gesamtmarkt bei fast hundert Milliarden Euro. Auffällig ist die Marktmacht der Plattformen: Über Online-Marktplätze werden inzwischen mehr als die Hälfte aller Onlineumsätze abgewickelt." },
+      { heading: "Vorteile und Grenzen für Kunden", text: "Für Kunden bietet der Online-Handel rund um die Uhr Verfügbarkeit, riesige Auswahl, einfache Preisvergleiche, Bewertungen und Lieferung nach Hause. Grenzen sind das fehlende Anfassen und Anprobieren, Wartezeit bis zur Lieferung, Retourenaufwand und Datenschutzbedenken. Erfolgreiche Anbieter versuchen, diese Nachteile durch gute Produktbilder, kostenlose Rücksendung, schnelle Lieferung und Vertrauenssignale auszugleichen." },
+      { heading: "Geschäftsmodelle im Netz", text: "Der klassische Online-Shop verkauft eigene Ware auf eigene Rechnung. Marktplätze bringen viele Anbieter und Käufer zusammen und verdienen an Provisionen, ohne selbst Ware zu besitzen. Abo-Modelle liefern regelmäßig gegen wiederkehrende Zahlung und schaffen planbare Umsätze. Vermittlungs- und Werbemodelle verdienen an der Zusammenführung von Angebot und Nachfrage. Viele erfolgreiche Anbieter kombinieren mehrere Modelle zu hybriden Formen." },
+      { heading: "Dropshipping und Fulfillment durch Plattformen", text: "Zwei Modelle prägen den Onlinehandel besonders. Beim Dropshipping verkauft ein Händler Ware, die er gar nicht selbst lagert; der Lieferant versendet direkt an den Kunden. Das senkt das Kapitalrisiko, kostet aber Marge und Kontrolle. Beim Fulfillment durch große Plattformen lagert der Händler seine Ware in deren Zentren, die dann Lagerung, Versand und Retouren übernehmen. Beide Modelle senken die Einstiegshürden, erhöhen aber die Abhängigkeit von Partnern." },
+      { heading: "Der Long Tail", text: "Ein digitales Grundprinzip ist der Long Tail, der lange Schwanz. Im stationären Handel ist Regalplatz teuer, deshalb führt man nur Bestseller. Online ist Regalplatz praktisch unbegrenzt, sodass sich auch seltene Nischenprodukte anbieten lassen. Die Summe der vielen kleinen Nischenverkäufe kann den Umsatz mit den wenigen Bestsellern übertreffen. Dieses Prinzip erklärt den Erfolg großer Sortiments- und Medienplattformen." },
+      { heading: "Plattformökonomie", text: "Plattformen schaffen keinen eigenen Warenwert, sondern vermitteln zwischen mehreren Nutzergruppen; man spricht von mehrseitigen Märkten. Sie stellen die Infrastruktur, setzen Regeln und senken die Transaktionskosten zwischen Angebot und Nachfrage. Weil sie an jeder Transaktion mitverdienen und kaum eigenes Warenrisiko tragen, sind Plattformen extrem skalierbar. Das macht sie zum prägenden Geschäftsmodell der digitalen Wirtschaft." },
+      { heading: "Direkte und indirekte Netzeffekte", text: "Der stärkste Hebel der Plattformökonomie sind Netzeffekte. Bei direkten Netzeffekten steigt der Nutzen mit der Zahl der Nutzer derselben Gruppe, etwa bei einem Messenger, der mit jedem weiteren Kontakt wertvoller wird. Bei indirekten Netzeffekten profitieren zwei Gruppen voneinander: Mehr Käufer ziehen mehr Verkäufer an und umgekehrt. Dadurch verstärkt sich Wachstum selbst, und der Markt tendiert zu wenigen großen Gewinnern." },
+      { heading: "Kritische Masse und Henne-Ei-Problem", text: "Am Anfang steht jede Plattform vor dem Henne-Ei-Problem: Ohne Verkäufer keine Käufer, ohne Käufer keine Verkäufer. Erst wenn eine kritische Masse an Nutzern erreicht ist, kippt das Wachstum ins Selbstläuferische. Deshalb subventionieren junge Plattformen oft eine Seite des Marktes, etwa durch Gratisangebote oder Boni, um überhaupt in Gang zu kommen. Wer die kritische Masse zuerst erreicht, sichert sich einen schwer einholbaren Vorsprung." },
+      { heading: "Wechselkosten und Lock-in", text: "Ist ein Kunde erst einmal auf einer Plattform, entstehen Wechselkosten: gespeicherte Daten, gesammelte Bewertungen, gelernte Bedienung, aufgebautes Vertrauen. Diese Bindung nennt man Lock-in-Effekt. Zusammen mit den Netzeffekten führt sie dazu, dass sich Marktführer stabilisieren und der Markt zu einer Konzentration neigt, oft beschrieben als der Gewinner nimmt alles. Für neue Wettbewerber ist es deshalb schwer, etablierte Plattformen anzugreifen, selbst mit besserer Technik." },
+      { heading: "Die Customer Journey", text: "Der Weg des Kunden bis zum Kauf und darüber hinaus heißt Customer Journey. Ein einfaches Trichtermodell führt von Aufmerksamkeit über Interesse und Erwägung zur Kaufentscheidung und schließlich zur Bindung und Weiterempfehlung. An jedem Berührungspunkt, jedem Touchpoint, kann der Kunde abspringen. Im E-Commerce lässt sich jeder Schritt genau messen, was gezielte Verbesserung ermöglicht und Marketing datenbasiert macht." },
+      { heading: "Conversion Rate", text: "Die wichtigste Kennzahl ist die Conversion Rate, der Anteil der Besucher, die tatsächlich kaufen. Im deutschen E-Commerce liegt sie im Schnitt nur bei knapp zwei Prozent, je nach Branche und Trafficquelle deutlich darüber oder darunter. Besucher aus dem E-Mail-Marketing konvertieren oft besser als solche aus bezahlter Werbung. Schon kleine Verbesserungen der Conversion Rate haben große Umsatzwirkung, weil sie auf den gesamten Besucherstrom wirken." },
+      { heading: "Warenkorbabbruch", text: "Rund sieben von zehn gefüllten Warenkörben werden nicht bis zum Kauf gebracht; die Warenkorbabbruchrate liegt bei über siebzig Prozent. Häufige Gründe sind unerwartete Versandkosten, ein Zwang zur Kontoanlage, ein umständlicher oder langer Bezahlvorgang, fehlende Wunschzahlart oder Zweifel an der Sicherheit. Gegenmaßnahmen sind transparente Kosten, ein Gastkauf ohne Registrierung, ein kurzer Checkout und Erinnerungs-Mails an abgebrochene Warenkörbe." },
+      { heading: "Bezahlverfahren", text: "In Deutschland sind Kauf auf Rechnung, Lastschrift und digitale Bezahldienste besonders beliebt, weil viele Kunden erst nach Erhalt der Ware zahlen wollen. Kreditkarte, Sofortüberweisung und mobile Bezahldienste ergänzen das Angebot. Für Händler bedeutet der Rechnungskauf ein Ausfallrisiko, für Kunden mehr Sicherheit. Fehlt die bevorzugte Zahlart im Checkout, ist der Abbruch oft programmiert; ein breiter Zahlungsmix erhöht die Abschlussquote spürbar." },
+      { heading: "Vertrauen im Online-Handel", text: "Weil der Kunde die Ware nicht anfassen kann und dem Händler nicht gegenübersteht, ist Vertrauen die härteste Währung. Gütesiegel unabhängiger Stellen, echte Kundenbewertungen, transparente Preise inklusive aller Kosten, klare Rückgaberegeln, ein sichtbares Impressum und sichere, verschlüsselte Bezahlung senken die Kaufhemmung. Schon ein einziges fehlendes Vertrauenssignal kann den Ausschlag gegen den Kauf geben." },
+      { heading: "Personalisierung und Empfehlungen", text: "Datengetriebene Empfehlungssysteme schlagen passende Produkte vor und erhöhen so den Warenkorbwert. Sie arbeiten etwa mit dem Verhalten ähnlicher Kunden nach dem Muster, wer dies kaufte, kaufte auch jenes. Personalisierung reicht von Produktvorschlägen über individuelle Startseiten bis zu maßgeschneiderten Angeboten und Preisen. Richtig eingesetzt steigert sie Umsatz und Zufriedenheit, wirft aber zugleich Fragen des Datenschutzes auf." },
+      { heading: "Mobile Commerce und Social Commerce", text: "Der Handel verschiebt sich auf das Smartphone; ein wachsender Anteil der Umsätze entsteht im Mobile Commerce. Deshalb ist ein reaktionsschnelles, für kleine Bildschirme optimiertes Design Grundvoraussetzung. Zusätzlich entsteht Social Commerce, bei dem direkt in sozialen Netzwerken eingekauft wird, oft angestoßen durch Influencer und kurze Videos. Kauf und Unterhaltung verschmelzen dabei zu einem nahtlosen Erlebnis." },
+      { heading: "Erfolgsfaktoren", text: "Im E-Commerce gewinnt selten das billigste, sondern das reibungsloseste Angebot. Schnelle Ladezeiten, klare Nutzerführung, ein kurzer Checkout, verlässliche und schnelle Lieferung, einfache Retouren und guter Kundenservice entscheiden. Jeder zusätzliche Klick, jede unklare Angabe und jede versteckte Gebühr kostet Kunden. Die konsequente, datenbasierte Optimierung der Nutzererfahrung ist damit der wichtigste Dauerauftrag im Onlinehandel." },
     ],
   },
   {
     id: "pod-marketing",
     icon: "📣",
-    title: "Online-Marketing: Vom Marketing-Mix zu KPIs",
+    title: "Online-Marketing: Vom Mix zu den Kennzahlen",
     sem: 2,
-    topic: "STP, 4P, SEO/SEA, Social Media, Conversion, KPIs",
+    topic: "STP, 4P, Preis, SEO/SEA, Social Media, KPIs",
     segments: [
-      {
-        heading: "Was Marketing bedeutet",
-        text: "Marketing ist mehr als Werbung; es ist die konsequente Ausrichtung des gesamten Unternehmens am Markt und an den Bedürfnissen der Kunden. Aus einer reinen Absatzfunktion ist ein Leitprinzip der Unternehmensführung geworden. Ziel ist es, Kundennutzen zu schaffen, Kunden zu gewinnen und langfristig zu binden.",
-      },
-      {
-        heading: "Markt und Marktforschung",
-        text: "Grundlage jeder Marketingentscheidung ist die Kenntnis des Marktes. Die Marktforschung liefert Daten über Kunden, Wettbewerber und Trends. Man unterscheidet primäre Forschung mit eigens erhobenen Daten, etwa Befragungen und Tests, und sekundäre Forschung mit vorhandenen Daten. Digitale Kanäle liefern zusätzlich ständig Verhaltensdaten, die Entscheidungen genauer machen.",
-      },
-      {
-        heading: "Segmentierung, Targeting, Positionierung",
-        text: "Bevor der Mix greift, kommt die Strategie, oft mit dem Kürzel STP. Bei der Segmentierung teilt man den Gesamtmarkt in Gruppen mit ähnlichen Bedürfnissen, etwa nach Alter, Region, Lebensstil oder Verhalten. Beim Targeting wählt man die attraktivsten Segmente aus. Bei der Positionierung verankert man das Angebot mit einem klaren Nutzenversprechen im Kopf der Zielgruppe, unterscheidbar vom Wettbewerb.",
-      },
-      {
-        heading: "Der Marketing-Mix und die vier P",
-        text: "Die operative Umsetzung erfolgt über den Marketing-Mix mit den vier P. Product, die Produktpolitik, gestaltet Leistung, Qualität, Design, Marke und Verpackung. Price, die Preispolitik, legt Preise, Rabatte und Zahlungsbedingungen fest. Place, die Distributionspolitik, bestimmt Vertriebswege und Warenverfügbarkeit. Promotion, die Kommunikationspolitik, umfasst Werbung, Verkaufsförderung, Öffentlichkeitsarbeit und Direktmarketing. Erst im stimmigen Zusammenspiel entfalten die vier P ihre Wirkung.",
-      },
-      {
-        heading: "Von vier P zu sieben P",
-        text: "Für Dienstleistungen wird der Mix um drei P erweitert. People steht für die Menschen, die die Leistung erbringen und den Eindruck prägen. Process meint die Abläufe, die das Kundenerlebnis bestimmen. Physical Evidence bezeichnet die sichtbaren Belege der Qualität, etwa Ausstattung, Auftreten oder Bewertungen. Gerade bei nicht greifbaren Leistungen entscheiden diese Faktoren über das Vertrauen der Kunden.",
-      },
-      {
-        heading: "Preispolitik",
-        text: "Der Preis ist der einzige Teil des Mix, der direkt Erlöse bringt; alle anderen verursachen Kosten. Bei der Penetrationsstrategie startet man niedrig, um schnell Marktanteile zu gewinnen. Bei der Abschöpfungsstrategie startet man hoch und senkt den Preis später. Preisdifferenzierung verlangt von verschiedenen Kunden verschiedene Preise, etwa nach Zeit, Menge oder Region. Online lassen sich Preise dynamisch und in Echtzeit anpassen.",
-      },
-      {
-        heading: "Kommunikation und das AIDA-Modell",
-        text: "Ein klassisches Modell der Werbewirkung ist AIDA. Zuerst muss Aufmerksamkeit geweckt werden, dann Interesse, danach ein Verlangen nach dem Produkt und schließlich die Handlung, also der Kauf. Modernes Marketing denkt darüber hinaus in vielen Kontaktpunkten über alle Kanäle und will den Kunden auch nach dem Kauf begleiten. Denn einen Bestandskunden zu halten ist deutlich günstiger, als einen neuen zu gewinnen.",
-      },
-      {
-        heading: "Kanäle des Online-Marketings",
-        text: "Online-Marketing bündelt viele Instrumente: Suchmaschinenmarketing, Social Media, Content-Marketing, E-Mail-Marketing, Affiliate-Marketing und Displaywerbung. Der große Vorteil gegenüber klassischer Werbung ist die genaue Messbarkeit jeder Maßnahme. Man kann Zielgruppen fein ansprechen, Reaktionen sofort messen und Budgets datenbasiert steuern.",
-      },
-      {
-        heading: "Suchmaschinenoptimierung",
-        text: "Suchmaschinenoptimierung, kurz SEO, sorgt dafür, dass eine Seite in den unbezahlten Trefferlisten weit oben erscheint. Dazu tragen relevante Inhalte, eine passende Auswahl an Suchbegriffen, sauberer technischer Aufbau, schnelle Ladezeiten und hochwertige Verweise anderer Seiten bei. SEO ist ein Marathon: Es wirkt langsam, dafür nachhaltig, denn der Besucherstrom bleibt auch bestehen, wenn du keine Werbung schaltest.",
-      },
-      {
-        heading: "Suchmaschinenwerbung",
-        text: "Suchmaschinenwerbung, kurz SEA, sind die bezahlten Anzeigen über oder neben den Ergebnissen. Meist zahlt man pro Klick in einem Auktionsverfahren, das Gebot und Anzeigenqualität kombiniert. SEA ist ein Sprint: sofort sichtbar, exakt steuerbar, aber nur wirksam, solange Budget fließt. SEO und SEA ergänzen sich, kurzfristige Sichtbarkeit durch Anzeigen und langfristige Präsenz durch organische Optimierung.",
-      },
-      {
-        heading: "Social Media, Content und Influencer",
-        text: "In sozialen Netzwerken zählt nicht Unterbrechung, sondern Relevanz. Content-Marketing baut mit nützlichen oder unterhaltsamen Inhalten Vertrauen und Reichweite auf, statt direkt zu verkaufen. Influencer verleihen Marken Glaubwürdigkeit über ihre Community. Entscheidend ist die Wahl des Kanals passend zur Zielgruppe: Ein Anbieter für Geschäftskunden ist woanders unterwegs als eine Modemarke für junge Leute.",
-      },
-      {
-        heading: "E-Mail-Marketing und Kundenbindung",
-        text: "E-Mail-Marketing gehört zu den wirtschaftlichsten Kanälen, weil es direkt bestehende Interessenten erreicht und oft überdurchschnittlich gut konvertiert. Voraussetzung ist die ausdrückliche Einwilligung der Empfänger. Verbunden mit einem Kundenbeziehungsmanagement lassen sich Nachrichten personalisieren und automatisieren, etwa Erinnerungen an abgebrochene Warenkörbe. So wird aus einem einmaligen Käufer ein wiederkehrender Kunde.",
-      },
-      {
-        heading: "Die wichtigsten Kennzahlen",
-        text: "Online-Marketing lebt von Kennzahlen. Die Klickrate zeigt, wie oft eine Anzeige geklickt wird. Die Conversion Rate misst den Anteil der Besucher, die zu Kunden werden. Die Kosten pro Neukunde geben an, was die Gewinnung kostet, der Kundenwert über die gesamte Beziehung, was ein Kunde einbringt. Der Return on Advertising Spend setzt Umsatz ins Verhältnis zu den Werbeausgaben. Grundregel: Der Kundenwert muss deutlich über den Gewinnungskosten liegen, sonst trägt sich das Geschäft nicht.",
-      },
+      { heading: "Was Marketing bedeutet", text: "Marketing ist mehr als Werbung; es ist die konsequente Ausrichtung des gesamten Unternehmens am Markt und an den Bedürfnissen der Kunden. Aus einer reinen Absatzfunktion ist ein Leitprinzip der Unternehmensführung geworden. Ziel ist es, Kundennutzen zu schaffen, profitable Kunden zu gewinnen und langfristig zu binden. Marketing verbindet dabei Marktforschung, Strategie und die konkreten Instrumente zu einem geschlossenen Kreislauf." },
+      { heading: "Markt und Marktforschung", text: "Grundlage jeder Marketingentscheidung ist die Kenntnis des Marktes. Die Marktforschung liefert Daten über Kunden, Wettbewerber und Trends. Man unterscheidet Primärforschung mit eigens erhobenen Daten, etwa Befragungen, Beobachtungen und Tests, und Sekundärforschung mit bereits vorhandenen Daten. Digitale Kanäle liefern zusätzlich ständig Verhaltensdaten in Echtzeit, die Entscheidungen genauer und schneller machen." },
+      { heading: "Marktsegmentierung", text: "Kein Markt ist einheitlich. Die Segmentierung teilt den Gesamtmarkt in Gruppen mit ähnlichen Bedürfnissen. Kriterien sind geografisch nach Region, demografisch nach Alter, Geschlecht und Einkommen, psychografisch nach Werten und Lebensstil sowie verhaltensbezogen nach Kaufverhalten und Nutzungsintensität. Ein gutes Segment ist messbar, ausreichend groß, erreichbar und in sich einheitlich, aber von anderen Segmenten deutlich verschieden." },
+      { heading: "Targeting und Positionierung", text: "Nach der Segmentierung folgt das Targeting, die Auswahl der attraktivsten Zielsegmente nach Größe, Wachstum und Wettbewerb. Danach kommt die Positionierung: Das Angebot wird mit einem klaren Nutzenversprechen im Kopf der Zielgruppe verankert, unterscheidbar vom Wettbewerb. Ein hilfreiches Werkzeug ist das Positionierungskreuz, das Marken anhand zweier zentraler Eigenschaften einordnet und Marktlücken sichtbar macht." },
+      { heading: "Der Marketing-Mix und die vier P", text: "Die operative Umsetzung erfolgt über den Marketing-Mix mit den vier P. Product, die Produktpolitik, gestaltet Leistung, Qualität, Design, Marke und Verpackung. Price, die Preispolitik, legt Preise, Rabatte und Zahlungsbedingungen fest. Place, die Distributionspolitik, bestimmt Vertriebswege und Warenverfügbarkeit. Promotion, die Kommunikationspolitik, umfasst Werbung, Verkaufsförderung, Öffentlichkeitsarbeit und Direktmarketing. Erst im stimmigen Zusammenspiel entfalten die vier P ihre Wirkung." },
+      { heading: "Produktpolitik", text: "Die Produktpolitik ist das Herz des Mix, denn ohne überzeugendes Produkt hilft keine Werbung. Sie umfasst die Gestaltung von Qualität, Design und Verpackung, die Zusammenstellung des Sortiments und die Markenpolitik. Wichtig ist der Produktlebenszyklus mit den Phasen Einführung, Wachstum, Reife und Rückgang; in jeder Phase sind andere Maßnahmen nötig. Innovationen und die rechtzeitige Pflege des Sortiments sichern langfristig den Erfolg." },
+      { heading: "Preispolitik und Strategien", text: "Der Preis ist der einzige Teil des Mix, der direkt Erlöse bringt; alle anderen verursachen zunächst Kosten. Bei der Penetrationsstrategie startet man niedrig, um schnell Marktanteile zu gewinnen. Bei der Abschöpfungsstrategie startet man hoch und senkt den Preis später, um zuerst zahlungskräftige Kunden abzuschöpfen. Die Preisbildung orientiert sich an Kosten, an der Nachfrage und am Wettbewerb; meist wirken alle drei zusammen." },
+      { heading: "Preisdifferenzierung", text: "Preisdifferenzierung bedeutet, für dasselbe oder ein ähnliches Produkt unterschiedliche Preise zu verlangen. Man unterscheidet nach Zeit, etwa günstigere Nebenzeiten, nach Ort, nach Menge über Mengenrabatte und nach Personengruppen wie Studierendenrabatten. Online lassen sich Preise dynamisch und in Echtzeit an Nachfrage und Wettbewerb anpassen. Ziel ist es, die Zahlungsbereitschaft verschiedener Kunden möglichst gut auszuschöpfen." },
+      { heading: "Distributionspolitik", text: "Die Distributionspolitik regelt, wie das Produkt zum Kunden gelangt. Beim direkten Vertrieb verkauft der Hersteller unmittelbar, etwa über den eigenen Online-Shop, und behält Kontrolle und Marge. Beim indirekten Vertrieb schaltet er Handelsstufen ein und gewinnt Reichweite. Man unterscheidet zudem intensive, selektive und exklusive Distribution, je nachdem, an wie vielen Stellen ein Produkt erhältlich sein soll. Im E-Commerce verschwimmen diese Grenzen." },
+      { heading: "Von vier P zu sieben P", text: "Für Dienstleistungen wird der Mix um drei P erweitert. People steht für die Menschen, die die Leistung erbringen und den Eindruck prägen. Process meint die Abläufe, die das Kundenerlebnis bestimmen. Physical Evidence bezeichnet die sichtbaren Belege der Qualität, etwa Ausstattung, Auftreten oder Bewertungen. Gerade bei nicht greifbaren Leistungen entscheiden diese Faktoren über das Vertrauen der Kunden." },
+      { heading: "Kommunikation und das AIDA-Modell", text: "Ein klassisches Modell der Werbewirkung ist AIDA. Zuerst muss Aufmerksamkeit geweckt werden, dann Interesse, danach ein Verlangen nach dem Produkt und schließlich die Handlung, also der Kauf. Modernes Marketing denkt darüber hinaus in vielen Kontaktpunkten über alle Kanäle und will den Kunden auch nach dem Kauf begleiten. Denn einen Bestandskunden zu halten ist deutlich günstiger, als einen neuen zu gewinnen." },
+      { heading: "Kanäle des Online-Marketings", text: "Online-Marketing bündelt viele Instrumente: Suchmaschinenmarketing, Social Media, Content-Marketing, E-Mail-Marketing, Affiliate-Marketing und Displaywerbung. Der große Vorteil gegenüber klassischer Werbung ist die genaue Messbarkeit jeder Maßnahme. Man kann Zielgruppen fein ansprechen, Reaktionen sofort messen, verschiedene Varianten testen und Budgets datenbasiert dorthin lenken, wo sie am meisten bewirken." },
+      { heading: "Suchmaschinenoptimierung", text: "Suchmaschinenoptimierung, kurz SEO, sorgt dafür, dass eine Seite in den unbezahlten Trefferlisten weit oben erscheint. Dazu tragen relevante Inhalte, eine passende Auswahl an Suchbegriffen, sauberer technischer Aufbau, schnelle Ladezeiten, mobile Tauglichkeit und hochwertige Verweise anderer Seiten bei. SEO ist ein Marathon: Es wirkt langsam, dafür nachhaltig, denn der Besucherstrom bleibt auch bestehen, wenn du keine Werbung schaltest." },
+      { heading: "Suchmaschinenwerbung", text: "Suchmaschinenwerbung, kurz SEA, sind die bezahlten Anzeigen über oder neben den Ergebnissen. Meist zahlt man pro Klick in einem Auktionsverfahren, das Gebot und Anzeigenqualität kombiniert. SEA ist ein Sprint: sofort sichtbar, exakt steuerbar und messbar, aber nur wirksam, solange Budget fließt. In der Praxis ergänzen sich SEO und SEA ideal, kurzfristige Sichtbarkeit durch Anzeigen und langfristige Präsenz durch organische Optimierung." },
+      { heading: "Social Media, Content und Influencer", text: "In sozialen Netzwerken zählt nicht Unterbrechung, sondern Relevanz. Content-Marketing baut mit nützlichen oder unterhaltsamen Inhalten Vertrauen und Reichweite auf, statt direkt zu verkaufen. Influencer verleihen Marken Glaubwürdigkeit über ihre Community, vom großen Star bis zum Mikro-Influencer mit kleiner, aber engagierter Fangemeinde. Entscheidend ist die Wahl des Kanals passend zur Zielgruppe; ein Anbieter für Geschäftskunden ist woanders unterwegs als eine Modemarke für junge Leute." },
+      { heading: "E-Mail-Marketing und CRM", text: "E-Mail-Marketing gehört zu den wirtschaftlichsten Kanälen, weil es direkt bestehende Interessenten erreicht und oft überdurchschnittlich gut konvertiert. Voraussetzung ist die ausdrückliche Einwilligung der Empfänger nach dem Opt-in-Prinzip. Verbunden mit einem Kundenbeziehungsmanagement, kurz CRM, lassen sich Nachrichten personalisieren und automatisieren, etwa Willkommensstrecken oder Erinnerungen an abgebrochene Warenkörbe. So wird aus einem einmaligen Käufer ein wiederkehrender Kunde." },
+      { heading: "Die wichtigsten Kennzahlen", text: "Online-Marketing lebt von Kennzahlen. Die Klickrate zeigt, wie oft eine Anzeige geklickt wird. Die Conversion Rate misst den Anteil der Besucher, die zu Kunden werden. Die Kosten pro Neukunde geben an, was die Gewinnung kostet, der Kundenwert über die gesamte Beziehung, was ein Kunde einbringt. Der Return on Advertising Spend setzt Umsatz ins Verhältnis zu den Werbeausgaben." },
+      { heading: "Kundenwert und Wirtschaftlichkeit", text: "Die zentrale Wirtschaftlichkeitsregel des Marketings lautet: Der Kundenwert über die gesamte Beziehung muss deutlich über den Kosten seiner Gewinnung liegen. Ist die Gewinnung eines Kunden teurer als sein späterer Wert, verliert das Unternehmen mit jedem Neukunden Geld. Deshalb rücken Kundenbindung, Wiederkaufrate und die Steigerung des durchschnittlichen Bestellwerts immer stärker in den Mittelpunkt, denn Bestandskunden sind meist deutlich profitabler als Neukunden." },
     ],
   },
   {
     id: "pod-informatik",
     icon: "💻",
-    title: "Informatik: Daten, Datenbanken und das Web",
+    title: "Informatik: Daten, Datenbanken, Web",
     sem: 2,
-    topic: "Zahlensysteme, Algorithmen, relationale DB, SQL, Client-Server",
+    topic: "Zahlensysteme, Algorithmen, relationale DB, SQL, Web, Sicherheit",
     segments: [
-      {
-        heading: "Bits, Bytes und Zahlensysteme",
-        text: "Computer kennen nur zwei Zustände, Strom an oder aus, dargestellt als eins und null. Das ist ein Bit. Acht Bit ergeben ein Byte. Damit lassen sich Zahlen, Text, Bilder und Töne codieren. Neben dem Dezimalsystem mit der Basis zehn nutzt die Informatik das Binärsystem mit Basis zwei und das Hexadezimalsystem mit Basis sechzehn. Wer diese Systeme umrechnen kann, versteht, wie Daten im Rechner wirklich dargestellt werden.",
-      },
-      {
-        heading: "Aufbau eines Computers",
-        text: "Die meisten Rechner folgen der Von-Neumann-Architektur. Kernstücke sind der Prozessor mit Rechen- und Steuerwerk, der Arbeitsspeicher für Programme und Daten während der Ausführung, dauerhafte Speicher wie Festplatten sowie Ein- und Ausgabegeräte, verbunden über Datenbusse. Ein wichtiger Punkt: Programme und Daten liegen im selben Speicher, was Computer so flexibel macht.",
-      },
-      {
-        heading: "Betriebssystem und Software",
-        text: "Zwischen Hardware und Anwendungen steht das Betriebssystem. Es verwaltet Prozessor, Speicher, Geräte und Dateien und stellt Programmen eine einheitliche Schnittstelle bereit. Man unterscheidet Systemsoftware, die den Betrieb ermöglicht, und Anwendungssoftware, die konkrete Aufgaben löst. Erst diese Schichtung erlaubt es, komplexe Systeme beherrschbar zu halten.",
-      },
-      {
-        heading: "Algorithmen und Datenstrukturen",
-        text: "Ein Algorithmus ist eine eindeutige, endliche und schrittweise Vorschrift zur Lösung eines Problems, vergleichbar mit einem Kochrezept. Damit ein Programm effizient arbeitet, braucht es passende Datenstrukturen: Listen für Reihenfolgen, Bäume für Hierarchien oder Tabellen für schnellen Zugriff. Die Laufzeit eines Algorithmus wächst mit der Datenmenge unterschiedlich stark, was man mit der O-Notation beschreibt. Gute Software entsteht, wenn Algorithmus und Datenstruktur zum Problem passen.",
-      },
-      {
-        heading: "Grundkonzepte der Programmierung",
-        text: "Programme bestehen aus wenigen Grundbausteinen. Variablen speichern Werte. Bedingungen verzweigen den Ablauf je nach Situation. Schleifen wiederholen Anweisungen. Funktionen bündeln wiederkehrende Abläufe unter einem Namen. Aus diesen einfachen Elementen lassen sich beliebig komplexe Programme zusammensetzen. Das Verständnis dieser Bausteine ist wichtiger als die Kenntnis einer bestimmten Programmiersprache.",
-      },
-      {
-        heading: "Warum Datenbanken",
-        text: "Sobald viele Daten dauerhaft, konsistent und für viele Nutzer gleichzeitig verwaltet werden müssen, stoßen einfache Dateien an ihre Grenzen. Datenbanksysteme lösen das. Sie trennen die Daten von den Anwendungen, sichern die Integrität, regeln gleichzeitige Zugriffe und ermöglichen mächtige Abfragen. Das verbreitetste Modell ist die relationale Datenbank.",
-      },
-      {
-        heading: "Das relationale Modell",
-        text: "Im relationalen Modell werden Daten in Tabellen aus Zeilen und Spalten gespeichert. Jede Zeile ist ein Datensatz, jede Spalte ein Attribut. Ein Primärschlüssel identifiziert jeden Datensatz eindeutig, etwa eine Kundennummer. Über Fremdschlüssel werden Tabellen verknüpft, zum Beispiel Bestellungen mit dem zugehörigen Kunden. So lassen sich Beziehungen zwischen Objekten sauber abbilden.",
-      },
-      {
-        heading: "Normalisierung",
-        text: "Damit Daten nicht mehrfach und widersprüchlich gespeichert werden, zerlegt man große Tabellen in mehrere kleinere. Dieser Prozess heißt Normalisierung. Er beseitigt Redundanz und verhindert sogenannte Anomalien beim Einfügen, Ändern und Löschen. Üblich sind die ersten drei Normalformen. Das Ergebnis sind schlanke, konsistente Tabellen, in denen jede Information genau einmal steht.",
-      },
-      {
-        heading: "Das Entity-Relationship-Modell",
-        text: "Bevor eine Datenbank gebaut wird, modelliert man sie im Entity-Relationship-Diagramm. Entitäten sind die Objekte der realen Welt, etwa Kunde, Produkt und Bestellung. Attribute beschreiben ihre Eigenschaften. Beziehungen verbinden die Entitäten und tragen eine Kardinalität, die angibt, wie viele Objekte einander zugeordnet sind, etwa eins zu vielen. Dieses Modell ist der Bauplan für die spätere Tabellenstruktur.",
-      },
-      {
-        heading: "Abfragen mit SQL",
-        text: "Mit Datenbanken kommuniziert man über SQL, die strukturierte Abfragesprache. SELECT holt Daten, WHERE filtert sie, ORDER BY sortiert, JOIN verknüpft mehrere Tabellen. Zum Verändern dienen INSERT, UPDATE und DELETE. Ein Beispiel: Wähle Name aus der Tabelle Kunden, wo die Stadt gleich Berlin ist. SQL ist erstaunlich nah an natürlicher Sprache, weshalb sich frühes Üben lohnt.",
-      },
-      {
-        heading: "Transaktionen und ACID",
-        text: "Damit gleichzeitige Zugriffe die Daten nicht zerstören, arbeiten Datenbanken mit Transaktionen, die die ACID-Eigenschaften erfüllen. Atomarität bedeutet, eine Transaktion wird ganz oder gar nicht ausgeführt. Konsistenz heißt, die Daten bleiben in einem gültigen Zustand. Isolation sorgt dafür, dass sich gleichzeitige Transaktionen nicht stören. Dauerhaftigkeit garantiert, dass bestätigte Änderungen auch bei einem Ausfall erhalten bleiben. Man denke an eine Überweisung, bei der niemals Geld verschwinden darf.",
-      },
-      {
-        heading: "Client-Server und das Web",
-        text: "Das Web arbeitet nach dem Client-Server-Prinzip. Dein Browser, der Client, sendet über das Protokoll HTTP eine Anfrage an einen Server, der die Antwort zurückliefert. Webseiten bestehen aus drei Schichten: HTML für die Struktur, CSS für das Aussehen und JavaScript für das Verhalten. Dynamische Seiten erzeugt der Server oft aus einer Datenbank. Wer diese Kette versteht, versteht, wie jeder Online-Shop im Inneren funktioniert.",
-      },
-      {
-        heading: "IT-Sicherheit",
-        text: "Mit der Vernetzung wächst die Bedeutung der Sicherheit. Grundpfeiler sind Vertraulichkeit, Integrität und Verfügbarkeit der Daten. Verschlüsselung schützt Daten bei Übertragung und Speicherung. Sichere Passwörter, Mehr-Faktor-Anmeldung und regelmäßige Aktualisierungen wehren Angriffe ab. Regelmäßige Sicherungskopien schützen vor Datenverlust. Sicherheit ist kein einmaliges Projekt, sondern ein Dauerprozess.",
-      },
+      { heading: "Bits, Bytes und Zahlensysteme", text: "Computer kennen nur zwei Zustände, Strom an oder aus, dargestellt als eins und null. Das ist ein Bit. Acht Bit ergeben ein Byte, mit dem sich zweihundertsechsundfünfzig Werte darstellen lassen. Neben dem Dezimalsystem mit der Basis zehn nutzt die Informatik das Binärsystem mit Basis zwei und das Hexadezimalsystem mit Basis sechzehn. Wer diese Systeme umrechnen kann, versteht, wie Daten im Rechner wirklich dargestellt werden." },
+      { heading: "Wie Daten codiert werden", text: "Alles im Rechner ist letztlich eine Folge von Bits. Text wird über Zeichentabellen codiert, etwa den Unicode-Standard, der praktisch alle Schriftzeichen der Welt abbildet. Bilder bestehen aus Bildpunkten mit Farbwerten, Töne aus vielen Messwerten pro Sekunde. Kompression verringert die Datenmenge, indem sie Redundanz entfernt. Das Verständnis der Codierung erklärt, warum Dateien unterschiedlich groß sind und warum Formate eine Rolle spielen." },
+      { heading: "Aufbau eines Computers", text: "Die meisten Rechner folgen der Von-Neumann-Architektur. Kernstücke sind der Prozessor mit Rechen- und Steuerwerk, der Arbeitsspeicher für Programme und Daten während der Ausführung, dauerhafte Speicher wie Festplatten und Solid-State-Disks sowie Ein- und Ausgabegeräte, verbunden über Datenbusse. Ein wichtiger Punkt: Programme und Daten liegen im selben Speicher, was Computer so flexibel und universell einsetzbar macht." },
+      { heading: "Betriebssystem und Software", text: "Zwischen Hardware und Anwendungen steht das Betriebssystem. Es verwaltet Prozessor, Speicher, Geräte und Dateien und stellt Programmen eine einheitliche Schnittstelle bereit. Man unterscheidet Systemsoftware, die den Betrieb ermöglicht, und Anwendungssoftware, die konkrete Aufgaben löst. Diese Schichtung nach dem Prinzip der Abstraktion erlaubt es, komplexe Systeme beherrschbar zu halten, weil jede Schicht nur mit der nächsten sprechen muss." },
+      { heading: "Algorithmen", text: "Ein Algorithmus ist eine eindeutige, endliche und schrittweise Vorschrift zur Lösung eines Problems, vergleichbar mit einem Kochrezept. Er muss allgemein für eine ganze Klasse von Eingaben funktionieren und in endlich vielen Schritten enden. Bekannte Beispiele sind Verfahren zum Sortieren und Suchen. Die Qualität eines Algorithmus zeigt sich vor allem darin, wie sein Aufwand mit der Größe der Eingabe wächst." },
+      { heading: "Datenstrukturen und Komplexität", text: "Damit ein Programm effizient arbeitet, braucht es passende Datenstrukturen: Listen für Reihenfolgen, Stapel und Warteschlangen für bestimmte Zugriffsmuster, Bäume für Hierarchien und Tabellen für schnellen Zugriff über Schlüssel. Die Laufzeit beschreibt man mit der O-Notation, die angibt, wie der Aufwand mit der Datenmenge wächst, etwa linear oder quadratisch. Gute Software entsteht, wenn Algorithmus und Datenstruktur zum Problem passen." },
+      { heading: "Grundkonzepte der Programmierung", text: "Programme bestehen aus wenigen Grundbausteinen. Variablen speichern Werte, Datentypen legen deren Art fest. Bedingungen verzweigen den Ablauf je nach Situation. Schleifen wiederholen Anweisungen. Funktionen bündeln wiederkehrende Abläufe unter einem Namen und machen Programme übersichtlich. Aus diesen einfachen Elementen lassen sich beliebig komplexe Programme zusammensetzen; das Verständnis dieser Bausteine ist wichtiger als die Kenntnis einer bestimmten Sprache." },
+      { heading: "Warum Datenbanken", text: "Sobald viele Daten dauerhaft, konsistent und für viele Nutzer gleichzeitig verwaltet werden müssen, stoßen einfache Dateien an ihre Grenzen. Datenbanksysteme lösen das. Sie trennen die Daten von den Anwendungen, sichern die Integrität, regeln gleichzeitige Zugriffe, vergeben Rechte und ermöglichen mächtige Abfragen. Ein Datenbankmanagementsystem ist die Software, die all das leistet. Das verbreitetste Modell ist die relationale Datenbank." },
+      { heading: "Das relationale Modell", text: "Im relationalen Modell werden Daten in Tabellen aus Zeilen und Spalten gespeichert. Jede Zeile ist ein Datensatz, jede Spalte ein Attribut mit festem Datentyp. Ein Primärschlüssel identifiziert jeden Datensatz eindeutig, etwa eine Kundennummer. Über Fremdschlüssel werden Tabellen verknüpft, indem eine Tabelle den Primärschlüssel einer anderen referenziert, zum Beispiel Bestellungen mit dem zugehörigen Kunden. So lassen sich Beziehungen sauber abbilden." },
+      { heading: "Normalisierung", text: "Damit Daten nicht mehrfach und widersprüchlich gespeichert werden, zerlegt man große Tabellen in mehrere kleinere; dieser Prozess heißt Normalisierung. Er beseitigt Redundanz und verhindert Anomalien beim Einfügen, Ändern und Löschen. Üblich sind die ersten drei Normalformen, die schrittweise verlangen, dass jedes Feld nur einen Wert enthält und jedes Nichtschlüsselattribut voll und nur vom Schlüssel abhängt. Das Ergebnis sind schlanke, konsistente Tabellen." },
+      { heading: "Das Entity-Relationship-Modell", text: "Bevor eine Datenbank gebaut wird, modelliert man sie im Entity-Relationship-Diagramm. Entitäten sind die Objekte der realen Welt, etwa Kunde, Produkt und Bestellung. Attribute beschreiben ihre Eigenschaften. Beziehungen verbinden die Entitäten und tragen eine Kardinalität, die angibt, wie viele Objekte einander zugeordnet sind, etwa eins zu vielen oder viele zu vielen. Dieses Modell ist der Bauplan für die spätere Tabellenstruktur." },
+      { heading: "Abfragen mit SQL", text: "Mit Datenbanken kommuniziert man über SQL, die strukturierte Abfragesprache. SELECT holt Daten, WHERE filtert sie, ORDER BY sortiert, GROUP BY fasst zusammen, JOIN verknüpft mehrere Tabellen. Zum Verändern dienen INSERT, UPDATE und DELETE. Ein Beispiel: Wähle Name aus der Tabelle Kunden, wo die Stadt gleich Berlin ist. SQL ist erstaunlich nah an natürlicher Sprache, weshalb sich frühes Üben besonders lohnt." },
+      { heading: "Joins verstehen", text: "Der Join ist das mächtigste Werkzeug relationaler Datenbanken, weil er Daten aus mehreren Tabellen zusammenführt. Der Inner Join liefert nur Datensätze, die in beiden Tabellen eine Entsprechung haben, etwa Kunden mit ihren Bestellungen. Ein Left Join liefert zusätzlich alle Datensätze der linken Tabelle, auch ohne Partner, etwa auch Kunden ohne Bestellung. Über die Verknüpfung von Primär- und Fremdschlüsseln entsteht so eine flexible, kombinierte Sicht auf die Daten." },
+      { heading: "Transaktionen und ACID", text: "Damit gleichzeitige Zugriffe die Daten nicht zerstören, arbeiten Datenbanken mit Transaktionen, die die ACID-Eigenschaften erfüllen. Atomarität bedeutet, eine Transaktion wird ganz oder gar nicht ausgeführt. Konsistenz heißt, die Daten bleiben in einem gültigen Zustand. Isolation sorgt dafür, dass sich gleichzeitige Transaktionen nicht stören. Dauerhaftigkeit garantiert, dass bestätigte Änderungen auch bei einem Ausfall erhalten bleiben. Man denke an eine Überweisung, bei der niemals Geld verschwinden darf." },
+      { heading: "Client-Server und das Web", text: "Das Web arbeitet nach dem Client-Server-Prinzip. Dein Browser, der Client, sendet über das Protokoll HTTP eine Anfrage an einen Server, der die Antwort zurückliefert. Adressen werden über das Domain Name System in Serveradressen übersetzt. Webseiten bestehen aus drei Schichten: HTML für die Struktur, CSS für das Aussehen und JavaScript für das Verhalten. Dynamische Seiten erzeugt der Server oft aus einer Datenbank." },
+      { heading: "Vom Frontend zum Backend", text: "Moderne Webanwendungen teilen sich in Frontend und Backend. Das Frontend läuft im Browser und kümmert sich um Darstellung und Interaktion. Das Backend läuft auf dem Server, enthält die Geschäftslogik und spricht mit der Datenbank. Beide kommunizieren über Schnittstellen, oft über sogenannte APIs, die Daten in strukturierter Form austauschen. Wer diese Aufteilung versteht, versteht, wie jeder Online-Shop im Inneren aufgebaut ist." },
+      { heading: "IT-Sicherheit", text: "Mit der Vernetzung wächst die Bedeutung der Sicherheit. Grundpfeiler sind Vertraulichkeit, Integrität und Verfügbarkeit der Daten. Verschlüsselung schützt Daten bei der Übertragung, erkennbar am Schloss-Symbol und dem sicheren Protokoll HTTPS, und bei der Speicherung. Sichere Passwörter, Mehr-Faktor-Anmeldung und regelmäßige Aktualisierungen wehren Angriffe ab. Typische Gefahren sind Phishing, Schadsoftware und der Diebstahl von Zugangsdaten." },
+      { heading: "Datensicherung und Ausblick", text: "Regelmäßige Sicherungskopien schützen vor Datenverlust durch Defekte, Fehler oder Angriffe; bewährt ist, mehrere Kopien an verschiedenen Orten zu halten. Über die Grundlagen hinaus prägen Cloud-Dienste, große Datenmengen und künstliche Intelligenz die Zukunft der Informatik. Für den E-Commerce heißt das: Wer die Datenverarbeitung im Inneren versteht, kann Systeme besser auswählen, bewerten und mitgestalten. Sicherheit und Datenpflege sind dabei kein einmaliges Projekt, sondern ein Dauerprozess." },
     ],
   },
   {
@@ -372,54 +189,22 @@ export const PODCASTS = [
     sem: 3,
     topic: "Vertragsschluss, Widerruf, Pflichtangaben, DSGVO, Wettbewerbsrecht",
     segments: [
-      {
-        heading: "Der rechtliche Rahmen",
-        text: "Der Online-Handel bewegt sich in einem dichten Netz aus Regeln. Das Bürgerliche Gesetzbuch regelt Verträge und den Verbraucherschutz, das Digitale-Dienste-Gesetz die Informationspflichten, die Datenschutz-Grundverordnung den Umgang mit personenbezogenen Daten und das Gesetz gegen den unlauteren Wettbewerb die Fairness am Markt. Wer verkauft, muss diese Ebenen kennen.",
-      },
-      {
-        heading: "Vertragsschluss im Internet",
-        text: "Ein Vertrag kommt durch zwei übereinstimmende Willenserklärungen zustande, Angebot und Annahme. Wichtig: Die Produktdarstellung im Shop ist rechtlich noch kein Angebot, sondern nur eine Aufforderung zur Bestellung, juristisch invitatio ad offerendum. Erst die Bestellung des Kunden ist das verbindliche Angebot. Der Händler nimmt es an, oft durch eine ausdrückliche Bestätigung oder den Versand der Ware. Die reine Eingangsbestätigung ist meist noch keine Annahme.",
-      },
-      {
-        heading: "Fernabsatz und seine Besonderheiten",
-        text: "Weil der Kunde die Ware vor dem Kauf nicht prüfen kann und dem Anbieter nicht gegenübersteht, spricht das Gesetz von Fernabsatzverträgen und schützt Verbraucher besonders. Daraus folgen erweiterte Informationspflichten und vor allem das Widerrufsrecht. Diese Regeln gelten für Verträge zwischen Unternehmern und Verbrauchern, nicht im reinen Geschäft zwischen Unternehmen.",
-      },
-      {
-        heading: "Das Widerrufsrecht",
-        text: "Der wichtigste Verbraucherschutz im Fernabsatz ist das Widerrufsrecht. Verbraucher können einen Online-Kauf in der Regel innerhalb von vierzehn Tagen ohne Angabe von Gründen widerrufen. Die Frist beginnt meist mit Erhalt der Ware. Klärt der Händler nicht ordnungsgemäß über das Widerrufsrecht auf, verlängert sich die Frist erheblich, um bis zu zwölf Monate. Für bestimmte Waren, etwa schnell verderbliche oder individuell angefertigte, ist das Widerrufsrecht ausgeschlossen.",
-      },
-      {
-        heading: "Die Button-Lösung",
-        text: "Der Gesetzgeber will verhindern, dass Kunden ungewollt kostenpflichtig bestellen. Deshalb muss die Schaltfläche am Ende des Bestellvorgangs eindeutig beschriftet sein, etwa mit den Worten zahlungspflichtig bestellen. Fehlt dieser klare Hinweis, kommt kein Vertrag zustande, und der Kunde muss nicht zahlen. Diese sogenannte Button-Lösung ist ein häufiger Prüfungsgegenstand.",
-      },
-      {
-        heading: "Informations- und Impressumspflichten",
-        text: "Jeder gewerbliche Online-Auftritt braucht ein vollständiges, leicht auffindbares Impressum mit Anbieterkennung. Dazu kommen umfangreiche Informationspflichten vor Vertragsschluss: Gesamtpreis einschließlich Steuern, Versandkosten, wesentliche Produkteigenschaften, Lieferzeit, Zahlungsarten und eine korrekte Widerrufsbelehrung. Fehlende oder falsche Angaben sind ein häufiger Grund für Abmahnungen.",
-      },
-      {
-        heading: "Allgemeine Geschäftsbedingungen",
-        text: "Allgemeine Geschäftsbedingungen sind vorformulierte Vertragsklauseln für eine Vielzahl von Verträgen. Sie werden nur wirksam, wenn der Kunde von ihnen Kenntnis nehmen konnte und ihnen zustimmt. Das Gesetz unterzieht sie einer Inhaltskontrolle: Klauseln, die den Kunden unangemessen benachteiligen, sind unwirksam. Überraschende oder unklare Klauseln gelten nicht. Gut gestaltete Geschäftsbedingungen schaffen Klarheit, dürfen aber die gesetzlichen Rechte der Verbraucher nicht aushebeln.",
-      },
-      {
-        heading: "Datenschutz nach DSGVO",
-        text: "Wer personenbezogene Daten verarbeitet, unterliegt der Datenschutz-Grundverordnung. Personenbezogen ist jede Information, die sich auf eine identifizierbare Person bezieht, etwa Name, Adresse oder Kaufhistorie. Verarbeitung ist praktisch jeder Umgang mit solchen Daten, vom Erheben über das Speichern bis zum Löschen. Die Verordnung gilt europaweit und auch für Anbieter außerhalb Europas, die sich an europäische Kunden richten.",
-      },
-      {
-        heading: "Die Grundsätze des Artikels fünf",
-        text: "Artikel fünf der Datenschutz-Grundverordnung nennt die zentralen Grundsätze. Rechtmäßigkeit, Verarbeitung nach Treu und Glauben und Transparenz. Zweckbindung, Daten nur für den angegebenen Zweck. Datenminimierung, nur so viele Daten wie nötig. Richtigkeit der Daten. Speicherbegrenzung, nicht länger als erforderlich. Integrität und Vertraulichkeit durch angemessene Sicherheit. Dazu die Rechenschaftspflicht: Der Verantwortliche muss die Einhaltung nachweisen können.",
-      },
-      {
-        heading: "Rechtsgrundlagen und Betroffenenrechte",
-        text: "Jede Verarbeitung braucht eine Rechtsgrundlage. Die wichtigsten sind die Einwilligung der betroffenen Person, die Erfüllung eines Vertrags und das berechtigte Interesse des Verantwortlichen nach Abwägung. Betroffene haben starke Rechte: Auskunft über ihre Daten, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit und Widerspruch. Diese Rechte muss ein Unternehmen praktisch umsetzen können.",
-      },
-      {
-        heading: "Bußgelder und Sanktionen",
-        text: "Die Datenschutz-Grundverordnung hat scharfe Zähne. Bei schweren Verstößen, etwa gegen die Grundsätze oder die Rechte der Betroffenen, drohen Geldbußen von bis zu zwanzig Millionen Euro oder bis zu vier Prozent des weltweiten Jahresumsatzes eines Unternehmens, je nachdem, welcher Betrag höher ist. In der Praxis wurden bereits zweistellige Millionenbeträge verhängt. Datenschutz ist damit nicht nur eine Frage der Ethik, sondern ein handfestes wirtschaftliches Risiko.",
-      },
-      {
-        heading: "Wettbewerbs-, Marken- und Urheberrecht",
-        text: "Das Gesetz gegen den unlauteren Wettbewerb verbietet irreführende Werbung, unzumutbare Belästigung und andere unlautere Praktiken. Verstöße werden häufig per Abmahnung verfolgt, bei der der Abgemahnte eine Unterlassungserklärung abgeben und Kosten tragen soll. Daneben sind fremde Marken, Texte und Bilder durch Marken- und Urheberrecht geschützt und dürfen nicht ohne Erlaubnis verwendet werden. Sauber informieren, ehrlich werben und fremde Rechte achten schützt vor teuren Fehlern.",
-      },
+      { heading: "Der rechtliche Rahmen", text: "Der Online-Handel bewegt sich in einem dichten Netz aus Regeln. Das Bürgerliche Gesetzbuch regelt Verträge und den Verbraucherschutz, das Digitale-Dienste-Gesetz die Informationspflichten, die Datenschutz-Grundverordnung den Umgang mit personenbezogenen Daten und das Gesetz gegen den unlauteren Wettbewerb die Fairness am Markt. Dazu kommen Marken- und Urheberrecht. Wer verkauft, muss diese Ebenen zumindest im Überblick kennen." },
+      { heading: "Willenserklärung und Vertrag", text: "Grundlage jedes Geschäfts ist die Willenserklärung, die geäußerte Absicht, eine Rechtsfolge herbeizuführen. Ein Vertrag kommt durch zwei übereinstimmende Willenserklärungen zustande: Angebot und Annahme. Beide müssen sich decken. Auch online gelten diese Grundregeln des Bürgerlichen Gesetzbuchs unverändert; die Besonderheit liegt nur in der elektronischen Form und im gesteigerten Schutz des Verbrauchers." },
+      { heading: "Vertragsschluss im Internet", text: "Wichtig ist eine Feinheit: Die Produktdarstellung im Shop ist rechtlich noch kein Angebot, sondern nur eine Aufforderung, ein Angebot abzugeben, juristisch invitatio ad offerendum. Erst die Bestellung des Kunden ist das verbindliche Angebot. Der Händler nimmt es an, oft durch eine ausdrückliche Auftragsbestätigung oder den Versand der Ware. Die reine automatische Eingangsbestätigung ist meist noch keine Annahme, was Händler vor unerwünschten Bindungen schützt." },
+      { heading: "Fernabsatzverträge", text: "Weil der Kunde die Ware vor dem Kauf nicht prüfen kann und dem Anbieter nicht gegenübersteht, spricht das Gesetz von Fernabsatzverträgen und schützt Verbraucher besonders. Daraus folgen erweiterte Informationspflichten und vor allem das Widerrufsrecht. Diese Regeln gelten für Verträge zwischen Unternehmern und Verbrauchern, nicht im reinen Geschäft zwischen Unternehmen. Der Verbraucherbegriff ist also der Schlüssel zu diesen Schutzrechten." },
+      { heading: "Informationspflichten", text: "Vor Vertragsschluss muss der Händler klar und verständlich informieren: über die wesentlichen Eigenschaften der Ware, den Gesamtpreis einschließlich Steuern und aller Zusatzkosten, Versandkosten, Liefertermin, Zahlungsarten sowie über das Bestehen und die Bedingungen des Widerrufsrechts. Diese Angaben müssen leicht zugänglich sein. Fehlen sie oder sind sie falsch, drohen Abmahnungen und die Rechte des Kunden erweitern sich." },
+      { heading: "Die Button-Lösung", text: "Der Gesetzgeber will verhindern, dass Kunden ungewollt kostenpflichtig bestellen. Deshalb muss die Schaltfläche am Ende des Bestellvorgangs eindeutig beschriftet sein, etwa mit den Worten zahlungspflichtig bestellen. Unmittelbar davor sind die wesentlichen Bestelldaten anzuzeigen. Fehlt dieser klare Hinweis, kommt kein Vertrag zustande, und der Kunde muss nicht zahlen. Diese sogenannte Button-Lösung ist ein häufiger Prüfungsgegenstand." },
+      { heading: "Das Widerrufsrecht", text: "Der wichtigste Verbraucherschutz im Fernabsatz ist das Widerrufsrecht. Verbraucher können einen Online-Kauf in der Regel innerhalb von vierzehn Tagen ohne Angabe von Gründen widerrufen. Die Frist beginnt meist mit Erhalt der Ware. Nach dem Widerruf sind Ware und Kaufpreis zurückzugewähren. Der Widerruf ist kein Umtausch aus Kulanz, sondern ein gesetzliches Recht, das den fehlenden Blick auf die Ware ausgleichen soll." },
+      { heading: "Grenzen des Widerrufsrechts", text: "Klärt der Händler nicht ordnungsgemäß über das Widerrufsrecht auf, verlängert sich die Frist erheblich, um bis zu zwölf Monate. Für bestimmte Waren ist das Widerrufsrecht jedoch ausgeschlossen, etwa bei schnell verderblichen Waren, bei entsiegelten Hygieneartikeln, bei individuell angefertigten Produkten oder bei entsiegelter Software. Diese Ausnahmen schützen den Händler vor unzumutbaren Rücknahmen und sind gut zu merken." },
+      { heading: "Impressum und AGB", text: "Jeder gewerbliche Online-Auftritt braucht ein vollständiges, leicht auffindbares Impressum mit Anbieterkennung. Allgemeine Geschäftsbedingungen sind vorformulierte Vertragsklauseln für eine Vielzahl von Verträgen; sie werden nur wirksam, wenn der Kunde von ihnen Kenntnis nehmen konnte und ihnen zustimmt. Das Gesetz unterzieht sie einer Inhaltskontrolle: Klauseln, die den Kunden unangemessen benachteiligen, sind unwirksam, ebenso überraschende oder unklare Klauseln." },
+      { heading: "Datenschutz: Grundbegriffe", text: "Wer personenbezogene Daten verarbeitet, unterliegt der Datenschutz-Grundverordnung. Personenbezogen ist jede Information, die sich auf eine identifizierbare Person bezieht, etwa Name, Adresse, Kaufhistorie oder Kennnummern. Verarbeitung ist praktisch jeder Umgang mit solchen Daten, vom Erheben über das Speichern bis zum Löschen. Die Verordnung gilt europaweit und auch für Anbieter außerhalb Europas, die sich an europäische Kunden richten." },
+      { heading: "Die Grundsätze des Artikels fünf", text: "Artikel fünf der Datenschutz-Grundverordnung nennt die zentralen Grundsätze. Rechtmäßigkeit, Verarbeitung nach Treu und Glauben und Transparenz. Zweckbindung, Daten nur für den angegebenen Zweck. Datenminimierung, nur so viele Daten wie nötig. Richtigkeit der Daten. Speicherbegrenzung, nicht länger als erforderlich. Integrität und Vertraulichkeit durch angemessene Sicherheit. Dazu die Rechenschaftspflicht: Der Verantwortliche muss die Einhaltung nachweisen können." },
+      { heading: "Rechtsgrundlagen der Verarbeitung", text: "Jede Verarbeitung braucht eine Rechtsgrundlage. Die wichtigsten sind die Einwilligung der betroffenen Person, die freiwillig, informiert und widerrufbar sein muss; die Erfüllung eines Vertrags, etwa die Lieferadresse für eine Bestellung; und das berechtigte Interesse des Verantwortlichen nach einer Abwägung mit den Interessen der Betroffenen. Ohne eine solche Grundlage ist die Verarbeitung unzulässig." },
+      { heading: "Betroffenenrechte", text: "Betroffene haben starke Rechte. Sie können Auskunft über ihre gespeicherten Daten verlangen, deren Berichtigung, deren Löschung, das sogenannte Recht auf Vergessenwerden, sowie die Einschränkung der Verarbeitung. Hinzu kommen das Recht auf Datenübertragbarkeit und das Widerspruchsrecht, etwa gegen Werbung. Ein Unternehmen muss organisatorisch in der Lage sein, diese Anfragen fristgerecht zu bearbeiten, in der Regel innerhalb eines Monats." },
+      { heading: "Bußgelder und Sanktionen", text: "Die Datenschutz-Grundverordnung hat scharfe Zähne. Bei schweren Verstößen, etwa gegen die Grundsätze oder die Rechte der Betroffenen, drohen Geldbußen von bis zu zwanzig Millionen Euro oder bis zu vier Prozent des gesamten weltweiten Jahresumsatzes eines Unternehmens, je nachdem, welcher Betrag höher ist. In der Praxis wurden bereits zweistellige Millionenbeträge verhängt. Datenschutz ist damit nicht nur eine Frage der Ethik, sondern ein handfestes wirtschaftliches Risiko." },
+      { heading: "Wettbewerbsrecht und Abmahnung", text: "Das Gesetz gegen den unlauteren Wettbewerb verbietet irreführende Werbung, unzumutbare Belästigung wie unerwünschte Werbe-Mails und andere unlautere Praktiken. Verstöße werden häufig per Abmahnung verfolgt, bei der der Abgemahnte eine strafbewehrte Unterlassungserklärung abgeben und Kosten tragen soll. Abmahnungen sind im E-Commerce ein reales Risiko, weil viele Wettbewerber und Verbände die Einhaltung der Regeln aktiv überwachen." },
+      { heading: "Marken- und Urheberrecht", text: "Fremde Marken, Texte, Fotos und Grafiken sind durch Marken- und Urheberrecht geschützt und dürfen nicht ohne Erlaubnis verwendet werden. Wer fremde Produktbilder kopiert oder eine geschützte Marke unbefugt nutzt, riskiert Unterlassungs- und Schadensersatzansprüche. Für den eigenen Shop bedeutet das: eigene Inhalte erstellen oder Nutzungsrechte einholen. Sauber informieren, ehrlich werben, Datenschutz achten und fremde Rechte respektieren schützt am Ende vor teuren Fehlern." },
     ],
   },
   {
@@ -429,103 +214,41 @@ export const PODCASTS = [
     sem: 4,
     topic: "Fulfillment, Lager, Kommissionierung, Bullwhip, Retouren",
     segments: [
-      {
-        heading: "Was Logistik leistet",
-        text: "Logistik sorgt dafür, dass das richtige Produkt in der richtigen Menge und Qualität zur richtigen Zeit am richtigen Ort zu den richtigen Kosten verfügbar ist. Man nennt das die sechs R der Logistik. Sie umfasst alle Prozesse der Planung, Steuerung und Kontrolle von Waren-, Informations- und Werteflüssen. Im E-Commerce ist Logistik oft der entscheidende Wettbewerbsfaktor.",
-      },
-      {
-        heading: "Die Logistiksysteme",
-        text: "Man gliedert die Logistik nach den Phasen der Wertschöpfung. Die Beschaffungslogistik bringt Material ins Unternehmen. Die Produktionslogistik steuert den innerbetrieblichen Fluss. Die Distributionslogistik bringt fertige Produkte zum Kunden. Die Entsorgungslogistik kümmert sich um Rückführung und Recycling, was auch die Retouren im Onlinehandel einschließt. Diese Systeme greifen ineinander.",
-      },
-      {
-        heading: "Der Fulfillment-Prozess",
-        text: "Im Onlinehandel heißt der gesamte Ablauf von der Bestellung bis zur Auslieferung Fulfillment. Er umfasst die Auftragsannahme, die Kommissionierung der Ware, das Verpacken, den Versand und die Bearbeitung von Rücksendungen. Viele Händler lagern diesen Prozess an spezialisierte Dienstleister oder an Fulfillment-Center großer Plattformen aus. Das spart Investitionen, kostet aber Marge und ein Stück Kontrolle über das Kundenerlebnis.",
-      },
-      {
-        heading: "Funktionen des Lagers",
-        text: "Ein Lager erfüllt mehrere Aufgaben: Es überbrückt Zeit zwischen Beschaffung und Bedarf, gleicht Schwankungen aus, ermöglicht Mengenrabatte beim Einkauf und sichert die Lieferfähigkeit. Zugleich verursacht es Kosten für Fläche, Kapitalbindung und Handling. Die Kunst besteht darin, genug Bestand für Lieferfähigkeit zu halten, ohne unnötig Kapital zu binden.",
-      },
-      {
-        heading: "Chaotische Lagerhaltung und Kommissionierung",
-        text: "Bei der chaotischen oder dynamischen Lagerhaltung wird Ware dort eingelagert, wo gerade Platz ist, und ein System merkt sich jeden Lagerplatz. Das nutzt den Raum optimal aus. Die Kommissionierung, also das Zusammenstellen der bestellten Artikel, ist der arbeitsintensivste Schritt. Verfahren reichen von Person zur Ware bis Ware zur Person mit Robotern. Barcodes, Scanner und Lagerverwaltungssysteme beschleunigen den Prozess und senken Fehler.",
-      },
-      {
-        heading: "Verpackung, Versand und die letzte Meile",
-        text: "Die Verpackung schützt die Ware, dient aber auch als Markenerlebnis und sollte möglichst ressourcenschonend sein. Für den Transport zum Kunden sorgen Kurier-, Express- und Paketdienste. Der teuerste und aufwendigste Abschnitt ist die letzte Meile, die Zustellung bis zur Haustür, besonders in Städten mit hoher Stopp-Dichte und beim Umgang mit Fehlzustellungen.",
-      },
-      {
-        heading: "Supply Chain Management",
-        text: "Über das einzelne Unternehmen hinaus denkt das Supply Chain Management. Es steuert die gesamte Kette vom Rohstoff bis zum Endkunden über mehrere Unternehmen hinweg. Ziel ist es, Warenflüsse und vor allem Informationsflüsse zwischen Lieferanten, Herstellern, Händlern und Kunden abzustimmen. Eine gut integrierte Lieferkette senkt Kosten, beschleunigt Durchlaufzeiten und erhöht die Zuverlässigkeit.",
-      },
-      {
-        heading: "Der Bullwhip-Effekt",
-        text: "Ein klassisches Problem der Lieferkette ist der Peitscheneffekt, englisch Bullwhip-Effekt. Kleine Schwankungen der Endkundennachfrage schaukeln sich entlang der Kette zu immer größeren Bestellausschlägen auf, je weiter man sich vom Kunden entfernt. Ursachen sind verzögerte Informationen, Bestellungen in großen Losen, Preisaktionen und Sicherheitspuffer aus Angst vor Engpässen. Die Folge sind mal überfüllte, mal leere Lager und hohe Kosten.",
-      },
-      {
-        heading: "Den Bullwhip-Effekt dämpfen",
-        text: "Gegen den Peitscheneffekt hilft vor allem Transparenz. Wenn alle Stufen die echten Verkaufsdaten des Endkunden sehen, statt nur die Bestellungen der nächsten Stufe, sinken die Ausschläge. Kleinere, häufigere Bestellungen, stabile Preise statt großer Aktionen und eine enge Abstimmung zwischen den Partnern glätten die Kette zusätzlich. Information ist hier buchstäblich wertvoller als Lagerbestand.",
-      },
-      {
-        heading: "Bestandsmanagement",
-        text: "Beim Bestandsmanagement geht es um die richtige Menge zur richtigen Zeit. Kennzahlen wie Meldebestand und Sicherheitsbestand steuern, wann nachbestellt wird. Beim Prinzip der bedarfssynchronen Anlieferung, oft Just-in-Time genannt, kommt Material erst kurz vor Verbrauch an, was Lagerkosten spart, aber die Kette störanfälliger macht. Die Corona-Jahre haben gezeigt, wie riskant zu schlanke Lieferketten sein können.",
-      },
-      {
-        heading: "Retourenmanagement",
-        text: "Rücksendungen sind ein Sonderthema des Onlinehandels, besonders bei Bekleidung, wo die Retourenquoten sehr hoch sein können. Retouren verursachen Kosten für Transport, Prüfung, Wiederaufbereitung und teils Wertverlust. Gutes Retourenmanagement senkt die Quote durch genaue Produktbeschreibungen, gute Bilder, Größenberatung und ehrliche Bewertungen. Zurückgesandte Ware muss schnell wieder verkaufsfähig gemacht werden, um Wertverluste zu begrenzen.",
-      },
-      {
-        heading: "Nachhaltige Logistik",
-        text: "Logistik ist längst nicht mehr nur eine Kostenfrage, sondern auch eine Verantwortungsfrage. Grüne Logistik setzt auf umweltfreundliche Verpackungen, gebündelte Lieferungen, emissionsarme Fahrzeuge und die Vermeidung unnötiger Retouren und Fehlfahrten. Kunden und Gesetzgeber erwarten zunehmend nachhaltiges Handeln. Wer Effizienz und Ökologie verbindet, spart oft zugleich Kosten und stärkt die Marke.",
-      },
+      { heading: "Was Logistik leistet", text: "Logistik sorgt dafür, dass das richtige Produkt in der richtigen Menge und Qualität zur richtigen Zeit am richtigen Ort zu den richtigen Kosten verfügbar ist. Man nennt das die sechs R der Logistik. Sie umfasst alle Prozesse der Planung, Steuerung und Kontrolle von Waren-, Informations- und Werteflüssen. Im E-Commerce ist Logistik oft der entscheidende Wettbewerbsfaktor, weil schnelle und zuverlässige Lieferung zum Kaufkriterium geworden ist." },
+      { heading: "Die Logistiksysteme", text: "Man gliedert die Logistik nach den Phasen der Wertschöpfung. Die Beschaffungslogistik bringt Material ins Unternehmen. Die Produktionslogistik steuert den innerbetrieblichen Fluss. Die Distributionslogistik bringt fertige Produkte zum Kunden. Die Entsorgungs- oder Retourenlogistik kümmert sich um Rückführung und Recycling. Diese Teilsysteme greifen ineinander und bilden zusammen die durchgängige Versorgungskette des Unternehmens." },
+      { heading: "Der Fulfillment-Prozess", text: "Im Onlinehandel heißt der gesamte Ablauf von der Bestellung bis zur Auslieferung Fulfillment. Er umfasst die Auftragsannahme, die Kommissionierung der Ware, das Verpacken, den Versand und die Bearbeitung von Rücksendungen. Die Geschwindigkeit und Zuverlässigkeit dieses Prozesses entscheidet über die Kundenzufriedenheit. Fehler wie falsche oder beschädigte Sendungen führen zu Retouren, Zusatzkosten und verlorenem Vertrauen." },
+      { heading: "Eigen- oder Fremdabwicklung", text: "Händler stehen vor der Wahl, das Fulfillment selbst zu betreiben oder auszulagern. Wer es selbst macht, behält Kontrolle und kann das Kundenerlebnis prägen, muss aber in Lager, Personal und Technik investieren. Wer an spezialisierte Dienstleister oder an Fulfillment-Center großer Plattformen auslagert, spart Investitionen und gewinnt Reichweite, gibt aber Marge und ein Stück Kontrolle ab. Diese Make-or-Buy-Entscheidung ist strategisch bedeutsam." },
+      { heading: "Funktionen des Lagers", text: "Ein Lager erfüllt mehrere Aufgaben: Es überbrückt Zeit zwischen Beschaffung und Bedarf, gleicht Schwankungen der Nachfrage aus, ermöglicht Mengenrabatte beim Einkauf, dient der Sortierung und sichert die Lieferfähigkeit. Zugleich verursacht es Kosten für Fläche, Kapitalbindung, Personal und das Risiko von Schwund und Veralterung. Die Kunst besteht darin, genug Bestand für Lieferfähigkeit zu halten, ohne unnötig Kapital zu binden." },
+      { heading: "Lagerorganisation", text: "Bei der Festplatzlagerung hat jeder Artikel seinen festen Platz. Bei der chaotischen oder dynamischen Lagerhaltung wird Ware dort eingelagert, wo gerade Platz ist, und ein Lagerverwaltungssystem merkt sich jeden Lagerplatz. Das nutzt den Raum optimal aus und ist in großen Onlinelagern üblich. Kennzahlen wie der Lagerumschlag zeigen, wie oft der Bestand im Jahr komplett verkauft und ersetzt wird; ein hoher Umschlag bindet weniger Kapital." },
+      { heading: "Kommissionierung", text: "Die Kommissionierung, also das Zusammenstellen der bestellten Artikel zu einer Sendung, ist der arbeitsintensivste Schritt im Lager. Beim Prinzip Person zur Ware laufen Mitarbeiter zu den Regalen. Beim Prinzip Ware zur Person bringen Fördertechnik oder Roboter die Regale zum Arbeitsplatz. Barcodes, Scanner, Pick-by-Light und zunehmend Automatisierung beschleunigen den Prozess und senken Fehler. Weniger Laufwege bedeuten direkt niedrigere Kosten." },
+      { heading: "Verpackung, Versand und letzte Meile", text: "Die Verpackung schützt die Ware, dient als Markenerlebnis und sollte möglichst ressourcenschonend sein. Für den Transport zum Kunden sorgen Kurier-, Express- und Paketdienste. Der teuerste und aufwendigste Abschnitt ist die letzte Meile, die Zustellung bis zur Haustür, besonders in Städten mit hoher Stopp-Dichte, engen Zeitfenstern und Fehlzustellungen. Konzepte wie Paketstationen und Abholpunkte sollen die letzte Meile entlasten." },
+      { heading: "Supply Chain Management", text: "Über das einzelne Unternehmen hinaus denkt das Supply Chain Management. Es steuert die gesamte Kette vom Rohstoff bis zum Endkunden über mehrere Unternehmen hinweg. Ziel ist es, Warenflüsse und vor allem Informationsflüsse zwischen Lieferanten, Herstellern, Händlern und Kunden abzustimmen. Eine gut integrierte Lieferkette senkt Kosten, beschleunigt Durchlaufzeiten und erhöht die Zuverlässigkeit für alle Beteiligten." },
+      { heading: "Der Bullwhip-Effekt", text: "Ein klassisches Problem der Lieferkette ist der Peitscheneffekt, englisch Bullwhip-Effekt. Kleine Schwankungen der Endkundennachfrage schaukeln sich entlang der Kette zu immer größeren Bestellausschlägen auf, je weiter man sich vom Kunden entfernt. Ursachen sind verzögerte Informationen, Bestellungen in großen Losen, Preisaktionen, die Nachfrage vorziehen, und Sicherheitspuffer aus Angst vor Engpässen. Die Folge sind mal überfüllte, mal leere Lager und hohe Kosten." },
+      { heading: "Den Bullwhip-Effekt dämpfen", text: "Gegen den Peitscheneffekt hilft vor allem Transparenz. Wenn alle Stufen die echten Verkaufsdaten des Endkunden sehen, statt nur die Bestellungen der nächsten Stufe, sinken die Ausschläge. Kleinere, häufigere Bestellungen, stabile Preise statt großer Aktionen, kurze Durchlaufzeiten und eine enge Abstimmung zwischen den Partnern glätten die Kette zusätzlich. In der Lieferkette ist Information deshalb oft wertvoller als zusätzlicher Lagerbestand." },
+      { heading: "Bestandsmanagement", text: "Beim Bestandsmanagement geht es um die richtige Menge zur richtigen Zeit. Kennzahlen wie Meldebestand und Sicherheitsbestand steuern, wann und wie viel nachbestellt wird. Beim Prinzip der bedarfssynchronen Anlieferung, oft Just-in-Time genannt, kommt Material erst kurz vor Verbrauch an, was Lagerkosten spart, aber die Kette störanfälliger macht. Die Lieferengpässe der letzten Jahre haben gezeigt, wie riskant zu schlanke Lieferketten sein können." },
+      { heading: "Retourenmanagement", text: "Rücksendungen sind ein Sonderthema des Onlinehandels, besonders bei Bekleidung, wo die Retourenquoten sehr hoch sein können. Retouren verursachen Kosten für Transport, Prüfung, Wiederaufbereitung und teils Wertverlust. Gutes Retourenmanagement senkt die Quote durch genaue Produktbeschreibungen, gute Bilder, Größenberatung und ehrliche Bewertungen. Zurückgesandte Ware muss schnell wieder verkaufsfähig gemacht werden, um Wertverluste zu begrenzen." },
+      { heading: "Nachhaltige Logistik", text: "Logistik ist längst nicht mehr nur eine Kostenfrage, sondern auch eine Verantwortungsfrage. Grüne Logistik setzt auf umweltfreundliche Verpackungen, gebündelte Lieferungen, emissionsarme Fahrzeuge, optimierte Routen und die Vermeidung unnötiger Retouren und Fehlfahrten. Kunden und Gesetzgeber erwarten zunehmend nachhaltiges Handeln. Wer Effizienz und Ökologie verbindet, spart oft zugleich Kosten und stärkt die Marke; Nachhaltigkeit und Wirtschaftlichkeit sind hier keine Gegensätze." },
     ],
   },
   {
     id: "pod-lernen",
     icon: "🎧",
-    title: "Lernstrategie: So bereitest du dich clever vor",
+    title: "Lernstrategie: Clever und nachhaltig lernen",
     sem: 0,
-    topic: "Active Recall, Vergessenskurve, Spaced Repetition, Fokus, Altklausuren",
+    topic: "Active Recall, Vergessenskurve, Spaced Repetition, Fokus, Prüfungen",
     segments: [
-      {
-        heading: "Aktives Erinnern",
-        text: "Der wirksamste Lernhebel ist Active Recall, das aktive Abrufen aus dem Gedächtnis. Statt Text nur wiederzulesen, schließt du das Buch und rufst den Stoff aktiv ab, etwa durch Quizfragen oder Lernkarten. Jeder erfolgreiche Abruf festigt die Erinnerungsspur stärker als mehrfaches passives Lesen. Genau darauf bauen die Quizze und Karteikarten in dieser App.",
-      },
-      {
-        heading: "Die Vergessenskurve",
-        text: "Der Psychologe Hermann Ebbinghaus zeigte schon vor über hundert Jahren, dass wir Neues rasch wieder vergessen. Ohne Wiederholung ist ein großer Teil des Stoffs schon nach wenigen Tagen verblasst. Diese Vergessenskurve lässt sich aber abflachen: Jede Wiederholung zur richtigen Zeit hebt das Erinnerungsniveau wieder an und lässt es langsamer abfallen.",
-      },
-      {
-        heading: "Verteiltes Wiederholen",
-        text: "Der zweite große Hebel ist Spaced Repetition, das zeitlich verteilte Wiederholen. Statt alles am Vortag zu pauken, wiederholst du in wachsenden Abständen: nach einem Tag, nach drei Tagen, nach einer Woche, nach einem Monat. Das Leitner-System mit Karteikästen setzt genau das um. Was du sicher kannst, kommt seltener dran, was noch wackelt, häufiger. So bleibt Wissen langfristig hängen.",
-      },
-      {
-        heading: "Verschachteln statt blocken",
-        text: "Viele lernen ein Thema komplett, bevor sie zum nächsten gehen. Wirksamer ist oft das Verschachteln, englisch Interleaving: Man mischt verschiedene Themen oder Aufgabentypen in einer Lerneinheit. Das fällt zunächst schwerer, trainiert aber das Unterscheiden und Anwenden, genau die Fähigkeit, die eine Klausur verlangt. Der Aufwand zahlt sich in besserem Transfer aus.",
-      },
-      {
-        heading: "Verstehen und verknüpfen",
-        text: "Reines Auswendiglernen ist brüchig. Stärker ist Elaboration: Du erklärst dir den Stoff in eigenen Worten, stellst Warum-Fragen und verknüpfst Neues mit bereits Bekanntem. Hilfreich ist auch, Inhalte doppelt zu codieren, also Sprache mit Bildern und Skizzen zu verbinden. Wer einen Zusammenhang jemandem erklären kann, hat ihn wirklich verstanden.",
-      },
-      {
-        heading: "Fokus statt Dauerlauf",
-        text: "Konzentration ist eine begrenzte Ressource. Die Pomodoro-Technik teilt das Lernen in fokussierte Blöcke von etwa fünfundzwanzig Minuten mit kurzen Pausen dazwischen. Der eingebaute Fokus-Timer unterstützt genau das. Entscheidend ist, in diesen Blöcken Ablenkungen konsequent auszuschalten, vor allem das Smartphone. Vier konzentrierte Blöcke bringen mehr als drei zerstreute Stunden.",
-      },
-      {
-        heading: "Der Testeffekt und Altklausuren",
-        text: "Sich selbst zu testen, verbessert das Behalten stärker als weiteres Lesen; das nennt man Testeffekt. Nichts nutzt das besser als echte Altklausuren. Sie zeigen Aufgabentypen, Schwerpunkte und Anspruchsniveau. Arbeite sie unter realistischen Bedingungen durch, auf Zeit und ohne Hilfsmittel. Der Klausur-Simulator und die Klausur-Analyse in dieser App helfen, wiederkehrende Muster und Themen zu erkennen.",
-      },
-      {
-        heading: "Schlaf und Pausen",
-        text: "Gedächtnis wird nicht beim Lernen gefestigt, sondern vor allem im Schlaf. Wer ausreichend schläft, verankert das Gelernte deutlich besser als jemand, der die Nacht durchpaukt. Auch kurze Pausen und Bewegung zwischen den Lerneinheiten fördern die Verarbeitung. Lernen und Erholung sind keine Gegensätze, sondern zwei Seiten desselben Prozesses.",
-      },
-      {
-        heading: "Ziele und Gewohnheiten",
-        text: "Große Vorhaben gelingen über kleine, feste Gewohnheiten. Setze dir konkrete Tagesziele statt vager Vorsätze, hake sie ab und mache das Lernen zur Routine an festen Zeiten. Ein sichtbarer Fortschritt, etwa eine Lernsträhne, motiviert zusätzlich. Kontinuität schlägt Intensität: Jeden Tag ein wenig ist wirksamer als seltene Marathons.",
-      },
-      {
-        heading: "Selbstwirksamkeit und Prüfungsangst",
-        text: "Ein gewisses Maß an Anspannung ist normal und sogar leistungsfördernd. Übermäßige Prüfungsangst dagegen blockiert. Dagegen helfen gute Vorbereitung, realistische Erwartungen, Probeklausuren unter echten Bedingungen und einfache Techniken wie ruhiges Atmen. Der Glaube, durch eigenes Handeln etwas erreichen zu können, die Selbstwirksamkeit, wächst mit jeder gemeisterten Aufgabe. Motivation folgt oft dem Handeln, nicht umgekehrt.",
-      },
+      { heading: "Aktives Erinnern", text: "Der wirksamste Lernhebel ist Active Recall, das aktive Abrufen aus dem Gedächtnis. Statt Text nur wiederzulesen, schließt du das Buch und rufst den Stoff aktiv ab, etwa durch Quizfragen, Lernkarten oder das freie Aufschreiben aus dem Kopf. Jeder erfolgreiche Abruf festigt die Erinnerungsspur stärker als mehrfaches passives Lesen. Genau darauf bauen die Quizze und Karteikarten in dieser App." },
+      { heading: "Warum Wiederlesen täuscht", text: "Passives Wiederlesen fühlt sich produktiv an, weil der Text zunehmend vertraut wirkt. Diese Vertrautheit ist aber trügerisch; sie täuscht Können vor, das im Abruf nicht standhält. Man nennt das eine Kompetenzillusion. Der ehrliche Test ist, ob du den Stoff ohne Vorlage wiedergeben kannst. Wer sich früh und oft selbst prüft, entlarvt Lücken rechtzeitig, statt sie erst in der Klausur zu bemerken." },
+      { heading: "Die Vergessenskurve", text: "Der Psychologe Hermann Ebbinghaus zeigte schon vor über hundert Jahren, dass wir Neues rasch wieder vergessen. Ohne Wiederholung ist ein großer Teil des Stoffs schon nach wenigen Tagen verblasst. Diese Vergessenskurve fällt anfangs steil ab und flacht dann ab. Entscheidend ist: Jede Wiederholung zur richtigen Zeit hebt das Erinnerungsniveau wieder an und lässt es danach langsamer abfallen." },
+      { heading: "Verteiltes Wiederholen", text: "Der zweite große Hebel ist Spaced Repetition, das zeitlich verteilte Wiederholen. Statt alles am Vortag zu pauken, wiederholst du in wachsenden Abständen: nach einem Tag, nach drei Tagen, nach einer Woche, nach einem Monat. Das nutzt den Abstandseffekt, wonach verteiltes Lernen deutlich besser haften bleibt als gebündeltes. Das Leitner-System mit Karteikästen setzt dieses Prinzip einfach und wirksam um." },
+      { heading: "Das Leitner-System", text: "Beim Leitner-System wandern Lernkarten durch mehrere Fächer. Eine richtig beantwortete Karte rückt ein Fach weiter und wird seltener abgefragt; eine falsch beantwortete Karte fällt zurück ins erste Fach und kommt schnell wieder dran. So verbringst du deine Zeit dort, wo sie am nötigsten ist, nämlich beim noch unsicheren Stoff. Das Fehler-Training und die Karteikarten dieser App arbeiten genau nach diesem Prinzip." },
+      { heading: "Verschachteln statt blocken", text: "Viele lernen ein Thema vollständig, bevor sie zum nächsten gehen. Wirksamer ist oft das Verschachteln, englisch Interleaving: Man mischt verschiedene Themen oder Aufgabentypen in einer Lerneinheit. Das fällt zunächst schwerer und fühlt sich weniger flüssig an, trainiert aber das Unterscheiden und das Auswählen der richtigen Methode, genau die Fähigkeit, die eine Klausur mit gemischten Aufgaben verlangt." },
+      { heading: "Verstehen und verknüpfen", text: "Reines Auswendiglernen ist brüchig. Stärker ist Elaboration: Du erklärst dir den Stoff in eigenen Worten, stellst Warum- und Wie-Fragen und verknüpfst Neues mit bereits Bekanntem. Hilfreich ist auch das doppelte Codieren, also Sprache mit Bildern, Skizzen und Diagrammen zu verbinden. Wer einen Zusammenhang jemand anderem erklären kann, hat ihn wirklich verstanden; das ist der sogenannte Lerneffekt durch Lehren." },
+      { heading: "Fokus statt Dauerlauf", text: "Konzentration ist eine begrenzte Ressource. Die Pomodoro-Technik teilt das Lernen in fokussierte Blöcke von etwa fünfundzwanzig Minuten mit kurzen Pausen dazwischen. Der eingebaute Fokus-Timer unterstützt genau das. Entscheidend ist, in diesen Blöcken Ablenkungen konsequent auszuschalten, vor allem das Smartphone. Vier konzentrierte Blöcke bringen mehr als drei zerstreute Stunden, in denen die Aufmerksamkeit ständig springt." },
+      { heading: "Der Testeffekt und Altklausuren", text: "Sich selbst zu testen, verbessert das Behalten stärker als weiteres Lesen; das nennt man Testeffekt. Nichts nutzt das besser als echte Altklausuren. Sie zeigen Aufgabentypen, Schwerpunkte und Anspruchsniveau. Arbeite sie unter realistischen Bedingungen durch, auf Zeit und ohne Hilfsmittel, und werte anschließend deine Fehler gezielt aus. Der Klausur-Simulator und die Klausur-Analyse in dieser App helfen, wiederkehrende Muster und Themen zu erkennen." },
+      { heading: "Schlaf, Pausen und Ernährung", text: "Gedächtnis wird nicht nur beim Lernen gefestigt, sondern vor allem im Schlaf. Wer ausreichend schläft, verankert das Gelernte deutlich besser als jemand, der die Nacht durchpaukt. Auch kurze Pausen, Bewegung und ausreichend Wasser fördern die Verarbeitung und die Konzentration. Lernen und Erholung sind keine Gegensätze, sondern zwei Seiten desselben Prozesses; der Schlaf nach dem Lernen ist Teil des Lernens." },
+      { heading: "Ziele und Gewohnheiten", text: "Große Vorhaben gelingen über kleine, feste Gewohnheiten. Setze dir konkrete, machbare Tagesziele statt vager Vorsätze, hake sie ab und mache das Lernen zur Routine an festen Zeiten und Orten. Ein sichtbarer Fortschritt, etwa eine Lernsträhne oder ein gefüllter Fortschrittsbalken, motiviert zusätzlich. Kontinuität schlägt Intensität: Jeden Tag ein wenig ist wirksamer als seltene Marathons kurz vor der Prüfung." },
+      { heading: "Selbstwirksamkeit und Prüfungsangst", text: "Ein gewisses Maß an Anspannung ist normal und sogar leistungsfördernd. Übermäßige Prüfungsangst dagegen blockiert das Denken. Dagegen helfen gründliche Vorbereitung, realistische Erwartungen, Probeklausuren unter echten Bedingungen und einfache Techniken wie ruhiges, langsames Atmen. Der Glaube, durch eigenes Handeln etwas erreichen zu können, die Selbstwirksamkeit, wächst mit jeder gemeisterten Aufgabe. Motivation folgt dabei oft dem Handeln, nicht umgekehrt; der erste kleine Schritt ist der wichtigste." },
     ],
   },
 ];

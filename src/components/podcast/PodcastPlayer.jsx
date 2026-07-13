@@ -10,10 +10,17 @@ import cardStyles from "../cards/cards.module.css";
 import styles from "./podcast.module.css";
 
 const RATES = [
-  { v: 0.85, label: "0,85×" },
-  { v: 1, label: "1×" },
-  { v: 1.15, label: "1,15×" },
+  { v: 0.85, label: "langsam" },
+  { v: 0.95, label: "natürlich" },
+  { v: 1.1, label: "zügig" },
 ];
+
+/** Stimm-Namen für die Auswahl kürzen (Sprachkürzel entfernen). */
+const voiceLabel = (v) => {
+  const nice = v.name.replace(/\s*\(.*?\)\s*/g, " ").replace(/de[-_]DE/gi, "").trim();
+  const premium = /premium|enhanced|neural|natural|siri/i.test(`${v.name} ${v.voiceURI}`);
+  return `${nice || v.name}${premium ? " ✨" : ""}`;
+};
 
 /** Eine Podcast-Episode: aufklappbares Skript + Sprachausgabe-Steuerung. */
 function Episode({ ep, open, onToggle, speech, activeId, setActiveId }) {
@@ -103,7 +110,27 @@ function Episode({ ep, open, onToggle, speech, activeId, setActiveId }) {
                 ))}
               </div>
             </div>
-          ) : (
+          ) : null}
+
+          {speech.supported && speech.voices.length > 1 && isActive && (
+            <label className={styles.voiceRow}>
+              <span className={styles.voiceLbl}>🎙️ Stimme</span>
+              <select
+                className={styles.voiceSelect}
+                value={speech.voiceURI}
+                onChange={(e) => speech.setVoiceURI(e.target.value)}
+              >
+                <option value="">Automatisch (natürlichste)</option>
+                {speech.voices.map((v) => (
+                  <option key={v.voiceURI} value={v.voiceURI}>
+                    {voiceLabel(v)}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
+
+          {!speech.supported && (
             <p className={styles.noTts}>
               🔇 Die Sprachausgabe wird von diesem Browser nicht unterstützt – lies das Skript einfach mit.
             </p>
@@ -198,8 +225,10 @@ const PodcastPlayer = memo(function PodcastPlayer() {
           ))}
 
           <p className={styles.footnote}>
-            🔊 Die Wiedergabe nutzt die Sprachausgabe deines Geräts und funktioniert offline. Stimme und
-            Klang hängen vom Betriebssystem ab.
+            🔊 Die Wiedergabe nutzt die Sprachausgabe deines Geräts und funktioniert offline. Für eine
+            besonders natürliche Stimme lade auf dem iPhone unter Einstellungen, Bedienungshilfen,
+            Gesprochene Inhalte, Stimmen, Deutsch eine Stimme mit dem Zusatz „Premium" – sie erscheint
+            dann oben in der Stimmen-Auswahl mit einem ✨.
           </p>
         </div>
       </Collapse>
