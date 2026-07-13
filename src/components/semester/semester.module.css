@@ -18,7 +18,7 @@
   align-items: center;
   justify-content: center;
   border-radius: var(--r-sm);
-  border: 1px solid var(--glass-border);
+  border: 1px solid transparent;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.02) 55%),
     var(--glass-bg);
@@ -41,16 +41,19 @@
   -webkit-mask-composite: xor;
   mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   mask-composite: exclude;
-  opacity: 0.55;
+  opacity: 0.68;
   pointer-events: none;
 }
 
+/* Verlaufs-Ring ersetzt den Glas-Rand komplett – sonst lägen zwei Linien
+   (Glas-Border + Ring) leicht versetzt übereinander. */
 .ringCard {
   position: relative;
+  border-color: transparent !important;
 }
 
 .ringCard::before {
-  opacity: 0.4;
+  opacity: 0.5;
 }
 
 .semKicker {
@@ -96,7 +99,7 @@
   flex-shrink: 0;
   padding: 0.24rem 0.45rem;
   border-radius: 8px;
-  border: 1px solid var(--glass-border);
+  border: 1px solid transparent;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.02) 55%),
     var(--glass-bg);
@@ -108,7 +111,7 @@
 
 .modCode::before {
   padding: 1.25px;
-  opacity: 0.5;
+  opacity: 0.66;
 }
 
 .modName {
@@ -256,7 +259,9 @@
   min-height: 48px; /* ≥44px Touch-Target */
   flex-shrink: 0;
   border-radius: var(--r-md);
-  border: 1px solid var(--glass-border);
+  /* Rand ist unsichtbar – die einzige Umrandung liefert der Verlaufs-Ring
+     (::before). So gibt es keine doppelte, leicht versetzte Linie. */
+  border: 1px solid transparent;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.02) 55%),
     var(--glass-bg);
@@ -284,7 +289,7 @@
   -webkit-mask-composite: xor;
   mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   mask-composite: exclude;
-  opacity: 0.55;
+  opacity: 0.68;
   pointer-events: none;
   transition: opacity var(--dur) var(--ease);
 }
