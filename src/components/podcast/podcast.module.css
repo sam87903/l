@@ -165,12 +165,31 @@
   color: color-mix(in srgb, var(--c) 82%, var(--text));
 }
 
-/* ── Stimm-Auswahl ── */
+/* ── Stimm-Auswahl (Sektionsebene) ── */
+.voicePanel {
+  margin-bottom: var(--s-3);
+  padding: var(--s-3);
+  border-radius: var(--r-sm);
+  border: 1px solid color-mix(in srgb, var(--orange, #f0a24b) 30%, transparent);
+  background: color-mix(in srgb, var(--orange, #f0a24b) 8%, transparent);
+}
+
+.voiceTip {
+  margin: var(--s-2) 0 0;
+  font-size: 0.68rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.voiceTip strong {
+  color: color-mix(in srgb, var(--orange, #f0a24b) 82%, var(--text));
+  font-weight: 700;
+}
+
 .voiceRow {
   display: flex;
   align-items: center;
   gap: var(--s-2);
-  margin-bottom: var(--s-3);
 }
 
 .voiceLbl {

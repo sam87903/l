@@ -1,7 +1,7 @@
 {
   "name": "marokko-lernplan",
   "private": true,
-  "version": "3.3.0",
+  "version": "3.3.1",
   "description": "Interaktive Lernplattform für den B.Sc. E-Commerce an der HRW",
   "type": "module",
   "scripts": {

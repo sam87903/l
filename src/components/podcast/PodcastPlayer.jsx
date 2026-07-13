@@ -112,24 +112,6 @@ function Episode({ ep, open, onToggle, speech, activeId, setActiveId }) {
             </div>
           ) : null}
 
-          {speech.supported && speech.voices.length > 1 && isActive && (
-            <label className={styles.voiceRow}>
-              <span className={styles.voiceLbl}>🎙️ Stimme</span>
-              <select
-                className={styles.voiceSelect}
-                value={speech.voiceURI}
-                onChange={(e) => speech.setVoiceURI(e.target.value)}
-              >
-                <option value="">Automatisch (natürlichste)</option>
-                {speech.voices.map((v) => (
-                  <option key={v.voiceURI} value={v.voiceURI}>
-                    {voiceLabel(v)}
-                  </option>
-                ))}
-              </select>
-            </label>
-          )}
-
           {!speech.supported && (
             <p className={styles.noTts}>
               🔇 Die Sprachausgabe wird von diesem Browser nicht unterstützt – lies das Skript einfach mit.
@@ -207,10 +189,40 @@ const PodcastPlayer = memo(function PodcastPlayer() {
       <Collapse open={open}>
         <div style={{ padding: "0 var(--s-4) var(--s-4)" }}>
           <p className={styles.intro}>
-            Lieber hören als lesen? Diese Folgen fassen die Themenblöcke deines Studiums in kurzen,
+            Lieber hören als lesen? Diese Folgen fassen die Themenblöcke deines Studiums in
             gesprochenen Kapiteln zusammen. Tippe auf eine Folge, drücke <strong>Podcast starten</strong> –
             und lass dir den Stoff vorlesen. Das Skript läuft zum Mitlesen mit.
           </p>
+
+          {speech.supported && speech.voices.length > 0 && (
+            <div className={styles.voicePanel}>
+              <label className={styles.voiceRow}>
+                <span className={styles.voiceLbl}>🎙️ Stimme</span>
+                <select
+                  className={styles.voiceSelect}
+                  value={speech.voiceURI}
+                  onChange={(e) => speech.setVoiceURI(e.target.value)}
+                  aria-label="Vorlese-Stimme wählen"
+                >
+                  <option value="">Automatisch (natürlichste)</option>
+                  {speech.voices.map((v) => (
+                    <option key={v.voiceURI} value={v.voiceURI}>
+                      {voiceLabel(v)}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              {!speech.premiumAvailable && (
+                <p className={styles.voiceTip}>
+                  💡 Klingt die Stimme noch roboterhaft? Dein Gerät hat nur die einfache Standardstimme
+                  installiert. Für eine echte, menschlich klingende Stimme lade auf dem iPhone unter
+                  <strong> Einstellungen › Bedienungshilfen › Gesprochene Inhalte › Stimmen › Deutsch </strong>
+                  eine Stimme mit dem Zusatz <strong>„Premium"</strong> oder eine <strong>Siri-Stimme</strong>
+                  herunter. Danach erscheint sie hier oben mit einem ✨ und wird automatisch gewählt.
+                </p>
+              )}
+            </div>
+          )}
 
           {PODCASTS.map((ep) => (
             <Episode
@@ -225,10 +237,9 @@ const PodcastPlayer = memo(function PodcastPlayer() {
           ))}
 
           <p className={styles.footnote}>
-            🔊 Die Wiedergabe nutzt die Sprachausgabe deines Geräts und funktioniert offline. Für eine
-            besonders natürliche Stimme lade auf dem iPhone unter Einstellungen, Bedienungshilfen,
-            Gesprochene Inhalte, Stimmen, Deutsch eine Stimme mit dem Zusatz „Premium" – sie erscheint
-            dann oben in der Stimmen-Auswahl mit einem ✨.
+            🔊 Die Wiedergabe nutzt die Sprachausgabe deines Geräts und funktioniert offline. Auf iPhone
+            und iPad werden ganze Absätze am Stück gelesen – das klingt runder und natürlicher als
+            Wort-für-Wort.
           </p>
         </div>
       </Collapse>

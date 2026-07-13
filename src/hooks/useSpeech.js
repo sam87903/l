@@ -4,25 +4,36 @@ const synth = typeof window !== "undefined" ? window.speechSynthesis : null;
 const SUPPORTED = !!synth && typeof window !== "undefined" && "SpeechSynthesisUtterance" in window;
 const VOICE_KEY = "mrk7-voice";
 
+// Nur Chrome/Chromium drosselt lange Äußerungen nach ~15 s. Überall sonst
+// (vor allem iOS/Safari) lesen wir ganze Absätze am Stück – das klingt durch
+// die natürliche Satzmelodie deutlich menschlicher als Satz-für-Satz.
+const IS_CHROME_FAMILY =
+  typeof navigator !== "undefined" && /chrome|crios|chromium|edg\//i.test(navigator.userAgent);
+
 /** Text in Sätze zerlegen – kurze Häppchen umgehen das 15-s-Limit von Chrome. */
 const toSentences = (text) => (text.match(/[^.!?]+[.!?]*/g) || [text]).map((s) => s.trim()).filter(Boolean);
 
 /**
- * Bewertet, wie natürlich eine Stimme klingt (höher = besser). Premium-,
- * Enhanced-, Neural- und Siri-Stimmen klingen deutlich menschlicher als die
- * kompakten Standardstimmen; Google- und benannte Personenstimmen folgen.
+ * Bewertet, wie natürlich eine Stimme klingt (höher = besser). Neural-,
+ * Premium-, Enhanced- und Siri-Stimmen klingen praktisch menschlich; die
+ * kompakten Standard- und eSpeak-Stimmen klingen robotisch und werden
+ * abgewertet.
  */
 const voiceScore = (v) => {
   const n = `${v.name} ${v.voiceURI}`.toLowerCase();
   let s = 0;
-  if (/premium|enhanced|neural|natural/.test(n)) s += 120;
-  if (/siri/.test(n)) s += 80;
-  if (/google/.test(n)) s += 50;
-  if (/petra|anna|markus|viktor|yannick|helena|katja|conrad|amala/.test(n)) s += 25;
-  if (v.localService === false) s += 15;
+  if (/siri/.test(n)) s += 200;
+  if (/neural|premium|enhanced|natural|wavenet|studio/.test(n)) s += 150;
+  if (/google/.test(n)) s += 60;
+  if (v.localService === false) s += 40; // Netz-/Cloud-Stimmen klingen meist runder
+  if (/petra|anna|markus|viktor|yannick|helena|katja|conrad|amala|marlene|vicki|hannah/.test(n)) s += 25;
   if (/de-de/i.test(v.lang)) s += 10;
+  if (/compact|kompakt|espeak|robot/.test(n)) s -= 60; // deutlich robotisch
   return s;
 };
+
+/** Gilt eine Stimme als natürlich (nicht robotisch)? */
+export const isNaturalVoice = (v) => !!v && voiceScore(v) >= 150;
 
 const germanVoices = () =>
   (synth?.getVoices() || []).filter((v) => /^de/i.test(v.lang)).sort((a, b) => voiceScore(b) - voiceScore(a));
@@ -108,8 +119,7 @@ export function useSpeech() {
     const u = new SpeechSynthesisUtterance(units[i].t);
     u.lang = "de-DE";
     u.rate = rateRef.current;
-    // Leicht wärmere Tonlage; natürlicher als der neutrale Standard.
-    u.pitch = 1.02;
+    u.pitch = 1;
     const v = resolveVoice();
     if (v) u.voice = v;
     u.onend = () => {
@@ -129,7 +139,13 @@ export function useSpeech() {
       synth.cancel();
       const units = [];
       segments.forEach((seg, si) => {
-        for (const sentence of toSentences(seg)) units.push({ t: sentence, si });
+        // Außerhalb von Chrome ganze Absätze am Stück – flüssigere, natürlichere
+        // Betonung; in Chrome satzweise gegen die 15-Sekunden-Drosselung.
+        if (IS_CHROME_FAMILY) {
+          for (const sentence of toSentences(seg)) units.push({ t: sentence, si });
+        } else {
+          units.push({ t: seg, si });
+        }
       });
       unitsRef.current = units;
       posRef.current = opts.fromSegment ? units.findIndex((u) => u.si >= opts.fromSegment) : 0;
@@ -177,6 +193,9 @@ export function useSpeech() {
     []
   );
 
+  // Steht überhaupt eine natürlich klingende Stimme bereit?
+  const premiumAvailable = voices.some(isNaturalVoice);
+
   return {
     supported: SUPPORTED,
     speaking,
@@ -187,6 +206,7 @@ export function useSpeech() {
     voices,
     voiceURI,
     setVoiceURI,
+    premiumAvailable,
     start,
     pause,
     resume,
