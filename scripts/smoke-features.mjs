@@ -150,6 +150,19 @@ const jumped = await page
   .catch(() => false);
 check(`Alpha-Sprung erreicht Gruppe ${lastLetter} trotz Lazy-Rendering`, jumped);
 
+/* ── Plan: Podcast-Sektion (Sprachausgabe der Themen) ── */
+await page.click('a[href="#/plan"]');
+await page.waitForSelector("text=Dein Fahrplan", { timeout: 8000 });
+await page.click("text=Podcast · Themen zum Anhören");
+await page.waitForTimeout(400);
+const epCount = await page.locator('[class*="epHead"]').count();
+check("Podcast: mehrere Folgen gelistet", epCount >= 5, `${epCount} Folgen`);
+await page.locator('[class*="epHead"]').first().click();
+await page.waitForTimeout(300);
+const podSegs = await page.locator('[class*="segText"]').count();
+check("Podcast: Skript-Kapitel sichtbar", podSegs >= 3, `${podSegs} Kapitel`);
+check("Podcast: Start-Knopf vorhanden", await page.locator('button:has-text("Podcast starten")').first().isVisible());
+
 /* ── Klausuren: Analyse, Radar, Heatmap, Insights, Simulator, Löschen ── */
 await page.click('a[href="#/klausuren"]');
 await page.waitForSelector('input[placeholder^="Name"]', { timeout: 5000 });
