@@ -87,6 +87,8 @@ await page.waitForSelector("text=Du hast Probleme mit");
 console.log("✅ Lernanalyse nach Quiz erscheint");
 await page.click('button:has-text("Fehler üben")');
 await page.waitForSelector("#fehler-training >> text=1 fällig");
+// Fehler-Training ist einklappbar (Standard: zu), öffnet sich aber über
+// „Fehler üben" automatisch.
 await page.waitForSelector("#fehler-training >> text=Was besagt das Minimalprinzip?");
 // Leitner: richtig → Stufe 2 (wartet bis morgen) → vorziehen → Stufe 3 → oberste Stufe bestanden = gemeistert
 await page.click('#fehler-training button:has-text("Ein festes Ziel mit minimalem Mitteleinsatz erreichen")');

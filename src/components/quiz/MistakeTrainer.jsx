@@ -1,6 +1,8 @@
-import { memo, useMemo, useState } from "react";
-import { ArrowRight, FastForward } from "lucide-react";
+import { memo, useEffect, useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { ArrowRight, ChevronDown, ChevronUp, FastForward } from "lucide-react";
 import GlassCard from "../ui/GlassCard.jsx";
+import Collapse from "../ui/Collapse.jsx";
 import Button from "../ui/Button.jsx";
 import QuizQuestion from "./QuizQuestion.jsx";
 import { SEMESTERS } from "../../data/semesters/index.js";
@@ -11,7 +13,7 @@ import { ACCENT } from "../../constants/theme.js";
 import { MISTAKE_MAX_BOX } from "../../constants/config.js";
 import { mistakeBox, reviewMistake, splitMistakes } from "../../utils/mistakes.js";
 import { daysUntil } from "../../utils/dates.js";
-import { cx } from "../../utils/misc.js";
+import { cx, kb } from "../../utils/misc.js";
 import styles from "./quiz.module.css";
 
 const MODULE_BY_ID = new Map(SEMESTERS.flatMap((s) => s.modules).map((m) => [m.id, m]));
@@ -47,11 +49,19 @@ function resolveEntry(entry) {
  */
 const MistakeTrainer = memo(function MistakeTrainer() {
   const { wrongPool, recordAnswer, stats } = useProgress();
+  const [open, setOpen] = useState(false);
   const [picked, setPicked] = useState(undefined);
   // Beantwortete Frage bis „Weiter" festhalten, auch wenn sie die Kartei verlässt.
   const [frozen, setFrozen] = useState(null);
   const [feedback, setFeedback] = useState(null);
   const [ahead, setAhead] = useState(false);
+  const toggle = () => setOpen((v) => !v);
+  const location = useLocation();
+
+  // Über „Fehler üben" (Lernanalyse) angesteuert: Training automatisch öffnen.
+  useEffect(() => {
+    if (location.state?.openTrainer) setOpen(true);
+  }, [location.state]);
 
   const { due, waiting } = useMemo(() => {
     const split = splitMistakes(wrongPool);
@@ -92,16 +102,20 @@ const MistakeTrainer = memo(function MistakeTrainer() {
 
   return (
     <GlassCard tint={ACCENT.red} id="fehler-training"
-      style={{ "--c": ACCENT.red, padding: "var(--s-4)", marginBottom: "var(--s-4)", scrollMarginTop: "100px" }}>
-      <div className={styles.head}>
+      style={{ "--c": ACCENT.red, marginBottom: "var(--s-4)", overflow: "hidden", scrollMarginTop: "100px" }}>
+      <div className={cx(styles.head, "hover-pop")} onClick={toggle} {...kb(toggle)} aria-expanded={open}
+        style={{ padding: "var(--s-3) var(--s-4)", cursor: "pointer" }}>
         <span className={styles.kicker} style={{ "--c": ACCENT.red, color: ACCENT.red }}>
           <span aria-hidden="true">🔁</span> Fehler-Training
         </span>
-        <span className={styles.score}>
+        <span className={styles.score} style={{ marginLeft: "auto" }}>
           {due.length} fällig · {waiting.length} wartend · {stats.mastered} gemeistert
         </span>
+        {open ? <ChevronUp size={15} aria-hidden="true" /> : <ChevronDown size={15} aria-hidden="true" />}
       </div>
 
+      <Collapse open={open}>
+      <div style={{ padding: "0 var(--s-4) var(--s-4)" }}>
       {current ? (
         <>
           <div className={styles.trainerMeta}>
@@ -143,6 +157,8 @@ const MistakeTrainer = memo(function MistakeTrainer() {
             : "Noch keine offenen Fehler. Falsch beantwortete Quizfragen landen automatisch hier und werden in wachsenden Abständen wiederholt, bis sie sitzen."}
         </p>
       )}
+      </div>
+      </Collapse>
     </GlassCard>
   );
 });
