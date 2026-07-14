@@ -19,6 +19,12 @@ export function useNeuralPlayer({ onError } = {}) {
   const [index, setIndex] = useState(-1);
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
+  // Vorlade-Status: Modell wird einmalig heruntergeladen und im Browser
+  // gecacht, damit die Wiedergabe später sofort startet.
+  const [ready, setReady] = useState(false);
+  const [preloading, setPreloading] = useState(false);
+  const [preloadError, setPreloadError] = useState(false);
+  const preloadStartedRef = useRef(false);
 
   const audioRef = useRef(null);
   const segsRef = useRef([]);
@@ -71,6 +77,29 @@ export function useNeuralPlayer({ onError } = {}) {
     }
   }, []);
 
+  /**
+   * Modell im Hintergrund vorladen und cachen (einmalig). Danach startet die
+   * Wiedergabe ohne Wartezeit. Fehler (z. B. offline) werden still gemerkt –
+   * erst beim tatsächlichen Abspielen wird auf die Gerätestimme zurückgefallen.
+   */
+  const preload = useCallback(() => {
+    if (ready || preloadStartedRef.current) return;
+    preloadStartedRef.current = true;
+    setPreloading(true);
+    setPreloadError(false);
+    setProgress(0);
+    ensureNeuralVoice(NEURAL_VOICE, setProgress)
+      .then(() => {
+        setReady(true);
+        setPreloading(false);
+      })
+      .catch(() => {
+        setPreloading(false);
+        setPreloadError(true);
+        preloadStartedRef.current = false; // erneuten Versuch erlauben
+      });
+  }, [ready]);
+
   const start = useCallback(
     async (segments, opts = {}) => {
       cancelRef.current = false;
@@ -84,10 +113,12 @@ export function useNeuralPlayer({ onError } = {}) {
       if (posRef.current < 0) posRef.current = 0;
       setSpeaking(true);
       setPaused(false);
-      setLoading(true);
-      setProgress(0);
+      // Ist das Modell schon vorgeladen, entfällt die Wartezeit.
+      if (!ready) setLoading(true);
+      setProgress(ready ? 100 : 0);
       try {
         await ensureNeuralVoice(NEURAL_VOICE, setProgress);
+        setReady(true);
       } catch (err) {
         setSpeaking(false);
         setLoading(false);
@@ -98,7 +129,7 @@ export function useNeuralPlayer({ onError } = {}) {
       setLoading(false);
       playNext();
     },
-    [playNext]
+    [playNext, ready]
   );
 
   const pause = useCallback(() => {
@@ -139,5 +170,5 @@ export function useNeuralPlayer({ onError } = {}) {
     []
   );
 
-  return { speaking, paused, index, loading, progress, start, pause, resume, stop };
+  return { speaking, paused, index, loading, progress, ready, preloading, preloadError, preload, start, pause, resume, stop };
 }

@@ -188,6 +188,12 @@ const PodcastPlayer = memo(function PodcastPlayer() {
   const engine = neuralMode ? neural : speech;
   const canPlay = neuralMode || speech.supported;
 
+  // KI-Stimme automatisch vorladen, sobald sie gewählt und die Sektion offen
+  // ist – dann startet die Wiedergabe später ohne Wartezeit.
+  useEffect(() => {
+    if (neuralMode && open) neural.preload();
+  }, [neuralMode, open, neural.preload]);
+
   const toggleSection = useCallback(() => setOpen((v) => !v), []);
 
   const switchMode = (toNeural) => {
@@ -251,11 +257,25 @@ const PodcastPlayer = memo(function PodcastPlayer() {
             <div className={styles.voicePanel}>
               <p className={styles.voiceTip}>
                 ✨ <strong>Neuronale KI-Stimme (Kerstin, weiblich)</strong> – klingt deutlich menschlicher und rechnet
-                direkt in deinem Browser, ohne dass Daten das Gerät verlassen. Beim <strong>ersten Start</strong> wird
-                das Stimmmodell einmalig geladen (rund 60 MB, danach gespeichert), deshalb braucht es
-                <strong> Internet</strong> und einen Moment Geduld. Klappt es nicht, schaltet die App
-                automatisch auf die Gerätestimme zurück.
+                direkt in deinem Browser, ohne dass Daten das Gerät verlassen.
               </p>
+              {neural.ready ? (
+                <p className={cx(styles.voiceStatus, styles.voiceStatusOk)}>
+                  ✅ Stimme geladen – die Wiedergabe startet sofort.
+                </p>
+              ) : neural.preloading ? (
+                <div className={styles.voiceStatus}>
+                  <span>⏳ Stimme wird vorbereitet… {neural.progress || 0}%</span>
+                  <span className={styles.voiceBar} aria-hidden="true">
+                    <span className={styles.voiceBarFill} style={{ width: `${neural.progress || 0}%` }} />
+                  </span>
+                  <span className={styles.voiceHint}>Einmaliger Download (~60 MB), danach dauerhaft gespeichert.</span>
+                </div>
+              ) : neural.preloadError ? (
+                <p className={cx(styles.voiceStatus, styles.voiceStatusWarn)}>
+                  ⚠️ Konnte nicht geladen werden (Internet nötig). Beim Abspielen wird sonst die Gerätestimme genutzt.
+                </p>
+              ) : null}
             </div>
           ) : (
             speech.supported && speech.voices.length > 0 && (

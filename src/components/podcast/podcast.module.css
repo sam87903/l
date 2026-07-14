@@ -217,6 +217,46 @@
   color: var(--muted);
 }
 
+.voiceStatus {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: var(--s-2);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: color-mix(in srgb, var(--orange, #f0a24b) 82%, var(--text));
+}
+
+.voiceStatusOk {
+  color: color-mix(in srgb, var(--teal, #2dd4a8) 78%, var(--text));
+}
+
+.voiceStatusWarn {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.voiceHint {
+  font-size: 0.6rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.voiceBar {
+  height: 6px;
+  border-radius: var(--r-full);
+  background: color-mix(in srgb, var(--orange, #f0a24b) 18%, transparent);
+  overflow: hidden;
+}
+
+.voiceBarFill {
+  display: block;
+  height: 100%;
+  border-radius: var(--r-full);
+  background: linear-gradient(90deg, var(--orange, #f0a24b), color-mix(in srgb, var(--orange, #f0a24b) 60%, #d9761f));
+  transition: width 0.3s ease;
+}
+
 .voiceTip strong {
   color: color-mix(in srgb, var(--orange, #f0a24b) 82%, var(--text));
   font-weight: 700;
