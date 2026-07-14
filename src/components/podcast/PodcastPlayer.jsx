@@ -154,7 +154,7 @@ function Episode({ ep, open, onToggle, engine, canPlay, neuralMode, rate, setRat
 /**
  * Podcast-Sektion auf der Plan-Seite: aufklappbare Liste von Hör-Episoden.
  * Zwei Vorlese-Engines: die Gerätestimme (Web Speech API, offline) oder – als
- * Beta – eine neuronale KI-Stimme (Piper/Thorsten), die online im Browser
+ * Beta – eine neuronale KI-Stimme (Piper/Kerstin, weiblich), die online im Browser
  * rechnet und deutlich menschlicher klingt. Schlägt die KI-Stimme fehl, wird
  * automatisch auf die Gerätestimme zurückgeschaltet.
  */
@@ -250,7 +250,7 @@ const PodcastPlayer = memo(function PodcastPlayer() {
           {neuralMode ? (
             <div className={styles.voicePanel}>
               <p className={styles.voiceTip}>
-                ✨ <strong>Neuronale KI-Stimme (Thorsten)</strong> – klingt deutlich menschlicher und rechnet
+                ✨ <strong>Neuronale KI-Stimme (Kerstin, weiblich)</strong> – klingt deutlich menschlicher und rechnet
                 direkt in deinem Browser, ohne dass Daten das Gerät verlassen. Beim <strong>ersten Start</strong> wird
                 das Stimmmodell einmalig geladen (rund 60 MB, danach gespeichert), deshalb braucht es
                 <strong> Internet</strong> und einen Moment Geduld. Klappt es nicht, schaltet die App

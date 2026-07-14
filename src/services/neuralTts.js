@@ -2,7 +2,7 @@
  * Neuronale Sprachausgabe im Browser (Piper/VITS, ohne API-Schlüssel).
  *
  * Läuft ausschließlich online: Die Bibliothek und das deutsche Stimmmodell
- * (Thorsten) werden per CDN geladen und danach im Browser zwischengespeichert
+ * (Kerstin, weiblich) werden per CDN geladen und danach im Browser gespeichert
  * (IndexedDB). Es fließen keine Zugangsdaten und keine Kosten – gerechnet wird
  * lokal auf dem Gerät. Alles ist optional: Schlägt der Download, die Bibliothek
  * oder die Synthese fehl, wirft die Funktion, und der Aufrufer fällt auf die
@@ -15,8 +15,8 @@
 // Gebündeltes ES-Modul inkl. onnxruntime-web über jsDelivr.
 const CDN = "https://cdn.jsdelivr.net/npm/@diffusionstudio/vits-web@1.0.3/+esm";
 
-/** Standard-Stimme: Thorsten, mittlere Qualität – natürlicher Klang, ~63 MB. */
-export const NEURAL_VOICE = "de_DE-thorsten-medium";
+/** Standard-Stimme: Kerstin – deutsche neuronale Frauenstimme. */
+export const NEURAL_VOICE = "de_DE-kerstin-low";
 
 let enginePromise = null;
 
