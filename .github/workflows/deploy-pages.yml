@@ -2,7 +2,7 @@ name: Deploy GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches: [main, claude/bau-nach-xoex2e]
   workflow_dispatch:
 
 permissions:
@@ -28,10 +28,19 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
-      - run: npm run build
-      # Pages funktioniert nur bei öffentlichem Repo (bzw. GitHub Pro).
-      # Solange das Repo privat ist, schlagen diese Schritte kontrolliert
-      # fehl, ohne den Workflow rot zu färben – Tests/Build bleiben strikt.
+      # Einzeldatei-Build: eine in sich geschlossene index.html – funktioniert
+      # unter jeder Adresse (auch unter /l/ bei Projekt-Pages), kein Base-Pfad
+      # nötig. Die KI-Stimme lädt ihr Modell zur Laufzeit per CDN nach.
+      - run: npm run build:single
+      - name: Seite vorbereiten
+        run: |
+          mkdir -p _site
+          cp dist-single/index.html _site/index.html
+          # 404 auf die App leiten (Deep-Links via Hash-Router bleiben nutzbar)
+          cp dist-single/index.html _site/404.html
+      # Pages funktioniert nur bei öffentlichem Repo (bzw. GitHub Pro). Bei
+      # privatem Repo schlägt dieser Schritt kontrolliert fehl, ohne den
+      # Workflow rot zu färben – Tests und Build bleiben strikt.
       - uses: actions/configure-pages@v5
         continue-on-error: true
         id: pages
@@ -40,7 +49,7 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         if: steps.pages.outcome == 'success'
         with:
-          path: dist
+          path: _site
       - id: deployment
         if: steps.pages.outcome == 'success'
         uses: actions/deploy-pages@v4
