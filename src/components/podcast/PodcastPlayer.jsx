@@ -1,14 +1,18 @@
-import { memo, useCallback, useState } from "react";
-import { ChevronDown, ChevronUp, Headphones, Pause, Play, Square } from "lucide-react";
+import { memo, useCallback, useEffect, useState } from "react";
+import { ChevronDown, ChevronUp, Headphones, Loader, Pause, Play, Square } from "lucide-react";
 import GlassCard from "../ui/GlassCard.jsx";
 import Collapse from "../ui/Collapse.jsx";
+import { useToast } from "../ui/Toast.jsx";
 import { PODCASTS, podcastMinutes } from "../../data/podcast.js";
 import { useSpeech } from "../../hooks/useSpeech.js";
+import { useNeuralPlayer } from "../../hooks/useNeuralPlayer.js";
 import { ACCENT } from "../../constants/theme.js";
 import { cx, kb } from "../../utils/misc.js";
+import { storage } from "../../services/storage.js";
 import cardStyles from "../cards/cards.module.css";
 import styles from "./podcast.module.css";
 
+const NEURAL_KEY = "mrk7-neural";
 const RATES = [
   { v: 0.85, label: "langsam" },
   { v: 0.95, label: "natürlich" },
@@ -23,44 +27,43 @@ const voiceLabel = (v) => {
 };
 
 /** Eine Podcast-Episode: aufklappbares Skript + Sprachausgabe-Steuerung. */
-function Episode({ ep, open, onToggle, speech, activeId, setActiveId }) {
+function Episode({ ep, open, onToggle, engine, canPlay, neuralMode, rate, setRate, activeId, setActiveId }) {
   const isActive = activeId === ep.id;
-  const isPlaying = isActive && speech.speaking;
-  const isPaused = isActive && speech.paused;
+  const isPlaying = isActive && engine.speaking;
+  const isPaused = isActive && engine.paused;
+  const isLoading = isActive && !!engine.loading;
   const mins = podcastMinutes(ep);
 
   const startFrom = (fromSegment) => {
     setActiveId(ep.id);
-    speech.start(
+    engine.start(
       ep.segments.map((s) => s.text),
       { fromSegment }
     );
   };
 
   const onPrimary = () => {
-    if (isPlaying && !isPaused) {
-      speech.pause();
-    } else if (isPaused) {
-      speech.resume();
-    } else {
-      startFrom(0);
-    }
+    if (isLoading) return;
+    if (isPlaying && !isPaused) engine.pause();
+    else if (isPaused) engine.resume();
+    else startFrom(0);
   };
 
-  const primaryLabel = isPlaying && !isPaused ? "Pause" : isPaused ? "Fortsetzen" : "Podcast starten";
-  const PrimaryIcon = isPlaying && !isPaused ? Pause : Play;
+  const primaryLabel = isLoading
+    ? `KI-Stimme lädt… ${engine.progress || 0}%`
+    : isPlaying && !isPaused
+      ? "Pause"
+      : isPaused
+        ? "Fortsetzen"
+        : "Podcast starten";
+  const PrimaryIcon = isLoading ? Loader : isPlaying && !isPaused ? Pause : Play;
 
   return (
     <GlassCard
       tint={open ? ACCENT.orange : undefined}
       style={{ "--c": ACCENT.orange, borderRadius: "var(--r-sm)", marginBottom: "var(--s-2)", overflow: "hidden" }}
     >
-      <div
-        className={cx(styles.epHead, "hover-pop")}
-        onClick={onToggle}
-        {...kb(onToggle)}
-        aria-expanded={open}
-      >
+      <div className={cx(styles.epHead, "hover-pop")} onClick={onToggle} {...kb(onToggle)} aria-expanded={open}>
         <span className={cx(styles.epIcon, isPlaying && styles.epIconLive)} aria-hidden="true">
           {ep.icon}
         </span>
@@ -82,37 +85,38 @@ function Episode({ ep, open, onToggle, speech, activeId, setActiveId }) {
         <div className={styles.epBody}>
           <p className={styles.epTopic}>{ep.topic}</p>
 
-          {speech.supported ? (
+          {canPlay ? (
             <div className={styles.controls}>
               <button
                 className={cx(styles.playBtn, "hover-pop")}
                 onClick={onPrimary}
                 aria-label={primaryLabel}
+                aria-busy={isLoading}
               >
-                <PrimaryIcon size={16} aria-hidden="true" />
+                <PrimaryIcon size={16} aria-hidden="true" className={isLoading ? styles.spin : undefined} />
                 {primaryLabel}
               </button>
-              {isActive && (speech.speaking || speech.paused) && (
-                <button className={cx(styles.stopBtn, "hover-pop")} onClick={speech.stop} aria-label="Stopp">
+              {isActive && (engine.speaking || engine.paused) && (
+                <button className={cx(styles.stopBtn, "hover-pop")} onClick={engine.stop} aria-label="Stopp">
                   <Square size={14} aria-hidden="true" /> Stopp
                 </button>
               )}
-              <div className={styles.rateRow} role="group" aria-label="Tempo">
-                {RATES.map((r) => (
-                  <button
-                    key={r.v}
-                    className={cx(styles.rateBtn, speech.rate === r.v && styles.rateBtnOn)}
-                    onClick={() => speech.setRate(r.v)}
-                    aria-pressed={speech.rate === r.v}
-                  >
-                    {r.label}
-                  </button>
-                ))}
-              </div>
+              {!neuralMode && setRate && (
+                <div className={styles.rateRow} role="group" aria-label="Tempo">
+                  {RATES.map((r) => (
+                    <button
+                      key={r.v}
+                      className={cx(styles.rateBtn, rate === r.v && styles.rateBtnOn)}
+                      onClick={() => setRate(r.v)}
+                      aria-pressed={rate === r.v}
+                    >
+                      {r.label}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
-          ) : null}
-
-          {!speech.supported && (
+          ) : (
             <p className={styles.noTts}>
               🔇 Die Sprachausgabe wird von diesem Browser nicht unterstützt – lies das Skript einfach mit.
             </p>
@@ -120,16 +124,16 @@ function Episode({ ep, open, onToggle, speech, activeId, setActiveId }) {
 
           <div className={styles.script}>
             {ep.segments.map((seg, i) => {
-              const current = isActive && speech.index === i;
+              const current = isActive && engine.index === i;
               return (
                 <div
                   key={i}
                   className={cx(styles.seg, current && styles.segCurrent)}
-                  onClick={speech.supported ? () => startFrom(i) : undefined}
-                  role={speech.supported ? "button" : undefined}
-                  tabIndex={speech.supported ? 0 : undefined}
-                  onKeyDown={speech.supported ? (e) => { if (e.key === "Enter") startFrom(i); } : undefined}
-                  title={speech.supported ? "Ab hier vorlesen" : undefined}
+                  onClick={canPlay ? () => startFrom(i) : undefined}
+                  role={canPlay ? "button" : undefined}
+                  tabIndex={canPlay ? 0 : undefined}
+                  onKeyDown={canPlay ? (e) => { if (e.key === "Enter") startFrom(i); } : undefined}
+                  title={canPlay ? "Ab hier vorlesen" : undefined}
                 >
                   <div className={styles.segHead}>
                     <span className={styles.segNum}>{i + 1}</span>
@@ -148,28 +152,59 @@ function Episode({ ep, open, onToggle, speech, activeId, setActiveId }) {
 }
 
 /**
- * Podcast-Sektion auf der Plan-Seite: aufklappbare Liste von Hör-Episoden,
- * die die Themenblöcke des Studiengangs strukturiert aufgreifen. Start-Knopf
- * liest das Skript vor (Web Speech API), das Skript ist zum Mitlesen sichtbar.
+ * Podcast-Sektion auf der Plan-Seite: aufklappbare Liste von Hör-Episoden.
+ * Zwei Vorlese-Engines: die Gerätestimme (Web Speech API, offline) oder – als
+ * Beta – eine neuronale KI-Stimme (Piper/Thorsten), die online im Browser
+ * rechnet und deutlich menschlicher klingt. Schlägt die KI-Stimme fehl, wird
+ * automatisch auf die Gerätestimme zurückgeschaltet.
  */
 const PodcastPlayer = memo(function PodcastPlayer() {
   const [open, setOpen] = useState(false);
   const [openId, setOpenId] = useState(null);
   const [activeId, setActiveId] = useState(null);
+  const [neuralMode, setNeuralMode] = useState(false);
+  const { push } = useToast();
   const speech = useSpeech();
 
+  // Zuletzt gewählte Stimmen-Art wiederherstellen.
+  useEffect(() => {
+    let cancelled = false;
+    Promise.resolve(storage.get(NEURAL_KEY)).then((v) => {
+      if (!cancelled && v === "1") setNeuralMode(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const handleNeuralError = useCallback(() => {
+    setNeuralMode(false);
+    storage.set(NEURAL_KEY, "0");
+    push("KI-Stimme nicht verfügbar (Internet nötig) – zurück zur Gerätestimme.", "🔇");
+  }, [push]);
+
+  const neural = useNeuralPlayer({ onError: handleNeuralError });
+
+  const engine = neuralMode ? neural : speech;
+  const canPlay = neuralMode || speech.supported;
+
   const toggleSection = useCallback(() => setOpen((v) => !v), []);
+
+  const switchMode = (toNeural) => {
+    engine.stop?.();
+    setNeuralMode(toNeural);
+    storage.set(NEURAL_KEY, toNeural ? "1" : "0");
+  };
 
   const toggleEpisode = useCallback(
     (id) => {
       setOpenId((prev) => {
         const next = prev === id ? null : id;
-        // Zugeklapptes Kapitel darf nicht im Hintergrund weiterreden.
-        if (prev === id && activeId === id) speech.stop();
+        if (prev === id && activeId === id) engine.stop?.();
         return next;
       });
     },
-    [activeId, speech]
+    [activeId, engine]
   );
 
   return (
@@ -194,34 +229,63 @@ const PodcastPlayer = memo(function PodcastPlayer() {
             und lass dir den Stoff vorlesen. Das Skript läuft zum Mitlesen mit.
           </p>
 
-          {speech.supported && speech.voices.length > 0 && (
+          {/* Engine-Auswahl: Gerätestimme (offline) oder KI-Stimme (Beta, online) */}
+          <div className={styles.engineRow} role="group" aria-label="Stimmen-Art">
+            <button
+              className={cx(styles.engineBtn, !neuralMode && styles.engineBtnOn)}
+              onClick={() => switchMode(false)}
+              aria-pressed={!neuralMode}
+            >
+              📱 Gerätestimme
+            </button>
+            <button
+              className={cx(styles.engineBtn, neuralMode && styles.engineBtnOn)}
+              onClick={() => switchMode(true)}
+              aria-pressed={neuralMode}
+            >
+              ✨ KI-Stimme · Beta
+            </button>
+          </div>
+
+          {neuralMode ? (
             <div className={styles.voicePanel}>
-              <label className={styles.voiceRow}>
-                <span className={styles.voiceLbl}>🎙️ Stimme</span>
-                <select
-                  className={styles.voiceSelect}
-                  value={speech.voiceURI}
-                  onChange={(e) => speech.setVoiceURI(e.target.value)}
-                  aria-label="Vorlese-Stimme wählen"
-                >
-                  <option value="">Automatisch (natürlichste)</option>
-                  {speech.voices.map((v) => (
-                    <option key={v.voiceURI} value={v.voiceURI}>
-                      {voiceLabel(v)}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              {!speech.premiumAvailable && (
-                <p className={styles.voiceTip}>
-                  💡 Klingt die Stimme noch roboterhaft? Dein Gerät hat nur die einfache Standardstimme
-                  installiert. Für eine echte, menschlich klingende Stimme lade auf dem iPhone unter
-                  <strong> Einstellungen › Bedienungshilfen › Gesprochene Inhalte › Stimmen › Deutsch </strong>
-                  eine Stimme mit dem Zusatz <strong>„Premium"</strong> oder eine <strong>Siri-Stimme</strong>
-                  herunter. Danach erscheint sie hier oben mit einem ✨ und wird automatisch gewählt.
-                </p>
-              )}
+              <p className={styles.voiceTip}>
+                ✨ <strong>Neuronale KI-Stimme (Thorsten)</strong> – klingt deutlich menschlicher und rechnet
+                direkt in deinem Browser, ohne dass Daten das Gerät verlassen. Beim <strong>ersten Start</strong> wird
+                das Stimmmodell einmalig geladen (rund 60 MB, danach gespeichert), deshalb braucht es
+                <strong> Internet</strong> und einen Moment Geduld. Klappt es nicht, schaltet die App
+                automatisch auf die Gerätestimme zurück.
+              </p>
             </div>
+          ) : (
+            speech.supported && speech.voices.length > 0 && (
+              <div className={styles.voicePanel}>
+                <label className={styles.voiceRow}>
+                  <span className={styles.voiceLbl}>🎙️ Stimme</span>
+                  <select
+                    className={styles.voiceSelect}
+                    value={speech.voiceURI}
+                    onChange={(e) => speech.setVoiceURI(e.target.value)}
+                    aria-label="Vorlese-Stimme wählen"
+                  >
+                    <option value="">Automatisch (natürlichste)</option>
+                    {speech.voices.map((v) => (
+                      <option key={v.voiceURI} value={v.voiceURI}>
+                        {voiceLabel(v)}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                {!speech.premiumAvailable && (
+                  <p className={styles.voiceTip}>
+                    💡 Klingt die Gerätestimme roboterhaft? Dann probiere die <strong>KI-Stimme</strong> oben –
+                    oder lade auf dem iPhone unter
+                    <strong> Einstellungen › Bedienungshilfen › Gesprochene Inhalte › Stimmen › Deutsch </strong>
+                    eine <strong>Premium-</strong> oder <strong>Siri-Stimme</strong> herunter.
+                  </p>
+                )}
+              </div>
+            )
           )}
 
           {PODCASTS.map((ep) => (
@@ -230,16 +294,19 @@ const PodcastPlayer = memo(function PodcastPlayer() {
               ep={ep}
               open={openId === ep.id}
               onToggle={() => toggleEpisode(ep.id)}
-              speech={speech}
+              engine={engine}
+              canPlay={canPlay}
+              neuralMode={neuralMode}
+              rate={speech.rate}
+              setRate={speech.setRate}
               activeId={activeId}
               setActiveId={setActiveId}
             />
           ))}
 
           <p className={styles.footnote}>
-            🔊 Die Wiedergabe nutzt die Sprachausgabe deines Geräts und funktioniert offline. Auf iPhone
-            und iPad werden ganze Absätze am Stück gelesen – das klingt runder und natürlicher als
-            Wort-für-Wort.
+            🔊 Gerätestimme funktioniert offline; auf iPhone und iPad werden ganze Absätze am Stück gelesen.
+            Die KI-Stimme (Beta) läuft nur online, rechnet aber lokal in deinem Browser.
           </p>
         </div>
       </Collapse>

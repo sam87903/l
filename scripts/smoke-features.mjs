@@ -72,6 +72,12 @@ await page.waitForSelector('[class*="pagerBtn"]', { timeout: 20000 });
 await page.waitForTimeout(800);
 check("Timer überlebt Reload (Pill wieder da)", await page.locator('button[aria-label*="Fokus-Timer läuft"]').isVisible());
 await page.locator('button[aria-label="Timer pausieren"]').click();
+await page.waitForTimeout(400);
+// Pausiert: Pill bleibt sichtbar, jetzt mit Fortsetzen-Knopf.
+const pausedPillTime = await page.locator('[class*="pillTime"]').isVisible();
+const resumeBtn = await page.locator('button[aria-label="Timer fortsetzen"]').isVisible();
+check("Timer-Pill bleibt bei Pause sichtbar (mit Fortsetzen)", pausedPillTime && resumeBtn);
+await page.locator('button[aria-label="Timer fortsetzen"]').click();
 
 /* ── Semester: Pager-Farben, Ketten, Brücken ── */
 const pagerCount = await page.locator('[class*="pagerBtn"]').count();
@@ -162,6 +168,11 @@ await page.waitForTimeout(300);
 const podSegs = await page.locator('[class*="segText"]').count();
 check("Podcast: Skript-Kapitel sichtbar", podSegs >= 3, `${podSegs} Kapitel`);
 check("Podcast: Start-Knopf vorhanden", await page.locator('button:has-text("Podcast starten")').first().isVisible());
+check(
+  "Podcast: Stimmen-Umschalter (Gerät / KI-Stimme)",
+  (await page.locator('button:has-text("Gerätestimme")').isVisible()) &&
+    (await page.locator('button:has-text("KI-Stimme")').isVisible())
+);
 
 /* ── Klausuren: Analyse, Radar, Heatmap, Insights, Simulator, Löschen ── */
 await page.click('a[href="#/klausuren"]');

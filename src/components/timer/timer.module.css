@@ -134,6 +134,12 @@
   transition: background var(--dur) var(--ease);
 }
 
+/* Pausiert: dezent gedimmt, damit klar ist, dass die Zeit gerade steht */
+.pillPaused {
+  opacity: 0.82;
+  border-style: dashed;
+}
+
 .pillMain {
   padding: 0 var(--s-2) 0 var(--s-3);
   color: var(--blue);

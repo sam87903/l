@@ -165,6 +165,42 @@
   color: color-mix(in srgb, var(--c) 82%, var(--text));
 }
 
+/* ── Engine-Auswahl: Gerätestimme vs. KI-Stimme ── */
+.engineRow {
+  display: flex;
+  gap: var(--s-2);
+  margin-bottom: var(--s-3);
+}
+
+.engineBtn {
+  flex: 1;
+  min-height: 42px;
+  padding: 0 var(--s-2);
+  border-radius: var(--r-sm);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--dur);
+}
+
+.engineBtnOn {
+  border-color: transparent;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--orange, #f0a24b) 30%, transparent), color-mix(in srgb, var(--orange, #f0a24b) 14%, transparent));
+  color: color-mix(in srgb, var(--orange, #f0a24b) 88%, var(--text));
+  box-shadow: 0 3px 12px color-mix(in srgb, var(--orange, #f0a24b) 24%, transparent);
+}
+
+.spin {
+  animation: podSpin 0.9s linear infinite;
+}
+
+@keyframes podSpin {
+  to { transform: rotate(360deg); }
+}
+
 /* ── Stimm-Auswahl (Sektionsebene) ── */
 .voicePanel {
   margin-bottom: var(--s-3);
