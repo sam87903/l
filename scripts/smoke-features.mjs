@@ -173,6 +173,37 @@ check(
   (await page.locator('button:has-text("Gerätestimme")').isVisible()) &&
     (await page.locator('button:has-text("KI-Stimme")').isVisible())
 );
+check("Podcast: Auto-Weiter-Schalter vorhanden", await page.locator('[role="switch"][aria-label*="nächsten Folge"]').isVisible());
+
+/* ── Formeln & Rechner: Rechner rechnet live ── */
+await page.click("text=Formeln & Rechner");
+await page.waitForTimeout(300);
+await page.click("text=E-Commerce- & Marketing-KPIs");
+await page.waitForTimeout(300);
+const crCard = page.locator('[class*="_card_"]:has-text("Conversion Rate")');
+await crCard.locator("input").nth(0).fill("5");
+await crCard.locator("input").nth(1).fill("200");
+await page.waitForTimeout(300);
+const crOut = (await crCard.locator('[class*="resultValue"]').first().textContent()).trim();
+check("Formel-Rechner: Conversion 5/200 = 2,50 %", crOut.startsWith("2,5"), crOut);
+
+/* ── Modul-Notiz speichern & wiederfinden ── */
+await page.click('a[href="#/semester"]');
+await page.waitForSelector('[class*="pagerBtn"]', { timeout: 5000 });
+await page.locator('[class*="modHead"]').first().click();
+await page.waitForTimeout(300);
+const modNote = page.locator('textarea[aria-label^="Notiz"]').first();
+await modNote.fill("Meine Testnotiz");
+await modNote.blur();
+await page.waitForTimeout(300);
+await page.click('a[href="#/statistik"]');
+await page.waitForTimeout(300);
+await page.click('a[href="#/semester"]');
+await page.waitForSelector('[class*="pagerBtn"]', { timeout: 5000 });
+await page.locator('[class*="modHead"]').first().click();
+await page.waitForTimeout(300);
+const noteVal = await page.locator('textarea[aria-label^="Notiz"]').first().inputValue();
+check("Modul-Notiz bleibt gespeichert", noteVal === "Meine Testnotiz", noteVal);
 
 /* ── Klausuren: Analyse, Radar, Heatmap, Insights, Simulator, Löschen ── */
 await page.click('a[href="#/klausuren"]');

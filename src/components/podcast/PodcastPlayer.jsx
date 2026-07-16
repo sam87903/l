@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { ChevronDown, ChevronUp, Headphones, Loader, Pause, Play, Square } from "lucide-react";
 import GlassCard from "../ui/GlassCard.jsx";
 import Collapse from "../ui/Collapse.jsx";
@@ -13,6 +13,7 @@ import cardStyles from "../cards/cards.module.css";
 import styles from "./podcast.module.css";
 
 const NEURAL_KEY = "mrk7-neural";
+const AUTO_KEY = "mrk7-podauto";
 const RATES = [
   { v: 0.85, label: "langsam" },
   { v: 0.95, label: "natürlich" },
@@ -27,20 +28,14 @@ const voiceLabel = (v) => {
 };
 
 /** Eine Podcast-Episode: aufklappbares Skript + Sprachausgabe-Steuerung. */
-function Episode({ ep, open, onToggle, engine, canPlay, neuralMode, rate, setRate, activeId, setActiveId }) {
+function Episode({ ep, open, onToggle, engine, canPlay, neuralMode, rate, setRate, activeId, onPlay }) {
   const isActive = activeId === ep.id;
   const isPlaying = isActive && engine.speaking;
   const isPaused = isActive && engine.paused;
   const isLoading = isActive && !!engine.loading;
   const mins = podcastMinutes(ep);
 
-  const startFrom = (fromSegment) => {
-    setActiveId(ep.id);
-    engine.start(
-      ep.segments.map((s) => s.text),
-      { fromSegment }
-    );
-  };
+  const startFrom = (fromSegment) => onPlay(ep, fromSegment);
 
   const onPrimary = () => {
     if (isLoading) return;
@@ -163,19 +158,26 @@ const PodcastPlayer = memo(function PodcastPlayer() {
   const [openId, setOpenId] = useState(null);
   const [activeId, setActiveId] = useState(null);
   const [neuralMode, setNeuralMode] = useState(false);
+  const [autoNext, setAutoNext] = useState(true);
   const { push } = useToast();
   const speech = useSpeech();
 
-  // Zuletzt gewählte Stimmen-Art wiederherstellen.
+  // Zuletzt gewählte Stimmen-Art + Auto-Weiter-Einstellung wiederherstellen.
   useEffect(() => {
     let cancelled = false;
     Promise.resolve(storage.get(NEURAL_KEY)).then((v) => {
       if (!cancelled && v === "1") setNeuralMode(true);
     });
+    Promise.resolve(storage.get(AUTO_KEY)).then((v) => {
+      if (!cancelled && v === "0") setAutoNext(false);
+    });
     return () => {
       cancelled = true;
     };
   }, []);
+
+  const autoNextRef = useRef(autoNext);
+  autoNextRef.current = autoNext;
 
   const handleNeuralError = useCallback(() => {
     setNeuralMode(false);
@@ -195,6 +197,36 @@ const PodcastPlayer = memo(function PodcastPlayer() {
   }, [neuralMode, open, neural.preload]);
 
   const toggleSection = useCallback(() => setOpen((v) => !v), []);
+
+  const toggleAutoNext = () => {
+    setAutoNext((v) => {
+      storage.set(AUTO_KEY, v ? "0" : "1");
+      return !v;
+    });
+  };
+
+  // Eine Folge abspielen; endet sie und Auto-Weiter ist an, startet die
+  // nächste Folge automatisch (Kette über onDone).
+  const playRef = useRef();
+  const playEpisode = useCallback(
+    (ep, fromSegment = 0) => {
+      setActiveId(ep.id);
+      setOpenId(ep.id);
+      const idx = PODCASTS.findIndex((e) => e.id === ep.id);
+      const next = PODCASTS[idx + 1];
+      engine.start(
+        ep.segments.map((s) => s.text),
+        {
+          fromSegment,
+          onDone: () => {
+            if (autoNextRef.current && next) playRef.current(next, 0);
+          },
+        }
+      );
+    },
+    [engine]
+  );
+  playRef.current = playEpisode;
 
   const switchMode = (toNeural) => {
     engine.stop?.();
@@ -252,6 +284,19 @@ const PodcastPlayer = memo(function PodcastPlayer() {
               ✨ KI-Stimme · Beta
             </button>
           </div>
+
+          <button
+            className={cx(styles.autoRow, "hover-pop")}
+            onClick={toggleAutoNext}
+            role="switch"
+            aria-checked={autoNext}
+            aria-label="Automatisch zur nächsten Folge"
+          >
+            <span className={cx(styles.autoSwitch, autoNext && styles.autoSwitchOn)} aria-hidden="true">
+              <span className={styles.autoKnob} />
+            </span>
+            <span className={styles.autoLabel}>▶▶ Auto-Weiter zur nächsten Folge</span>
+          </button>
 
           {neuralMode ? (
             <div className={styles.voicePanel}>
@@ -320,7 +365,7 @@ const PodcastPlayer = memo(function PodcastPlayer() {
               rate={speech.rate}
               setRate={speech.setRate}
               activeId={activeId}
-              setActiveId={setActiveId}
+              onPlay={playEpisode}
             />
           ))}
 

@@ -3,7 +3,7 @@
 export const SEMESTER_START = "2026-09-01";
 export const DEFAULT_START_DATE = "2026-07-10";
 export const APP_NAME = "Marokko-Lernplan";
-export const APP_VERSION = "3.4.2";
+export const APP_VERSION = "3.5.0";
 
 /** Storage-Schlüssel. mrk6-* bleibt kompatibel zu Fortschritt aus v2. */
 export const STORAGE_KEYS = {
@@ -24,6 +24,8 @@ export const STORAGE_KEYS = {
   quizView: "mrk7-qview",
   timer: "mrk7-tm",
   chainsDone: "mrk7-ch",
+  notes: "mrk7-notes",
+  podcastAuto: "mrk7-podauto",
 };
 
 /** Leitner-System: Wiederholungsintervall in Tagen je Box (1–5). */

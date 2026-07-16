@@ -10,6 +10,7 @@ import SmartQuizCard from "../components/quiz/SmartQuizCard.jsx";
 import DueTrainer from "../components/flashcards/DueTrainer.jsx";
 import ModuleResources from "../components/resources/ModuleResources.jsx";
 import PodcastPlayer from "../components/podcast/PodcastPlayer.jsx";
+import FormulaTool from "../components/formulas/FormulaTool.jsx";
 import { PLAN, WOCHEN } from "../data/plan.js";
 import { WEEK_COLORS } from "../constants/theme.js";
 import { todayPlanDay } from "../utils/dates.js";
@@ -123,6 +124,8 @@ export default function PlanPage() {
       })}
 
       <ModuleResources />
+
+      <FormulaTool />
 
       <SmartQuizCard />
 

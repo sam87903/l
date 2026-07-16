@@ -75,6 +75,14 @@ const SLICE_VALIDATORS = {
     isObject(v)
       ? Object.fromEntries(Object.entries(v).filter(([, entries]) => isObject(entries)))
       : null,
+  chainsDone: (v) =>
+    isObject(v) ? Object.fromEntries(Object.entries(v).filter(([, b]) => b === true)) : null,
+  notes: (v) =>
+    isObject(v)
+      ? Object.fromEntries(
+          Object.entries(v).filter(([, t]) => typeof t === "string" && t.trim()).map(([k, t]) => [k, t.slice(0, 4000)])
+        )
+      : null,
 };
 
 /**

@@ -31,6 +31,7 @@ export function useNeuralPlayer({ onError } = {}) {
   const posRef = useRef(0);
   const cancelRef = useRef(false);
   const urlRef = useRef(null);
+  const doneRef = useRef(null);
   const onErrorRef = useRef(onError);
   onErrorRef.current = onError;
 
@@ -52,6 +53,9 @@ export function useNeuralPlayer({ onError } = {}) {
     if (i >= segs.length) {
       setSpeaking(false);
       setIndex(-1);
+      const done = doneRef.current;
+      doneRef.current = null;
+      done?.();
       return;
     }
     setIndex(segs[i].si);
@@ -111,6 +115,7 @@ export function useNeuralPlayer({ onError } = {}) {
       segsRef.current = segments.map((t, si) => ({ t, si }));
       posRef.current = opts.fromSegment ?? 0;
       if (posRef.current < 0) posRef.current = 0;
+      doneRef.current = opts.onDone ?? null;
       setSpeaking(true);
       setPaused(false);
       // Ist das Modell schon vorgeladen, entfällt die Wartezeit.
@@ -144,6 +149,7 @@ export function useNeuralPlayer({ onError } = {}) {
 
   const stop = useCallback(() => {
     cancelRef.current = true;
+    doneRef.current = null;
     const a = audioRef.current;
     if (a) {
       a.pause();

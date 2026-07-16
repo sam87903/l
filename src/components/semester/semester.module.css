@@ -208,6 +208,30 @@
   color: var(--muted);
 }
 
+/* ── Modul-Notiz ── */
+.noteBox {
+  margin-top: var(--s-2);
+}
+
+.noteArea {
+  width: 100%;
+  min-height: 44px;
+  padding: var(--s-2);
+  border-radius: var(--r-sm);
+  border: 1px solid var(--glass-border);
+  background: color-mix(in srgb, var(--c) 6%, var(--surface));
+  color: var(--text);
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.noteArea:focus {
+  outline: none;
+  border-color: color-mix(in srgb, var(--c) 55%, transparent);
+}
+
 .wahlRow {
   display: flex;
   align-items: center;

@@ -12,9 +12,11 @@ import styles from "./semester.module.css";
 /** Ein Studienmodul: Prüfungsform, Themen, Quiz-Sprung, Lernkarten. */
 const ModuleCard = memo(function ModuleCard({ module, color, autoOpen = false }) {
   const [open, setOpen] = useState(false);
-  const { quizBest } = useProgress();
+  const { quizBest, notes, setNote } = useProgress();
   const navigate = useNavigate();
   const toggle = () => setOpen((v) => !v);
+  // Modul-Notiz: lokal tippen, beim Verlassen des Feldes speichern.
+  const [noteText, setNoteText] = useState(() => notes[module.id] || "");
 
   // Von außen angesteuert (z. B. Lernketten-Klick): Modul aufklappen.
   useEffect(() => {
@@ -90,6 +92,19 @@ const ModuleCard = memo(function ModuleCard({ module, color, autoOpen = false })
               Konkrete Inhalte hängen vom gewählten Wahlmodul ab – siehe Wahlmodul-Verzeichnis unten.
             </p>
           )}
+
+          <div className={styles.noteBox}>
+            <div className={styles.sectionKicker}>📝 Deine Notiz</div>
+            <textarea
+              className={styles.noteArea}
+              value={noteText}
+              onChange={(e) => setNoteText(e.target.value)}
+              onBlur={() => setNote(module.id, noteText)}
+              placeholder="Eigene Notiz zu diesem Modul – wird automatisch gespeichert."
+              rows={2}
+              aria-label={`Notiz zu ${module.name}`}
+            />
+          </div>
         </div>
       </Collapse>
     </GlassCard>
