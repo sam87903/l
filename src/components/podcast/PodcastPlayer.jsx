@@ -306,7 +306,7 @@ const PodcastPlayer = memo(function PodcastPlayer() {
               </p>
               {neural.ready ? (
                 <p className={cx(styles.voiceStatus, styles.voiceStatusOk)}>
-                  ✅ Stimme geladen – die Wiedergabe startet sofort.
+                  ✅ Stimme geladen &amp; gespeichert – startet sofort, auch offline.
                 </p>
               ) : neural.preloading ? (
                 <div className={styles.voiceStatus}>
@@ -370,8 +370,9 @@ const PodcastPlayer = memo(function PodcastPlayer() {
           ))}
 
           <p className={styles.footnote}>
-            🔊 Gerätestimme funktioniert offline; auf iPhone und iPad werden ganze Absätze am Stück gelesen.
-            Die KI-Stimme (Beta) läuft nur online, rechnet aber lokal in deinem Browser.
+            🔊 Gerätestimme funktioniert immer offline; auf iPhone und iPad werden ganze Absätze am
+            Stück gelesen. Die KI-Stimme braucht beim ersten Laden Internet – danach ist sie auf dem
+            Gerät gespeichert und funktioniert ebenfalls offline.
           </p>
         </div>
       </Collapse>

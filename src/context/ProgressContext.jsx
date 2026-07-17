@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useStoredState } from "../hooks/useStoredState.js";
-import { AUTO_BACKUP_INTERVAL_MS, DEFAULT_START_DATE, EXAM_TEXT_LIMIT, LEITNER_INTERVALS, LEITNER_MAX_BOX, MISTAKE_POOL_CAP, RECENTS_LIMIT, STORAGE_KEYS, XP_RULES } from "../constants/config.js";
+import { AUTO_BACKUP_INTERVAL_MS, DEFAULT_START_DATE, EXAM_TEXT_LIMIT, LEITNER_INTERVALS, LEITNER_MAX_BOX, MISTAKE_POOL_CAP, RECENTS_LIMIT, SIM_HISTORY_CAP, STORAGE_KEYS, XP_RULES } from "../constants/config.js";
 import { PLAN } from "../data/plan.js";
 import { computeStreak, computeXp, levelInfo } from "../utils/xp.js";
 import { addDaysISO, todayISO } from "../utils/dates.js";
@@ -30,8 +30,9 @@ export function ProgressProvider({ children }) {
   const [srs, setSrs, l12] = useStoredState(STORAGE_KEYS.srs, {});
   const [chainsDone, setChainsDone, l13] = useStoredState(STORAGE_KEYS.chainsDone, {});
   const [notes, setNotes, l14] = useStoredState(STORAGE_KEYS.notes, {});
+  const [simHistory, setSimHistory, l15] = useStoredState(STORAGE_KEYS.simHistory, []);
 
-  const ready = l1 && l2 && l3 && l4 && l5 && l6 && l7 && l8 && l9 && l10 && l11 && l12 && l13 && l14;
+  const ready = l1 && l2 && l3 && l4 && l5 && l6 && l7 && l8 && l9 && l10 && l11 && l12 && l13 && l14 && l15;
 
   const logActivity = useCallback(
     (minutes) => {
@@ -55,6 +56,15 @@ export function ProgressProvider({ children }) {
   const toggleChainDone = useCallback(
     (chainId) => setChainsDone((c) => ({ ...c, [chainId]: !c[chainId] })),
     [setChainsDone]
+  );
+
+  /** Probeklausur-Ergebnis in den Verlauf aufnehmen (neueste zuerst). */
+  const addSimResult = useCallback(
+    (entry) => {
+      setSimHistory((list) => [{ at: new Date().toISOString(), ...entry }, ...list].slice(0, SIM_HISTORY_CAP));
+      logActivity(3);
+    },
+    [setSimHistory, logActivity]
   );
 
   /** Freie Notiz zu einem Modul speichern (leer = löschen). */
@@ -231,9 +241,9 @@ export function ProgressProvider({ children }) {
       version: 3,
       exportedAt: new Date().toISOString(),
       startDate, doneDays, quizBest, fcKnown, favorites, recents, activity, settings,
-      wrongPool, mastered, exams, srs, chainsDone, notes,
+      wrongPool, mastered, exams, srs, chainsDone, notes, simHistory,
     }),
-    [startDate, doneDays, quizBest, fcKnown, favorites, recents, activity, settings, wrongPool, mastered, exams, srs, chainsDone, notes]
+    [startDate, doneDays, quizBest, fcKnown, favorites, recents, activity, settings, wrongPool, mastered, exams, srs, chainsDone, notes, simHistory]
   );
 
   // ── Barrierefreiheit: Nutzer-Toggles als Root-Attribute, damit CSS die
@@ -281,8 +291,9 @@ export function ProgressProvider({ children }) {
       if (data.srs) setSrs(data.srs);
       if (data.chainsDone) setChainsDone(data.chainsDone);
       if (data.notes) setNotes(data.notes);
+      if (Array.isArray(data.simHistory)) setSimHistory(data.simHistory);
     },
-    [setStartDate, setDoneDays, setQuizBest, setFcKnown, setFavorites, setRecents, setActivity, setSettings, setWrongPool, setMastered, setExams, setSrs, setChainsDone, setNotes]
+    [setStartDate, setDoneDays, setQuizBest, setFcKnown, setFavorites, setRecents, setActivity, setSettings, setWrongPool, setMastered, setExams, setSrs, setChainsDone, setNotes, setSimHistory]
   );
 
   const restoreAutoBackup = useCallback(
@@ -308,7 +319,8 @@ export function ProgressProvider({ children }) {
     setSrs({});
     setChainsDone({});
     setNotes({});
-  }, [setDoneDays, setQuizBest, setFcKnown, setFavorites, setRecents, setActivity, setSettings, setStartDate, setWrongPool, setMastered, setExams, setSrs, setChainsDone, setNotes]);
+    setSimHistory([]);
+  }, [setDoneDays, setQuizBest, setFcKnown, setFavorites, setRecents, setActivity, setSettings, setStartDate, setWrongPool, setMastered, setExams, setSrs, setChainsDone, setNotes, setSimHistory]);
 
   const value = useMemo(
     () => ({
@@ -326,13 +338,14 @@ export function ProgressProvider({ children }) {
       srs, reviewCard,
       chainsDone, toggleChainDone,
       notes, setNote,
+      simHistory, addSimResult,
       autoBackups, restoreAutoBackup,
       exportData, importData, resetAll,
     }),
     [ready, stats, doneDays, toggleDay, startDate, setStartDate, quizBest, saveQuizResult,
      fcKnown, setKnownCard, favorites, toggleFavorite, recents, pushRecent, activity,
      addFocusMinutes, settings, setSettings, wrongPool, recordAnswer, exams, addExam,
-     removeExam, srs, reviewCard, chainsDone, toggleChainDone, notes, setNote, autoBackups, restoreAutoBackup, exportData, importData, resetAll]
+     removeExam, srs, reviewCard, chainsDone, toggleChainDone, notes, setNote, simHistory, addSimResult, autoBackups, restoreAutoBackup, exportData, importData, resetAll]
   );
 
   return <ProgressContext.Provider value={value}>{children}</ProgressContext.Provider>;

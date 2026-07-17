@@ -3,7 +3,7 @@
 export const SEMESTER_START = "2026-09-01";
 export const DEFAULT_START_DATE = "2026-07-10";
 export const APP_NAME = "Marokko-Lernplan";
-export const APP_VERSION = "3.6.0";
+export const APP_VERSION = "3.7.0";
 
 /** Storage-Schlüssel. mrk6-* bleibt kompatibel zu Fortschritt aus v2. */
 export const STORAGE_KEYS = {
@@ -26,7 +26,11 @@ export const STORAGE_KEYS = {
   chainsDone: "mrk7-ch",
   notes: "mrk7-notes",
   podcastAuto: "mrk7-podauto",
+  simHistory: "mrk7-sim",
 };
+
+/** Wie viele Probeklausur-Ergebnisse aufgehoben werden. */
+export const SIM_HISTORY_CAP = 20;
 
 /** Leitner-System: Wiederholungsintervall in Tagen je Box (1–5). */
 export const LEITNER_INTERVALS = { 1: 0, 2: 3, 3: 7, 4: 14, 5: 30 };

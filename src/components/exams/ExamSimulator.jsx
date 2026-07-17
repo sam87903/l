@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Check, ClipboardCopy, FlaskConical, Play, RotateCcw, Send } from "lucide-react";
 import GlassCard from "../ui/GlassCard.jsx";
 import Button from "../ui/Button.jsx";
@@ -61,7 +61,7 @@ function mockExamAsText(mock) {
  * und Selbsteinschätzung.
  */
 const ExamSimulator = memo(function ExamSimulator() {
-  const { exams, wrongPool, fcKnown, quizBest, recordAnswer } = useProgress();
+  const { exams, wrongPool, fcKnown, quizBest, recordAnswer, simHistory, addSimResult } = useProgress();
   const { push } = useToast();
   const openTopic = useOpenTopic();
   const [size, setSize] = useState("standard");
@@ -71,6 +71,9 @@ const ExamSimulator = memo(function ExamSimulator() {
   const [openGrades, setOpenGrades] = useState({}); // Aufgaben-Index → 0|0.5|1
   const [openDrafts, setOpenDrafts] = useState({});
   const [revealed, setRevealed] = useState({});
+  // Vergleichswert: der Versuch VOR dem gerade abgegebenen.
+  const [prevAttempt, setPrevAttempt] = useState(null);
+  const savedRef = useRef(null);
 
   const progress = useMemo(() => ({ wrongPool, fcKnown, quizBest }), [wrongPool, fcKnown, quizBest]);
   const profile = useMemo(() => buildExamProfile(exams), [exams]);
@@ -98,6 +101,27 @@ const ExamSimulator = memo(function ExamSimulator() {
     timer.pause();
     setPhase("result");
   };
+
+  // Ergebnis genau einmal pro Probeklausur im Verlauf speichern.
+  useEffect(() => {
+    if (phase !== "result" || !mock || savedRef.current === mock) return;
+    savedRef.current = mock;
+    const mcCorrect = Object.values(mcAnswers).filter(Boolean).length;
+    const result = gradeMockExam({
+      mcCorrect,
+      mcTotal: mock.mc.length,
+      openScores: mock.open.map((_, i) => openGrades[i] ?? 0),
+    });
+    setPrevAttempt(simHistory[0] ?? null);
+    addSimResult({
+      size,
+      pct: result.pct,
+      grade: result.grade,
+      points: result.points,
+      maxPoints: result.maxPoints,
+      passed: result.passed,
+    });
+  }, [phase, mock, mcAnswers, openGrades, simHistory, addSimResult, size]);
 
   const backToSetup = () => {
     timer.pause();
@@ -149,6 +173,34 @@ const ExamSimulator = memo(function ExamSimulator() {
             <Button tint={ACCENT.violet} style={{ width: "100%", marginTop: "var(--s-2)" }} onClick={start}>
               <Play size={15} aria-hidden="true" /> Probeklausur starten
             </Button>
+
+            {simHistory.length > 0 && (
+              <div className={styles.section}>
+                <div className={styles.sectionKicker} style={{ "--c": ACCENT.violet }}>
+                  📜 Deine letzten Ergebnisse
+                </div>
+                {simHistory.slice(0, 5).map((h, i) => (
+                  <div key={h.at ?? i} className={styles.simHistRow}>
+                    <span className={styles.simHistGrade} data-passed={h.passed || undefined}>{h.grade}</span>
+                    <span className={styles.simHistMeta}>
+                      {h.pct} % · {EXAM_SIZES.find((s) => s.id === h.size)?.label ?? h.size}
+                    </span>
+                    <span className={styles.simHistDate}>
+                      {h.at ? new Date(h.at).toLocaleDateString("de-DE") : ""}
+                    </span>
+                  </div>
+                ))}
+                {simHistory.length >= 2 && (
+                  <p className={styles.simTrend}>
+                    {simHistory[0].pct > simHistory[1].pct
+                      ? `📈 Aufwärtstrend: +${simHistory[0].pct - simHistory[1].pct} Prozentpunkte gegenüber dem Versuch davor.`
+                      : simHistory[0].pct < simHistory[1].pct
+                        ? `📉 ${simHistory[0].pct - simHistory[1].pct} Prozentpunkte gegenüber dem Versuch davor – dranbleiben!`
+                        : "➡️ Stabil auf dem Niveau des letzten Versuchs."}
+                  </p>
+                )}
+              </div>
+            )}
           </>
         )}
       </GlassCard>
@@ -183,6 +235,15 @@ const ExamSimulator = memo(function ExamSimulator() {
           <span className={styles.badge}>
             Teil B: {mock.open.reduce((s, _, i) => s + (openGrades[i] ?? 0) * OPEN_POINTS, 0)} von {mock.open.length * OPEN_POINTS} P
           </span>
+          {prevAttempt && (
+            <span className={styles.badge}>
+              {result.pct > prevAttempt.pct
+                ? `📈 +${result.pct - prevAttempt.pct} Pp. vs. letzter Versuch (${prevAttempt.grade})`
+                : result.pct < prevAttempt.pct
+                  ? `📉 ${result.pct - prevAttempt.pct} Pp. vs. letzter Versuch (${prevAttempt.grade})`
+                  : `➡️ wie letzter Versuch (${prevAttempt.grade})`}
+            </span>
+          )}
         </div>
         {weakOpen.length > 0 && (
           <div className={styles.section}>

@@ -362,6 +362,55 @@ button.topItem:active {
   color: var(--muted);
 }
 
+/* ── Verlauf der Probeklausur-Ergebnisse ── */
+.simHistRow {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-1) 0;
+  border-bottom: 1px solid var(--border);
+  font-size: var(--fs-sm);
+}
+
+.simHistRow:last-of-type {
+  border-bottom: none;
+}
+
+.simHistGrade {
+  width: 40px;
+  flex-shrink: 0;
+  text-align: center;
+  padding: 0.12rem 0;
+  border-radius: var(--r-sm);
+  background: color-mix(in srgb, var(--red) 16%, transparent);
+  color: var(--red);
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+
+.simHistGrade[data-passed] {
+  background: color-mix(in srgb, var(--teal) 16%, transparent);
+  color: var(--teal);
+}
+
+.simHistMeta {
+  flex: 1;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.simHistDate {
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+.simTrend {
+  margin: var(--s-2) 0 0;
+  font-size: var(--fs-xs);
+  color: var(--muted);
+  line-height: 1.5;
+}
+
 .openItem {
   margin-bottom: var(--s-3);
   padding-bottom: var(--s-3);

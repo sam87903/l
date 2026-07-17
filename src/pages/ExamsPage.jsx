@@ -75,7 +75,12 @@ export default function ExamsPage() {
                 {new Date(exam.addedAt).toLocaleDateString("de-DE")} · {Math.round(exam.text.length / 1000)}k Zeichen
               </span>
               <button className={`${examStyles.deleteBtn} hover-pop`}
-                onClick={(e) => { e.stopPropagation(); removeExam(exam.id); if (open) setOpenId(null); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (!window.confirm(`Klausur „${exam.name}" wirklich löschen?`)) return;
+                  removeExam(exam.id);
+                  if (open) setOpenId(null);
+                }}
                 aria-label={`Klausur „${exam.name}" löschen`}>
                 <Trash2 size={15} aria-hidden="true" />
               </button>

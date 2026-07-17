@@ -4,7 +4,10 @@ import { viteSingleFile } from "vite-plugin-singlefile";
 
 // BUILD_TARGET=single erzeugt eine einzelne, offline nutzbare HTML-Datei
 // (z.B. zum direkten Öffnen auf dem Smartphone ohne Webserver).
+// PAGES=1 (zusätzlich): Single-Build für GitHub Pages – Manifest-, Icon-
+// und SW-Verweise bleiben erhalten, weil die Dateien mit deployt werden.
 const single = process.env.BUILD_TARGET === "single";
+const pages = process.env.PAGES === "1";
 
 // Flagge als Inline-Favicon für die Single-HTML (keine Nachbardateien).
 const FLAG_DATA_URI =
@@ -24,7 +27,7 @@ const stripExternalLinks = {
 
 export default defineConfig({
   base: "./",
-  plugins: [react(), ...(single ? [stripExternalLinks, viteSingleFile()] : [])],
+  plugins: [react(), ...(single ? [...(pages ? [] : [stripExternalLinks]), viteSingleFile()] : [])],
   build: {
     outDir: single ? "dist-single" : "dist",
     target: "es2020",

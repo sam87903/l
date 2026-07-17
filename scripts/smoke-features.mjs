@@ -251,6 +251,8 @@ await page.waitForSelector("text=Ergebnis der Probeklausur", { timeout: 5000 });
 const note = (await page.locator('[class*="simGradeNote"]').textContent()).trim();
 check("Simulator liefert deutsche Note", /^\d,\d$/.test(note), note);
 await page.click('button:has-text("Neue Probeklausur")');
+await page.waitForTimeout(400);
+check("Simulator-Verlauf zeigt letzte Ergebnisse", await page.locator("text=Deine letzten Ergebnisse").isVisible());
 
 // Klausur löschen
 const delCountBefore = await page.locator('[class*="examRow"]').count();

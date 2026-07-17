@@ -26,13 +26,19 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
-      - run: npm run build:single
+      # PAGES=1: Manifest-/Icon-Verweise bleiben in der HTML, weil die
+      # Dateien mit deployt werden (echte PWA: installierbar + offline).
+      - run: PAGES=1 npm run build:single
       - name: Seite vorbereiten
         run: |
           mkdir -p _site
           cp dist-single/index.html _site/index.html
           # 404 = App, damit Deep-Links (Hash-Router) funktionieren
           cp dist-single/index.html _site/404.html
+          # PWA-Dateien: Manifest, Icons, Service Worker
+          cp public/manifest.webmanifest public/icon.svg public/icon-180.png public/icon-192.png public/icon-512.png _site/
+          # Build-Stempel in den SW: jede Veröffentlichung rotiert den Cache
+          sed "s/__BUILD__/${GITHUB_SHA::12}/" public/sw.js > _site/sw.js
           # Jekyll-Verarbeitung abschalten
           touch _site/.nojekyll
       - name: In gh-pages-Branch veröffentlichen

@@ -4,6 +4,7 @@ import { Flame, Moon, Settings, Sun, SunMoon } from "lucide-react";
 import MoroccoFlag from "../ui/MoroccoFlag.jsx";
 import { useTheme } from "../../context/ThemeContext.jsx";
 import { useProgress } from "../../context/ProgressContext.jsx";
+import { useOnline } from "../../hooks/useOnline.js";
 import styles from "./layout.module.css";
 
 const MODE_META = {
@@ -17,6 +18,7 @@ const Header = memo(function Header() {
   const { mode, cycleMode } = useTheme();
   const { stats } = useProgress();
   const navigate = useNavigate();
+  const online = useOnline();
   const { icon: ModeIcon, state } = MODE_META[mode] ?? MODE_META.auto;
 
   return (
@@ -29,6 +31,11 @@ const Header = memo(function Header() {
         </span>
       </Link>
       <div className={styles.headerActions}>
+        {!online && (
+          <span className={styles.offlineChip} title="Kein Internet – die App läuft komplett lokal weiter">
+            ✈️ Offline
+          </span>
+        )}
         {stats.streak > 0 && (
           <span className={styles.streakChip} title={`${stats.streak} Tage Lern-Streak`}>
             <Flame size={12} aria-hidden="true" />

@@ -83,6 +83,10 @@ const SLICE_VALIDATORS = {
           Object.entries(v).filter(([, t]) => typeof t === "string" && t.trim()).map(([k, t]) => [k, t.slice(0, 4000)])
         )
       : null,
+  simHistory: (v) =>
+    Array.isArray(v)
+      ? v.filter((e) => isObject(e) && typeof e.grade === "string" && Number.isFinite(e.pct)).slice(0, 20)
+      : null,
 };
 
 /**

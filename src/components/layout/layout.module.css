@@ -91,6 +91,21 @@
   font-weight: 800;
 }
 
+/* Flugmodus/Funkloch: alles läuft lokal weiter */
+.offlineChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.28rem 0.6rem;
+  border-radius: var(--r-full);
+  border: 1px solid color-mix(in srgb, var(--orange) 45%, transparent);
+  background: color-mix(in srgb, var(--orange) 15%, transparent);
+  color: var(--orange);
+  font-size: var(--fs-xs);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
 .main {
   flex: 1 1 auto;
   min-height: 0; /* erlaubt dem Flex-Kind, kleiner als sein Inhalt zu werden → scrollt */
