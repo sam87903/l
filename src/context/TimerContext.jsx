@@ -79,8 +79,6 @@ export function TimerProvider({ children }) {
         setHydrated(true);
         return;
       }
-      // Merker: Läuft schon eine Session? Dann nicht zusätzlich starten.
-      let didResume = false;
       try {
         const snap = JSON.parse(raw || "null");
         if (snap && typeof snap === "object") {
@@ -93,11 +91,10 @@ export function TimerProvider({ children }) {
           const now = Date.now();
           const totalSec = (brk ? BREAK_MINUTES : m) * SECONDS_PER_MINUTE;
           if (Number.isFinite(snap.endAt) && snap.endAt > now) {
-            // Session läuft noch – nahtlos weiterzählen.
+            // Session lief beim Verlassen noch – nahtlos weiterzählen.
             setManual(snap.manual === true);
             timerRef.current.reset(Math.max(1, Math.round((snap.endAt - now) / 1000)));
             timerRef.current.start();
-            didResume = true;
           } else if (Number.isFinite(snap.endAt)) {
             // Während der Abwesenheit abgelaufen: erst den Snapshot
             // löschen, dann gutschreiben (keine Doppel-Gutschrift).
@@ -113,8 +110,8 @@ export function TimerProvider({ children }) {
             setIsBreak(false);
             timerRef.current.reset(m * SECONDS_PER_MINUTE);
           } else if (Number.isFinite(snap.remaining) && snap.remaining > 0 && snap.remaining < totalSec) {
-            // Mitten in der Session pausiert – Rest übernehmen; der
-            // Auto-Start unten lässt sie weiterlaufen.
+            // Mitten in der Session pausiert – Rest übernehmen (bleibt pausiert,
+            // bis der Nutzer selbst fortsetzt).
             setManual(snap.manual === true);
             timerRef.current.reset(Math.round(snap.remaining));
           } else {
@@ -123,12 +120,6 @@ export function TimerProvider({ children }) {
         }
       } catch {
         /* defekter Snapshot – frisch starten */
-      }
-      // Auto-Start beim App-Öffnen: Fokus-Session automatisch starten,
-      // sofern nicht ohnehin schon eine läuft (Einstellung, standardmäßig
-      // an). Eine pausierte Session wird dabei weitergezählt.
-      if (!cancelled && !didResume && settings.autoStartTimer !== false) {
-        timerRef.current.start();
       }
       setHydrated(true);
     })();

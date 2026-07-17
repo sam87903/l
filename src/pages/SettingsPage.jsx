@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Bell, Contrast, Download, FileSpreadsheet, History, Printer, RotateCcw, Timer, Upload, Volume2, ZapOff } from "lucide-react";
+import { Bell, Contrast, Download, FileSpreadsheet, History, Printer, RotateCcw, Upload, Volume2, ZapOff } from "lucide-react";
 import PageTransition from "../components/layout/PageTransition.jsx";
 import GlassCard from "../components/ui/GlassCard.jsx";
 import Button from "../components/ui/Button.jsx";
@@ -145,19 +145,6 @@ export default function SettingsPage() {
       </GlassCard>
 
       <div className={styles.sectionTitle}>🔔 Timer &amp; Feedback</div>
-      <GlassCard className={styles.settingRow}>
-        <Timer size={18} aria-hidden="true" style={{ flexShrink: 0, color: ACCENT.teal }} />
-        <div className={styles.settingBody}>
-          <div className={styles.settingTitle}>Timer automatisch starten</div>
-          <div className={styles.settingDesc}>Fokus-Session startet von selbst, sobald du die App öffnest.</div>
-        </div>
-        <div className={cx(styles.switch, settings.autoStartTimer && styles.switchOn)} role="switch"
-          aria-checked={!!settings.autoStartTimer} aria-label="Timer automatisch starten umschalten" tabIndex={0}
-          onClick={() => toggleSetting("autoStartTimer")}
-          onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && (e.preventDefault(), toggleSetting("autoStartTimer"))}>
-          <span className={styles.switchKnob} />
-        </div>
-      </GlassCard>
       <GlassCard className={styles.settingRow}>
         <Volume2 size={18} aria-hidden="true" style={{ flexShrink: 0, color: ACCENT.blue }} />
         <div className={styles.settingBody}>

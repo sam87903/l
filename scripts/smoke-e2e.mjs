@@ -168,11 +168,13 @@ await page.waitForSelector("text=Session geschafft");
 await page.waitForSelector("text=0 fällig");
 console.log("✅ Karten-Training: fällige Karte wiederholt → Box 2");
 
-// Fokus-Timer: startet seit v3 automatisch beim App-Öffnen und läuft hier
-// längst – vorzeitig beenden speichert die bisherigen Minuten.
+// Fokus-Timer: manuell starten (kein Auto-Start mehr), kurz laufen lassen,
+// dann vorzeitig beenden – die bisherigen Minuten werden gespeichert.
 await page.click("nav >> text=Start");
+await page.locator('[class*="controls"] button:has-text("Start")').first().click();
 await page.getByRole("button", { name: "Pause", exact: true }).waitFor({ timeout: 4000 });
-console.log("✅ Fokus-Timer: Auto-Start läuft beim App-Öffnen");
+console.log("✅ Fokus-Timer: startet auf Knopfdruck (kein Auto-Start)");
+await page.waitForTimeout(1300);
 const finishBtn = page.getByRole("button", { name: /Beenden/ });
 await finishBtn.waitFor({ timeout: 4000 });
 await finishBtn.click();

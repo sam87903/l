@@ -7,6 +7,7 @@ import Disclosure from "../components/ui/Disclosure.jsx";
 import KpiCard from "../components/dashboard/KpiCard.jsx";
 import AchievementsRow from "../components/dashboard/AchievementsRow.jsx";
 import WeakSpotRadar from "../components/stats/WeakSpotRadar.jsx";
+import LearningHistory from "../components/stats/LearningHistory.jsx";
 import Heatmap from "../components/charts/Heatmap.jsx";
 import BarChart from "../components/charts/BarChart.jsx";
 import { SEMESTERS } from "../data/semesters/index.js";
@@ -143,6 +144,9 @@ export default function StatsPage() {
           tint={ACCENT.violet}
         />
       </div>
+
+      {/* Lern-Rückblick: durch Wochen & Monate zurückblättern */}
+      <LearningHistory />
 
       {/* Streak-Kalender */}
       <div className={styles.sectionTitle}>🗓️ Streak-Kalender · letzte 16 Wochen</div>

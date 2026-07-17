@@ -9,7 +9,7 @@ import { pushAutoBackup, readAutoBackups } from "../services/autoBackup.js";
 
 const ProgressContext = createContext(null);
 
-const DEFAULT_SETTINGS = { sound: true, notifications: false, reducedMotion: false, highContrast: false, autoStartTimer: true };
+const DEFAULT_SETTINGS = { sound: true, notifications: false, reducedMotion: false, highContrast: false };
 
 /**
  * Zentraler Lernfortschritt: abgehakte Tage, Quiz-Bestscores, gewusste
