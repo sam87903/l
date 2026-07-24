@@ -3,7 +3,7 @@
 export const SEMESTER_START = "2026-09-01";
 export const DEFAULT_START_DATE = "2026-07-10";
 export const APP_NAME = "Marokko-Lernplan";
-export const APP_VERSION = "3.7.0";
+export const APP_VERSION = "3.8.0";
 
 /** Storage-Schlüssel. mrk6-* bleibt kompatibel zu Fortschritt aus v2. */
 export const STORAGE_KEYS = {

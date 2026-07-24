@@ -1,23 +1,12 @@
-import { motion, useReducedMotion } from "framer-motion";
 import { useProgress } from "../../context/ProgressContext.jsx";
 
 /**
- * Einheitliche Seiten-Eingangsanimation. Respektiert sowohl die
- * System-Einstellung (prefers-reduced-motion) als auch den
- * App-Toggle „Reduzierte Animationen".
+ * Einheitliche Seiten-Eingangsanimation (CSS, ohne Animations-Bibliothek).
+ * Die System-Einstellung `prefers-reduced-motion` und der App-Toggle
+ * „Reduzierte Animationen" stellen sie über animations.css ruhig; bei
+ * aktivem Toggle wird die Klasse zusätzlich gar nicht erst gesetzt.
  */
 export default function PageTransition({ children }) {
-  const systemReduced = useReducedMotion();
   const { settings } = useProgress();
-  if (systemReduced || settings.reducedMotion) return <div>{children}</div>;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.28, ease: [0.32, 0.72, 0.33, 1] }}
-    >
-      {children}
-    </motion.div>
-  );
+  return <div className={settings.reducedMotion ? undefined : "anim-page"}>{children}</div>;
 }

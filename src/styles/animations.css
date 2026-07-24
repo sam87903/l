@@ -1,0 +1,105 @@
+/* ═══ Animationen ohne JS-Bibliothek ═══
+   Ersetzt framer-motion: dieselben Effekte, aber als native CSS-Animationen.
+   Sie laufen auf dem Compositor (flüssiger auf dem Handy) und sparen rund
+   150 kB JavaScript, das sonst bei jedem Kaltstart geparst werden müsste. */
+
+@keyframes anim-page-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes anim-fade-up {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes anim-pop-in {
+  from { opacity: 0; transform: translateY(-4px) scale(0.98); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes anim-toast-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.9); }
+  60%  { opacity: 1; transform: translateY(-2px) scale(1.01); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes anim-pill-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.92); }
+  60%  { opacity: 1; transform: translateY(-1px) scale(1.02); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes anim-backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes anim-modal-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.92); }
+  60%  { opacity: 1; transform: translateY(-2px) scale(1.01); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Seitenwechsel */
+.anim-page {
+  animation: anim-page-in 0.28s cubic-bezier(0.32, 0.72, 0.33, 1) both;
+}
+
+/* Kleine Einblendungen (Quiz-Erklärung, Begriffs-Popup) */
+.anim-fadeUp { animation: anim-fade-up 0.22s var(--ease, ease-out) both; }
+.anim-popIn  { animation: anim-pop-in 0.22s var(--ease, ease-out) both; }
+
+/* Schwebende Elemente mit federndem Auftritt */
+.anim-toast { animation: anim-toast-in 0.34s cubic-bezier(0.22, 1.2, 0.36, 1) both; }
+.anim-pill  { animation: anim-pill-in 0.34s cubic-bezier(0.22, 1.2, 0.36, 1) both; }
+
+/* Dialog */
+.anim-backdrop { animation: anim-backdrop-in 0.18s ease-out both; }
+.anim-modal    { animation: anim-modal-in 0.32s cubic-bezier(0.22, 1.2, 0.36, 1) both; }
+
+/* Chevron drehen (Begriffs-Pill) */
+.anim-rotate {
+  display: inline-flex;
+  transition: transform 0.24s var(--ease, ease-out);
+}
+.anim-rotateOpen { transform: rotate(180deg); }
+
+/* Antippen: kurzes Eindrücken statt JS-Gesten-Engine */
+.anim-tap {
+  transition: transform 0.12s ease-out;
+}
+.anim-tap:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+/* Lernkarte: 3D-Flip + Wisch-Versatz.
+   Der Versatz kommt live per --swipe aus dem Pointer-Handler; ohne aktives
+   Ziehen sorgt die Transition für ein weiches Zurückfedern. */
+.anim-card {
+  transform: translateX(var(--swipe, 0px)) rotateY(var(--flip, 0deg));
+  transition: transform 0.42s cubic-bezier(0.22, 1.1, 0.36, 1);
+  touch-action: pan-y;
+}
+.anim-cardDragging {
+  transition: none;
+}
+
+/* Reduzierte Bewegung: alles ruhig stellen (System-Einstellung + App-Toggle) */
+@media (prefers-reduced-motion: reduce) {
+  .anim-page, .anim-fadeUp, .anim-popIn, .anim-toast, .anim-pill,
+  .anim-backdrop, .anim-modal { animation-duration: 0.01ms; }
+  .anim-rotate, .anim-tap, .anim-card { transition-duration: 0.01ms; }
+}
+
+:root[data-motion="reduced"] .anim-page,
+:root[data-motion="reduced"] .anim-fadeUp,
+:root[data-motion="reduced"] .anim-popIn,
+:root[data-motion="reduced"] .anim-toast,
+:root[data-motion="reduced"] .anim-pill,
+:root[data-motion="reduced"] .anim-backdrop,
+:root[data-motion="reduced"] .anim-modal { animation-duration: 0.01ms; }
+
+:root[data-motion="reduced"] .anim-rotate,
+:root[data-motion="reduced"] .anim-tap,
+:root[data-motion="reduced"] .anim-card { transition-duration: 0.01ms; }

@@ -1,6 +1,5 @@
 import { memo } from "react";
 import { useNavigate } from "react-router-dom";
-import { AnimatePresence, motion } from "framer-motion";
 import { Coffee, Pause, Play, Timer } from "lucide-react";
 import { formatClock, useTimer } from "../../context/TimerContext.jsx";
 import { cx } from "../../utils/misc.js";
@@ -18,46 +17,36 @@ const TimerPill = memo(function TimerPill() {
 
   // Pausiert = mitten in der Session gestoppt (Restzeit übrig, läuft nicht).
   const paused = !running && !done && elapsedSec > 0 && remaining > 0;
-  const visible = running || paused;
+  if (!running && !paused) return null;
 
   return (
-    <AnimatePresence>
-      {visible && (
-        <motion.div
-          className={cx(styles.pillWrap, paused && styles.pillPaused)}
-          initial={{ opacity: 0, y: 14, scale: 0.92 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 10, scale: 0.95 }}
-          transition={{ type: "spring", stiffness: 400, damping: 30 }}
-        >
-          <button
-            className={styles.pillMain}
-            onClick={() => navigate("/")}
-            aria-label={
-              paused
-                ? "Timer pausiert – zum Dashboard wechseln"
-                : isBreak
-                  ? "Pause läuft – zum Dashboard wechseln"
-                  : "Fokus-Timer läuft – zum Dashboard wechseln"
-            }
-          >
-            {isBreak ? <Coffee size={14} aria-hidden="true" /> : <Timer size={14} aria-hidden="true" />}
-            <span className={styles.pillTime} aria-hidden="true">
-              {formatClock(remaining)}
-            </span>
-          </button>
-          {paused ? (
-            <button className={styles.pillPause} onClick={start} aria-label="Timer fortsetzen">
-              <Play size={14} aria-hidden="true" />
-            </button>
-          ) : (
-            <button className={styles.pillPause} onClick={pause} aria-label="Timer pausieren">
-              <Pause size={14} aria-hidden="true" />
-            </button>
-          )}
-        </motion.div>
+    <div className={cx(styles.pillWrap, paused && styles.pillPaused, "anim-pill")}>
+      <button
+        className={styles.pillMain}
+        onClick={() => navigate("/")}
+        aria-label={
+          paused
+            ? "Timer pausiert – zum Dashboard wechseln"
+            : isBreak
+              ? "Pause läuft – zum Dashboard wechseln"
+              : "Fokus-Timer läuft – zum Dashboard wechseln"
+        }
+      >
+        {isBreak ? <Coffee size={14} aria-hidden="true" /> : <Timer size={14} aria-hidden="true" />}
+        <span className={styles.pillTime} aria-hidden="true">
+          {formatClock(remaining)}
+        </span>
+      </button>
+      {paused ? (
+        <button className={styles.pillPause} onClick={start} aria-label="Timer fortsetzen">
+          <Play size={14} aria-hidden="true" />
+        </button>
+      ) : (
+        <button className={styles.pillPause} onClick={pause} aria-label="Timer pausieren">
+          <Pause size={14} aria-hidden="true" />
+        </button>
       )}
-    </AnimatePresence>
+    </div>
   );
 });
 

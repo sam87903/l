@@ -1,19 +1,16 @@
 import { memo, useMemo, useState } from "react";
-import { motion } from "framer-motion";
 import { CalendarClock, Check, Play, RotateCcw } from "lucide-react";
 import GlassCard from "../ui/GlassCard.jsx";
 import Button from "../ui/Button.jsx";
 import ProgressBar from "../ui/ProgressBar.jsx";
 import { useProgress } from "../../context/ProgressContext.jsx";
+import { useSwipeCard } from "../../hooks/useSwipeCard.js";
 import { useToast } from "../ui/Toast.jsx";
 import { collectDueCards } from "../../utils/decks.js";
 import { LEITNER_MAX_BOX } from "../../constants/config.js";
 import { ACCENT } from "../../constants/theme.js";
 import { cx } from "../../utils/misc.js";
 import styles from "./flashcards.module.css";
-
-const SWIPE_DISTANCE = 70;
-const SWIPE_VELOCITY = 500;
 
 /**
  * Deck-übergreifendes Karten-Training: sammelt alle heute fälligen
@@ -51,15 +48,11 @@ const DueTrainer = memo(function DueTrainer() {
     });
   };
 
-  const onDragEnd = (_e, info) => {
-    if (!flipped) return;
-    const swipe = info.offset.x > SWIPE_DISTANCE || info.velocity.x > SWIPE_VELOCITY
-      ? 1
-      : info.offset.x < -SWIPE_DISTANCE || info.velocity.x < -SWIPE_VELOCITY
-        ? -1
-        : 0;
-    if (swipe) answer(swipe === 1);
-  };
+  // Wischen bewertet nur die aufgedeckte Karte (→ Gewusst / ← Nochmal).
+  const swipe = useSwipeCard({
+    onSwipe: (dir) => flipped && answer(dir === "right"),
+    onTap: () => setFlipped((f) => !f),
+  });
 
   const current = session?.queue[0];
 
@@ -98,17 +91,11 @@ const DueTrainer = memo(function DueTrainer() {
             height={4} label="Trainings-Fortschritt" />
 
           <div className={styles.scene}>
-            <motion.div
+            <div
               key={`${current.deckId}#${current.index}`}
-              className={styles.cardInner}
-              animate={{ rotateY: flipped ? 180 : 0 }}
-              initial={false}
-              transition={{ type: "spring", stiffness: 260, damping: 24 }}
-              drag="x"
-              dragConstraints={{ left: 0, right: 0 }}
-              dragElastic={0.7}
-              onDragEnd={onDragEnd}
-              onTap={() => setFlipped((f) => !f)}
+              className={cx(styles.cardInner, "anim-card", swipe.dragging && "anim-cardDragging")}
+              style={{ "--flip": flipped ? "180deg" : "0deg" }}
+              {...swipe.handlers}
               role="button"
               tabIndex={0}
               onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && (e.preventDefault(), setFlipped((f) => !f))}
@@ -124,7 +111,7 @@ const DueTrainer = memo(function DueTrainer() {
                 <div className={styles.faceLabel} style={{ color: "var(--c)" }}>Definition</div>
                 <div className={styles.faceDef}>{current.back}</div>
               </div>
-            </motion.div>
+            </div>
           </div>
 
           {flipped ? (

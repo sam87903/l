@@ -4,6 +4,7 @@ import App from "./App.jsx";
 import { registerServiceWorker } from "./registerSW.js";
 import "./styles/tokens.css";
 import "./styles/global.css";
+import "./styles/animations.css";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

@@ -1,18 +1,15 @@
 import { memo, useCallback, useMemo, useState } from "react";
-import { motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, Check, RotateCcw, Shuffle } from "lucide-react";
 import GlassCard from "../ui/GlassCard.jsx";
 import Button from "../ui/Button.jsx";
 import ProgressBar from "../ui/ProgressBar.jsx";
 import { useProgress } from "../../context/ProgressContext.jsx";
+import { useSwipeCard } from "../../hooks/useSwipeCard.js";
 import { isDue } from "../../utils/decks.js";
 import { LEITNER_MAX_BOX } from "../../constants/config.js";
 import { ACCENT } from "../../constants/theme.js";
 import { cx, shuffleArray } from "../../utils/misc.js";
 import styles from "./flashcards.module.css";
-
-const SWIPE_DISTANCE = 70;
-const SWIPE_VELOCITY = 500;
 
 const fmtShort = (iso) => (iso ? `${iso.slice(8, 10)}.${iso.slice(5, 7)}.` : "");
 
@@ -85,16 +82,12 @@ const FlashcardDeck = memo(function FlashcardDeck({ deckId, cards, color = ACCEN
   };
 
   /** Wischen: umgedreht = bewerten (→ Gewusst / ← Nochmal), sonst blättern. */
-  const onDragEnd = (_e, info) => {
-    const swipe = info.offset.x > SWIPE_DISTANCE || info.velocity.x > SWIPE_VELOCITY
-      ? 1
-      : info.offset.x < -SWIPE_DISTANCE || info.velocity.x < -SWIPE_VELOCITY
-        ? -1
-        : 0;
-    if (!swipe) return;
-    if (flipped) mark(swipe === 1);
-    else go(swipe === 1 ? -1 : 1);
+  const onSwipe = (dir) => {
+    const right = dir === "right";
+    if (flipped) mark(right);
+    else go(right ? -1 : 1);
   };
+  const swipe = useSwipeCard({ onSwipe, onTap: () => setFlipped((f) => !f) });
 
   return (
     <GlassCard tint={color} className={styles.deck} style={{ "--c": color }}>
@@ -142,15 +135,10 @@ const FlashcardDeck = memo(function FlashcardDeck({ deckId, cards, color = ACCEN
       {card ? (
         <>
           <div className={styles.scene}>
-            <motion.div
-              className={styles.cardInner}
-              animate={{ rotateY: flipped ? 180 : 0 }}
-              transition={{ type: "spring", stiffness: 260, damping: 24 }}
-              drag="x"
-              dragConstraints={{ left: 0, right: 0 }}
-              dragElastic={0.7}
-              onDragEnd={onDragEnd}
-              onTap={() => setFlipped((f) => !f)}
+            <div
+              className={cx(styles.cardInner, "anim-card", swipe.dragging && "anim-cardDragging")}
+              style={{ "--flip": flipped ? "180deg" : "0deg" }}
+              {...swipe.handlers}
               role="button"
               tabIndex={0}
               onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && (e.preventDefault(), setFlipped((f) => !f))}
@@ -173,7 +161,7 @@ const FlashcardDeck = memo(function FlashcardDeck({ deckId, cards, color = ACCEN
                 <div className={styles.faceLabel} style={{ color: "var(--c)" }}>Definition</div>
                 <div className={styles.faceDef}>{card.back}</div>
               </div>
-            </motion.div>
+            </div>
           </div>
 
           <div className={styles.controls}>

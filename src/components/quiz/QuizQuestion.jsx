@@ -1,5 +1,4 @@
 import { memo } from "react";
-import { motion } from "framer-motion";
 import { cx } from "../../utils/misc.js";
 import styles from "./quiz.module.css";
 
@@ -23,25 +22,24 @@ const QuizQuestion = memo(function QuizQuestion({ index, question, picked, onPic
           const showCorrect = answered && isCorrect;
           const showWrong = answered && isPicked && !isCorrect;
           return (
-            <motion.button
+            <button
               key={oi}
-              className={cx(styles.option, showCorrect && styles.optionCorrect, showWrong && styles.optionWrong)}
+              className={cx(styles.option, showCorrect && styles.optionCorrect, showWrong && styles.optionWrong, "anim-tap")}
               disabled={answered}
               onClick={() => onPick(oi)}
-              whileTap={answered ? undefined : { scale: 0.98 }}
             >
               <span className={styles.optionMark} aria-hidden="true">
                 {showCorrect ? "✓" : showWrong ? "✕" : ""}
               </span>
               {option}
-            </motion.button>
+            </button>
           );
         })}
       </div>
       {answered && question.explain && (
-        <motion.p className={styles.explain} initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}>
+        <p className={cx(styles.explain, "anim-fadeUp")}>
           💡 {question.explain}
-        </motion.p>
+        </p>
       )}
     </div>
   );
