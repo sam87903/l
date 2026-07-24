@@ -5,12 +5,10 @@
  * A11y-Toggles, Theme. Aufruf: node scripts/smoke-features.mjs [chromium]
  */
 import { chromium } from "playwright-core";
-import { fileURLToPath } from "node:url";
-import path from "node:path";
+import { appUnderTest } from "./app-under-test.mjs";
 
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const executablePath = process.argv[2] ?? "/opt/pw-browsers/chromium-1194/chrome-linux/chrome";
-const APP = "file://" + path.join(root, "release/marokko-lernplan-app.html");
+const APP = appUnderTest();
 
 const browser = await chromium.launch({
   executablePath,

@@ -6,8 +6,8 @@
  * Aufruf: node scripts/smoke-gestures.mjs
  */
 import { chromium } from "playwright-core";
-import path from "node:path";
-const APP = "file://" + path.resolve("release/marokko-lernplan-app.html");
+import { appUnderTest } from "./app-under-test.mjs";
+const APP = appUnderTest();
 const b = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium-1194/chrome-linux/chrome", args: ["--no-sandbox", "--allow-file-access-from-files"] });
 const page = await b.newPage({ viewport: { width: 390, height: 844 }, hasTouch: true });
 const errs=[]; page.on("pageerror",e=>errs.push(String(e)));

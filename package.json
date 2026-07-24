@@ -1,7 +1,7 @@
 {
   "name": "marokko-lernplan",
   "private": true,
-  "version": "3.8.0",
+  "version": "3.9.0",
   "description": "Interaktive Lernplattform für den B.Sc. E-Commerce an der HRW",
   "type": "module",
   "scripts": {
@@ -12,7 +12,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "build:phone": "BUILD_TARGET=single vite build && node scripts/make-compact.mjs",
-    "smoke": "node scripts/smoke-e2e.mjs"
+    "smoke": "npm run build:single && node scripts/smoke-e2e.mjs",
+    "smoke:offline": "node scripts/smoke-offline.mjs",
+    "smoke:gestures": "npm run build:single && node scripts/smoke-gestures.mjs",
+    "smoke:features": "npm run build:single && node scripts/smoke-features.mjs"
   },
   "dependencies": {
     "lucide-react": "^1.23.0",

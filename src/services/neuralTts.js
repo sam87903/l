@@ -31,6 +31,33 @@ async function engine() {
   return enginePromise;
 }
 
+const READY_KEY = "mrk7-voice-ready";
+
+/** Merken, dass das Modell lokal liegt – ohne Netz nachschlagbar. */
+const markStored = (voiceId) => {
+  try {
+    localStorage.setItem(READY_KEY, voiceId);
+  } catch {
+    /* Speicher nicht verfügbar – dann eben ohne Merker */
+  }
+};
+
+/**
+ * Liegt das Stimmmodell schon lokal?
+ *
+ * Bewusst nur über einen lokalen Merker – die Bibliothek allein zum
+ * Nachschauen vom CDN zu laden würde offline scheitern und im Flugzeug
+ * bei jedem Blick in den Reise-Check einen Netzwerkfehler erzeugen.
+ * Der Merker wird gesetzt, sobald das Modell nachweislich bereitsteht.
+ */
+export function isNeuralVoiceStored(voiceId = NEURAL_VOICE) {
+  try {
+    return localStorage.getItem(READY_KEY) === voiceId;
+  } catch {
+    return false;
+  }
+}
+
 /**
  * Stellt sicher, dass das Stimmmodell verfügbar ist. Beim ersten Mal wird es
  * heruntergeladen (Fortschritt 0–100 über onProgress), danach aus dem Cache
@@ -40,12 +67,14 @@ export async function ensureNeuralVoice(voiceId = NEURAL_VOICE, onProgress) {
   const tts = await engine();
   const stored = await tts.stored();
   if (Array.isArray(stored) && stored.includes(voiceId)) {
+    markStored(voiceId);
     onProgress?.(100);
     return;
   }
   await tts.download(voiceId, (p) => {
     if (onProgress && p && p.total) onProgress(Math.min(100, Math.round((p.loaded / p.total) * 100)));
   });
+  markStored(voiceId);
 }
 
 /** Synthetisiert einen Textabschnitt und liefert eine Object-URL (WAV). */

@@ -12,3 +12,19 @@ export function registerServiceWorker() {
     });
   });
 }
+
+/**
+ * Dauerhafte Speicherung anfordern: Ohne diese Zusage darf der Browser die
+ * App-Daten jederzeit verwerfen – auf iOS schon nach längerer Nicht-Nutzung.
+ * Für eine Lern-App, die wochenlang offline genutzt wird, wäre das fatal.
+ * Läuft still im Hintergrund; das Ergebnis zeigt der Reise-Check.
+ */
+export function requestPersistentStorageQuietly() {
+  if (typeof navigator === "undefined" || !navigator.storage?.persist) return;
+  navigator.storage
+    .persisted()
+    .then((already) => (already ? null : navigator.storage.persist()))
+    .catch(() => {
+      /* Browser verweigert – der Reise-Check macht darauf aufmerksam */
+    });
+}

@@ -85,6 +85,10 @@
   transition: none;
 }
 
+/* Lade-Kringel */
+@keyframes anim-spin { to { transform: rotate(360deg); } }
+.anim-spin { animation: anim-spin 0.9s linear infinite; }
+
 /* Reduzierte Bewegung: alles ruhig stellen (System-Einstellung + App-Toggle) */
 @media (prefers-reduced-motion: reduce) {
   .anim-page, .anim-fadeUp, .anim-popIn, .anim-toast, .anim-pill,

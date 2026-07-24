@@ -4,6 +4,7 @@ import PageTransition from "../components/layout/PageTransition.jsx";
 import GlassCard from "../components/ui/GlassCard.jsx";
 import Button from "../components/ui/Button.jsx";
 import Modal from "../components/ui/Modal.jsx";
+import OfflineReady from "../components/settings/OfflineReady.jsx";
 import { useToast } from "../components/ui/Toast.jsx";
 import { useTheme } from "../context/ThemeContext.jsx";
 import { useProgress } from "../context/ProgressContext.jsx";
@@ -197,6 +198,9 @@ export default function SettingsPage() {
           <span className={styles.switchKnob} />
         </div>
       </GlassCard>
+
+      <div className={styles.sectionTitle}>✈️ Reise &amp; Offline</div>
+      <OfflineReady />
 
       <div className={styles.sectionTitle}>💾 Daten</div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "var(--s-2)" }}>

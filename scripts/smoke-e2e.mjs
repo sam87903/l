@@ -3,10 +3,8 @@
  * Aufruf: node scripts/smoke-e2e.mjs [chromium-binary]
  */
 import { chromium } from "playwright-core";
-import { fileURLToPath } from "node:url";
-import path from "node:path";
+import { appUnderTest } from "./app-under-test.mjs";
 
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const executablePath = process.argv[2] ?? "/opt/pw-browsers/chromium-1194/chrome-linux/chrome";
 
 const browser = await chromium.launch({
@@ -19,7 +17,7 @@ page.on("pageerror", (e) => errors.push(String(e)));
 page.on("console", (m) => { if (m.type() === "error") errors.push(m.text()); });
 
 const t0 = Date.now();
-await page.goto("file://" + path.join(root, "release/marokko-lernplan-app.html"));
+await page.goto(appUnderTest());
 await page.waitForSelector("text=Salam, bereit zu lernen?", { timeout: 20000 });
 console.log(`✅ Dashboard sichtbar nach ${Date.now() - t0} ms`);
 

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ensureNeuralVoice, synthNeural, NEURAL_VOICE } from "../services/neuralTts.js";
+import { ensureNeuralVoice, isNeuralVoiceStored, synthNeural, NEURAL_VOICE } from "../services/neuralTts.js";
 
 // Kurzes stilles WAV – entsperrt das Audio-Element innerhalb der Nutzergeste
 // (iOS erlaubt spätere programmatische Wiedergabe nur nach einer solchen Geste).
@@ -20,8 +20,9 @@ export function useNeuralPlayer({ onError } = {}) {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   // Vorlade-Status: Modell wird einmalig heruntergeladen und im Browser
-  // gecacht, damit die Wiedergabe später sofort startet.
-  const [ready, setReady] = useState(false);
+  // gecacht, damit die Wiedergabe später sofort startet. Liegt es aus einer
+  // früheren Sitzung schon vor, gilt es sofort als bereit – ohne Ladeanzeige.
+  const [ready, setReady] = useState(() => isNeuralVoiceStored());
   const [preloading, setPreloading] = useState(false);
   const [preloadError, setPreloadError] = useState(false);
   const preloadStartedRef = useRef(false);
@@ -88,6 +89,12 @@ export function useNeuralPlayer({ onError } = {}) {
    */
   const preload = useCallback(() => {
     if (ready || preloadStartedRef.current) return;
+    // Ohne Netz und ohne gespeichertes Modell gibt es nichts zu holen – dann
+    // gar nicht erst anfragen, sonst gibt es unterwegs nur Fehlermeldungen.
+    if (typeof navigator !== "undefined" && navigator.onLine === false) {
+      setPreloadError(true);
+      return;
+    }
     preloadStartedRef.current = true;
     setPreloading(true);
     setPreloadError(false);
