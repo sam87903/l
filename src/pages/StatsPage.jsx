@@ -8,6 +8,7 @@ import KpiCard from "../components/dashboard/KpiCard.jsx";
 import AchievementsRow from "../components/dashboard/AchievementsRow.jsx";
 import WeakSpotRadar from "../components/stats/WeakSpotRadar.jsx";
 import LearningHistory from "../components/stats/LearningHistory.jsx";
+import DueForecast from "../components/stats/DueForecast.jsx";
 import Heatmap from "../components/charts/Heatmap.jsx";
 import BarChart from "../components/charts/BarChart.jsx";
 import { SEMESTERS } from "../data/semesters/index.js";
@@ -149,6 +150,9 @@ export default function StatsPage() {
 
       {/* Lern-Rückblick: durch Wochen & Monate zurückblättern */}
       <LearningHistory />
+
+      {/* Und der Blick nach vorn: was in den nächsten 14 Tagen ansteht */}
+      <DueForecast />
 
       {/* Streak-Kalender */}
       <div className={styles.sectionTitle}>🗓️ Streak-Kalender · letzte 16 Wochen</div>

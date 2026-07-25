@@ -1,0 +1,165 @@
+/* ═══ Lernlast-Vorschau (nächste 14 Tage) ═══
+   Gegenstück zum rückwärtsgerichteten Lern-Rückblick. Zwei gestapelte
+   Segmente je Tag: Lernkarten und Quizfragen der Fehler-Kartei. */
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin-bottom: var(--s-2);
+}
+
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex: 1;
+  font-size: var(--fs-xs);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--c);
+}
+
+.range {
+  font-size: var(--fs-xs);
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.lead {
+  margin: 0 0 var(--s-3);
+  font-size: var(--fs-xs);
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.lead strong {
+  color: var(--text);
+}
+
+/* ── Balken ── */
+.chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 108px;
+  margin-bottom: var(--s-2);
+}
+
+.day {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  height: 100%;
+}
+
+.count {
+  font-size: 0.56rem;
+  font-weight: 700;
+  color: var(--muted);
+  line-height: 1;
+  height: 0.7rem;
+}
+
+.track {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  border-radius: var(--r-sm);
+  background: color-mix(in srgb, var(--text) 7%, transparent);
+  overflow: hidden;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 2px;
+  transition: height var(--dur, 0.24s) ease-out;
+}
+
+.segQuestions {
+  background: var(--orange);
+}
+
+.segCards {
+  background: var(--c);
+}
+
+.wd {
+  font-size: 0.52rem;
+  font-weight: 700;
+  color: var(--muted);
+  line-height: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.wdToday {
+  color: var(--c);
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ── Legende ── */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+  font-size: 0.62rem;
+  color: var(--muted);
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 3px;
+}
+
+.dotCards {
+  background: var(--c);
+}
+
+.dotQuestions {
+  background: var(--orange);
+}
+
+/* ── Hochrechnung ── */
+.projection {
+  margin-top: var(--s-3);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--border);
+}
+
+.projRow {
+  margin: 0 0 var(--s-1);
+  font-size: var(--fs-xs);
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.projRow strong {
+  color: var(--text);
+}
+
+.projNote {
+  margin: var(--s-2) 0 0;
+  font-size: 0.6rem;
+  line-height: 1.55;
+  color: var(--muted);
+  opacity: 0.85;
+}

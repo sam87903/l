@@ -2,6 +2,7 @@ import { memo, useMemo, useState } from "react";
 import { ChevronDown, ChevronUp, Calculator } from "lucide-react";
 import GlassCard from "../ui/GlassCard.jsx";
 import Collapse from "../ui/Collapse.jsx";
+import FormulaTrainer from "./FormulaTrainer.jsx";
 import { FORMULAS, FORMULA_CATS } from "../../data/formulas.js";
 import { ACCENT } from "../../constants/theme.js";
 import { cx, kb } from "../../utils/misc.js";
@@ -125,6 +126,10 @@ const FormulaTool = memo(function FormulaTool() {
             und Investitionsrechnung bis zu E-Commerce-KPIs. Tippe eine Kategorie an, gib deine Werte ein,
             das Ergebnis rechnet sich sofort.
           </p>
+
+          {/* Abfrage vor der Liste: Wer nur blättert, merkt sich wenig. */}
+          <FormulaTrainer />
+
           {byCat.map(({ cat, list }) => (
             <Category
               key={cat.id}

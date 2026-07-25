@@ -38,6 +38,17 @@ await page.addInitScript(() => {
     "s2-mkt~ext": { c: 5, t: 10 },
     "s1-ecm": { c: 9, t: 10 },
   }));
+  // Leitner-Karten mit gestaffelten Fälligkeiten für die Lernlast-Vorschau
+  const inDays = (n) => { const d = new Date(); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
+  localStorage.setItem("mrk7-sr", JSON.stringify({
+    glossar: {
+      0: { box: 1, due: inDays(0) },
+      1: { box: 2, due: inDays(1) },
+      2: { box: 2, due: inDays(1) },
+      3: { box: 3, due: inDays(4) },
+      4: { box: 1, due: inDays(-3) },
+    },
+  }));
 });
 
 await page.goto(APP);
@@ -125,6 +136,23 @@ await page.click("text=Erfolgsquote je Thema");
 await page.waitForTimeout(500);
 const statsText = await page.evaluate(() => document.body.innerText);
 check("Erfolgsquote ohne rohe ~ext-IDs", statsText.includes("Erfolgsquote") && !statsText.includes("~ext"));
+
+/* ── Lernlast-Vorschau: Blick nach vorn statt nur zurück ── */
+const forecastLead = (await page.locator('[class*="lead"]').filter({ hasText: "Wiederholungen" }).first()
+  .textContent().catch(() => "")) || "";
+check("Vorschau zählt die fälligen Wiederholungen der nächsten 14 Tage",
+  /\d+ Wiederholungen in den nächsten 14 Tagen/.test(forecastLead.replace(/\s+/g, " ")),
+  forecastLead.replace(/\s+/g, " ").trim().slice(0, 70));
+const forecastBars = await page.locator('[class*="forecast"] [class*="_day_"]').count()
+  || await page.locator('[class*="_chart_"] [class*="_day_"]').count();
+check("Vorschau zeigt 14 Tagesbalken", forecastBars === 14, `${forecastBars}`);
+const projections = await page.locator('[class*="projRow"]').allTextContents();
+check("Vorschau nennt den frühesten Termin für die Fehler-Kartei",
+  projections.some((t) => /Fehlerfrage/.test(t)), projections.length + " Zeile(n)");
+// Deutsche Zahlen- und Datumsschreibweise (kein "0.8", kein "18.09..")
+const statsBody = await page.evaluate(() => document.body.innerText);
+check("Vorschau schreibt Zahlen und Daten deutsch",
+  !/Ø \d+\.\d/.test(statsBody) && !/\d{2}\.\d{2}\.\./.test(statsBody));
 
 /* ── Glossar: Suche + Favorit ── */
 await page.click('a[href="#/glossar"]');
@@ -223,7 +251,26 @@ await page.waitForSelector("text=Dein Fahrplan", { timeout: 8000 });
 /* ── Formeln & Rechner: Rechner rechnet live ── */
 await page.click("text=Formeln & Rechner");
 await page.waitForTimeout(300);
-await page.click("text=E-Commerce- & Marketing-KPIs");
+
+/* ── Formel-Trainer: Abfrage statt reinem Nachschlagen ── */
+await page.click('button:has-text("Abfrage starten")');
+await page.waitForTimeout(600);
+const fq = (await page.locator('[class*="questionText"]').first().textContent()) || "";
+const fOpts = await page.locator('[class*="_option_"]').count();
+check("Formel-Trainer stellt eine Frage mit vier Optionen", fq.length > 10 && fOpts === 4,
+  `${fOpts} Optionen · ${fq.replace(/\s+/g, " ").trim().slice(0, 50)}`);
+check("Formel-Trainer erzeugt keine kaputten Zahlen", !/NaN|undefined|Infinity/.test(fq));
+await page.keyboard.press("1");
+await page.waitForTimeout(400);
+const fMarked = await page.locator('[class*="optionCorrect"], [class*="optionWrong"]').count();
+check("Formel-Trainer nimmt die Antwort an", fMarked >= 1, `${fMarked} markiert`);
+await page.click('button:has-text("Neue Abfrage zusammenstellen")');
+await page.waitForTimeout(400);
+check("Formel-Trainer lässt sich neu zusammenstellen",
+  await page.locator('button:has-text("Abfrage starten")').first().isVisible());
+// Gezielt die Kategorie-Überschrift der Liste – der Trainer-Chip darüber
+// trägt denselben Text.
+await page.locator('[class*="catHead"]:has-text("E-Commerce- & Marketing-KPIs")').first().click();
 await page.waitForTimeout(300);
 const crCard = page.locator('[class*="_card_"]:has-text("Conversion Rate")');
 await crCard.locator("input").nth(0).fill("5");

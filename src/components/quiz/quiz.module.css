@@ -50,6 +50,10 @@
   font-size: var(--fs-sm);
   font-weight: 600;
   line-height: 1.5;
+  /* Der Formel-Trainer setzt die Formel per Zeilenumbruch ab – ohne
+     pre-line klebte sie an der Frage. Auf alle anderen Fragen ohne
+     Umbruch hat das keine Auswirkung. */
+  white-space: pre-line;
 }
 
 .options {

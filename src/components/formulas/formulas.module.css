@@ -166,3 +166,60 @@
   color: color-mix(in srgb, var(--blue) 92%, var(--text));
   font-weight: 900;
 }
+
+/* ═══ Formel-Trainer ═══
+   Sitzt über der Formelliste: erst abgefragt werden, dann nachschlagen. */
+.trainer {
+  padding: var(--s-4);
+  margin-bottom: var(--s-3);
+  border-radius: var(--r-sm);
+}
+
+.trainerHead {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin-bottom: var(--s-2);
+}
+
+.trainerKicker {
+  flex: 1;
+  font-size: var(--fs-xs);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c);
+}
+
+.trainerText {
+  margin: 0 0 var(--s-3);
+  font-size: var(--fs-xs);
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.optRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1);
+  margin-bottom: var(--s-2);
+}
+
+.opt {
+  min-height: 32px;
+  padding: 0 var(--s-2);
+  border-radius: var(--r-full);
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.62rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--dur);
+}
+
+.optOn {
+  border-color: color-mix(in srgb, var(--c) 60%, transparent);
+  background: color-mix(in srgb, var(--c) 18%, transparent);
+  color: var(--text);
+}

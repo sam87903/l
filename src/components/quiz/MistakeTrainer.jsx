@@ -12,6 +12,7 @@ import { useProgress } from "../../context/ProgressContext.jsx";
 import { ACCENT } from "../../constants/theme.js";
 import { MISTAKE_MAX_BOX } from "../../constants/config.js";
 import { mistakeBox, reviewMistake, splitMistakes } from "../../utils/mistakes.js";
+import { FORMULA_RECORD_MOD } from "../../utils/formulaQuiz.js";
 import { daysUntil } from "../../utils/dates.js";
 import { cx, kb } from "../../utils/misc.js";
 import styles from "./quiz.module.css";
@@ -34,11 +35,14 @@ function resolveEntry(entry) {
     (extBase ? EXTENDED_QUIZ[extBase]?.[entry.qi] : module?.quiz?.[entry.qi]) ??
     general?.quiz?.[entry.qi];
   if (!question) return null;
+  const topic = entry.question?.topic ? ` · ${entry.question.topic}` : "";
   const sourceLabel = module
     ? `${module.code} · ${module.name}${extBase ? " · Erweitert" : ""}`
     : general
       ? `${general.icon} ${general.name}`
-      : `Smart-Quiz${entry.question?.topic ? ` · ${entry.question.topic}` : ""}`;
+      : entry.modId === FORMULA_RECORD_MOD
+        ? `🧮 Formeln${topic}`
+        : `Smart-Quiz${topic}`;
   return { ...entry, question, sourceLabel };
 }
 
