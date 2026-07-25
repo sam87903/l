@@ -89,6 +89,27 @@ const FlashcardDeck = memo(function FlashcardDeck({ deckId, cards, color = ACCEN
   };
   const swipe = useSwipeCard({ onSwipe, onTap: () => setFlipped((f) => !f) });
 
+  /**
+   * Tastatur auf der Karte: Leertaste/Enter dreht um, ←/→ machen dasselbe wie
+   * das Wischen. Bewusst am Kartenelement statt am Fenster – auf der
+   * Semester-Seite können mehrere Stapel gleichzeitig offen sein, und dann
+   * dürfen die Pfeiltasten nur den Stapel bewegen, der gerade den Fokus hat.
+   */
+  const onCardKey = (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      setFlipped((f) => !f);
+      return;
+    }
+    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+    e.preventDefault();
+    const forward = e.key === "ArrowRight";
+    // Umgedreht bewerten, sonst blättern – Pfeile folgen dabei der
+    // Leserichtung (→ weiter / gewusst), nicht der Wisch-Mechanik.
+    if (flipped) mark(forward);
+    else go(forward ? 1 : -1);
+  };
+
   return (
     <GlassCard tint={color} className={styles.deck} style={{ "--c": color }}>
       <div className={styles.head}>
@@ -141,7 +162,11 @@ const FlashcardDeck = memo(function FlashcardDeck({ deckId, cards, color = ACCEN
               {...swipe.handlers}
               role="button"
               tabIndex={0}
-              onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && (e.preventDefault(), setFlipped((f) => !f))}
+              onKeyDown={onCardKey}
+              // Tastenkürzel gehören in aria-keyshortcuts, nicht ins Label:
+              // Vorlesesoftware liest das Label bei jedem Kartenwechsel vor,
+              // und eine Bedienungsanleitung darin wäre nur Lärm.
+              aria-keyshortcuts="Space ArrowRight ArrowLeft"
               aria-label={flipped ? "Definition – antippen für Begriff" : "Begriff – antippen für Definition"}
             >
               <div className={styles.face}>

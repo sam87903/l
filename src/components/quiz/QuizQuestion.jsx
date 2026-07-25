@@ -29,7 +29,11 @@ const QuizQuestion = memo(function QuizQuestion({ index, question, picked, onPic
               onClick={() => onPick(oi)}
             >
               <span className={styles.optionMark} aria-hidden="true">
-                {showCorrect ? "✓" : showWrong ? "✕" : ""}
+                {showCorrect ? "✓" : showWrong ? "✕" : (
+                  /* Ziffern-Hinweis nur mit Maus/Tastatur – auf dem Handy wäre
+                     die Zahl nur Ballast, dort tippt man die Antwort an. */
+                  <span className={styles.optionKey}>{oi + 1}</span>
+                )}
               </span>
               {option}
             </button>

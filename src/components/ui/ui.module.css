@@ -350,3 +350,41 @@
   gap: var(--s-2);
   margin-top: var(--s-2);
 }
+
+/* ═══ Speicher-Warnung ═══
+   Sitzt unter dem Header über allen Seiten. Bewusst kräftig: Wenn nichts
+   mehr gespeichert wird, ist alles andere auf dem Bildschirm zweitrangig. */
+.storageWarn {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin: 0 0 var(--s-3);
+  padding: var(--s-3);
+  border-radius: var(--r-md);
+  border: 1px solid color-mix(in srgb, var(--c) 55%, transparent);
+  background: color-mix(in srgb, var(--c) 16%, var(--surface));
+  color: var(--text);
+  font-size: var(--fs-xs);
+  line-height: 1.45;
+}
+
+.storageWarnBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.storageWarnBtn {
+  flex-shrink: 0;
+  padding: var(--s-2) var(--s-3);
+  border-radius: var(--r-full);
+  border: 1px solid color-mix(in srgb, var(--c) 60%, transparent);
+  background: color-mix(in srgb, var(--c) 26%, transparent);
+  color: var(--text);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.storageWarnBtn:active {
+  transform: scale(0.97);
+}

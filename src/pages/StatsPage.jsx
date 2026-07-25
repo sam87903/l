@@ -103,7 +103,9 @@ export default function StatsPage() {
           <span style={{ fontSize: "0.68rem", color: "var(--muted)", fontWeight: 700 }}>von {stats.total}</span>
         </ProgressRing>
         <div className={dashStyles.statsHeroBody}>
-          <p className={styles.bannerKicker} style={{ "--c": ACCENT.teal }}>📊 Dein Lernfortschritt im Überblick</p>
+          {/* Kurz gehalten: Neben dem 140-px-Ring bleiben auf einem schmalen
+              Handy nur ~180 px – ein längerer Titel bricht auf drei Zeilen. */}
+          <p className={styles.bannerKicker} style={{ "--c": ACCENT.teal }}>📊 Dein Fortschritt</p>
           <div className={dashStyles.statsHeroLine}>
             <span className={dashStyles.statsHeroValue}>{pct}%</span>
             <span style={{ fontSize: "var(--fs-sm)", color: "var(--muted)", fontWeight: 600 }}>des 21-Tage-Plans</span>

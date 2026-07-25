@@ -28,13 +28,18 @@ export function useStoredState(key, initialValue, { raw = false } = {}) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
 
+  // Aktueller Wert als Ref, damit der Updater rein bleiben kann: Das
+  // Speichern darf nicht im State-Updater passieren – React ruft ihn unter
+  // Umständen mehrfach auf, was doppelte Schreibvorgänge auslöst.
+  const valueRef = useRef(value);
+  valueRef.current = value;
+
   const set = useCallback(
     (next) => {
-      setValue((prev) => {
-        const resolved = typeof next === "function" ? next(prev) : next;
-        storage.set(key, serializeRef.current(resolved));
-        return resolved;
-      });
+      const resolved = typeof next === "function" ? next(valueRef.current) : next;
+      valueRef.current = resolved;
+      setValue(resolved);
+      storage.set(key, serializeRef.current(resolved));
     },
     [key]
   );

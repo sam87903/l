@@ -55,5 +55,19 @@ p = await pos();
   await page.mouse.up(); await page.waitForTimeout(400); }
 check("Vertikales Ziehen blättert nicht", p === await pos(), `${p} → ${await pos()}`);
 check("Kein Rest-Versatz", !/--swipe:\s*-?[1-9]/.test((await card.getAttribute("style"))||""));
+
+// Tastatur: dieselben Aktionen ohne Maus (Fokus liegt auf der Karte)
+await card.focus();
+p = await pos();
+await page.keyboard.press("ArrowRight"); await page.waitForTimeout(300);
+check("Pfeil rechts blättert weiter", p !== await pos(), `${p} → ${await pos()}`);
+p = await pos();
+await page.keyboard.press("ArrowLeft"); await page.waitForTimeout(300);
+check("Pfeil links blättert zurück", p !== await pos(), `${p} → ${await pos()}`);
+const flipBefore = (await card.getAttribute("style"))||"";
+await page.keyboard.press("Space"); await page.waitForTimeout(350);
+const flipAfter = (await card.getAttribute("style"))||"";
+check("Leertaste dreht die Karte um", flipBefore !== flipAfter,
+  `${/--flip:\s*([^;]+)/.exec(flipBefore)?.[1]} → ${/--flip:\s*([^;]+)/.exec(flipAfter)?.[1]}`);
 console.log("JS-Fehler:", errs.length?errs.slice(0,3):"keine");
 await b.close(); process.exit(fail?1:0);

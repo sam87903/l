@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import Header from "./Header.jsx";
 import BottomNav from "./BottomNav.jsx";
 import TimerPill from "../timer/TimerPill.jsx";
+import StorageWarning from "../ui/StorageWarning.jsx";
 import styles from "./layout.module.css";
 
 /** Grundgerüst aller Seiten: Header, Inhaltsbereich, Navigation. */
@@ -10,6 +11,7 @@ export default function AppLayout() {
     <>
       <Header />
       <main className={styles.main}>
+        <StorageWarning />
         <Outlet />
       </main>
       <BottomNav />

@@ -239,6 +239,14 @@ export default function SettingsPage() {
               <span aria-hidden="true">⏱️</span>
               <span style={{ flex: 1, fontSize: "var(--fs-sm)", fontWeight: i === 0 ? 700 : 500 }}>
                 {relTime(entry.at)}{i === 0 ? " · neueste" : ""}
+                {/* Ehrlich kennzeichnen: Sehr große Sicherungen lassen die
+                    Klausur-Volltexte weg, damit der Speicher nicht volläuft.
+                    Wer so eine Version einspielt, soll das vorher wissen. */}
+                {entry.slim && (
+                  <span style={{ display: "block", fontSize: "var(--fs-xs)", color: "var(--muted)", fontWeight: 500 }}>
+                    ohne Klausur-Volltexte (Platzgründe)
+                  </span>
+                )}
               </span>
               <Button onClick={() => setPendingRestore(i)} style={{ minHeight: 38, padding: "0.35rem 0.8rem" }}>
                 <RotateCcw size={13} aria-hidden="true" /> Wiederherstellen

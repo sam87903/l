@@ -18,4 +18,30 @@ describe("autoBackup", () => {
     const list = await readAutoBackups();
     expect(list).toHaveLength(1);
   });
+
+  it("lässt Klausur-Volltexte weg, sobald der Snapshot zu groß wird", async () => {
+    const riesig = "x".repeat(200000);
+    await pushAutoBackup({
+      doneDays: { 1: true },
+      exams: [
+        { id: "a", name: "Klausur A", addedAt: "2026-01-01", text: riesig },
+        { id: "b", name: "Klausur B", addedAt: "2026-01-02", text: riesig },
+      ],
+    });
+    const [entry] = await readAutoBackups();
+    expect(entry.slim).toBe(true);
+    expect(entry.data.exams.map((e) => e.text)).toEqual(["", ""]);
+    // Namen bleiben erhalten – man sieht, was fehlt
+    expect(entry.data.exams[0].name).toBe("Klausur A");
+    // Der Lernfortschritt bleibt immer vollständig
+    expect(entry.data.doneDays).toEqual({ 1: true });
+    expect(JSON.stringify(entry).length).toBeLessThan(5000);
+  });
+
+  it("behält kleine Snapshots vollständig inklusive Klausurtext", async () => {
+    await pushAutoBackup({ exams: [{ id: "a", name: "Klein", text: "kurzer Text" }] });
+    const [entry] = await readAutoBackups();
+    expect(entry.slim).toBeUndefined();
+    expect(entry.data.exams[0].text).toBe("kurzer Text");
+  });
 });

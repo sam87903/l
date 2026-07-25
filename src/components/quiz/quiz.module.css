@@ -103,6 +103,21 @@
   text-align: center;
 }
 
+/* Tastatur-Ziffer der Antwort: nur sichtbar, wo es eine Tastatur gibt. */
+.optionKey {
+  display: none;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--muted);
+  opacity: 0.75;
+}
+
+@media (pointer: fine) {
+  .optionKey {
+    display: inline;
+  }
+}
+
 .explain {
   margin-top: var(--s-2);
   font-size: 0.71rem;

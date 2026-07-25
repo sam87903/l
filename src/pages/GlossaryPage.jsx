@@ -11,6 +11,7 @@ import { ACCENT } from "../constants/theme.js";
 import { useDebouncedValue } from "../hooks/useDebouncedValue.js";
 import { useProgress } from "../context/ProgressContext.jsx";
 import { cx } from "../utils/misc.js";
+import { matches } from "../utils/text.js";
 import glossaryStyles from "../components/glossary/glossary.module.css";
 import styles from "./pages.module.css";
 
@@ -33,16 +34,15 @@ export default function GlossaryPage() {
   const [openTerms, setOpenTerms] = useState(() =>
     location.state?.openTerm ? new Set([location.state.openTerm]) : new Set()
   );
-  const debouncedQuery = useDebouncedValue(query.trim().toLowerCase());
+  const debouncedQuery = useDebouncedValue(query.trim());
 
   const filtered = useMemo(() => {
     let terms = ALL_TERMS;
     if (filter === "favorites") terms = terms.filter((t) => favorites.includes(t));
     if (filter === "recent") terms = recents.filter((t) => t in GLOSSARY);
     if (!debouncedQuery) return terms;
-    return terms.filter(
-      (t) => t.toLowerCase().includes(debouncedQuery) || GLOSSARY[t].toLowerCase().includes(debouncedQuery)
-    );
+    // Umlaut-tolerant: „okonomie" und „oekonomie" finden beide „Ökonomie".
+    return terms.filter((t) => matches(t, debouncedQuery) || matches(GLOSSARY[t], debouncedQuery));
   }, [filter, favorites, recents, debouncedQuery]);
 
   const toggleOpen = useCallback(

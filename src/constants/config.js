@@ -3,7 +3,7 @@
 export const SEMESTER_START = "2026-09-01";
 export const DEFAULT_START_DATE = "2026-07-10";
 export const APP_NAME = "Marokko-Lernplan";
-export const APP_VERSION = "3.9.0";
+export const APP_VERSION = "3.10.0";
 
 /** Storage-Schlüssel. mrk6-* bleibt kompatibel zu Fortschritt aus v2. */
 export const STORAGE_KEYS = {
@@ -26,6 +26,7 @@ export const STORAGE_KEYS = {
   chainsDone: "mrk7-ch",
   notes: "mrk7-notes",
   podcastAuto: "mrk7-podauto",
+  podcastPos: "mrk7-podpos",
   simHistory: "mrk7-sim",
 };
 
@@ -39,6 +40,13 @@ export const LEITNER_MAX_BOX = 5;
 /** Auto-Backup: Intervall (ms) und wie viele Versionen behalten werden. */
 export const AUTO_BACKUP_INTERVAL_MS = 60000;
 export const AUTO_BACKUP_KEEP = 3;
+/**
+ * Ab dieser Größe (Zeichen) speichert ein Auto-Backup die Klausur-Volltexte
+ * nicht mehr mit. Drei Vollkopien mit je mehreren hundert KB Klausurtext
+ * würden sonst den Browser-Speicher füllen – und danach ließe sich gar
+ * nichts mehr sichern, auch kein Lernfortschritt.
+ */
+export const AUTO_BACKUP_BUDGET = 250000;
 
 /** Fehler-Kartei (Leitner light): Wartezeit in Tagen je Box; oberste Stufe bestanden = gemeistert. */
 export const MISTAKE_INTERVALS = { 1: 0, 2: 1, 3: 3 };

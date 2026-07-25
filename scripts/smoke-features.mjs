@@ -173,6 +173,53 @@ check(
 );
 check("Podcast: Auto-Weiter-Schalter vorhanden", await page.locator('[role="switch"][aria-label*="nächsten Folge"]').isVisible());
 
+// Weiterhören: gespeicherte Hörposition wird als Sprungmarke angeboten
+await page.evaluate(() => localStorage.setItem("mrk7-podpos", JSON.stringify({ id: "pod-handel", seg: 4 })));
+await page.reload();
+await page.waitForSelector("text=Dein Fahrplan", { timeout: 8000 });
+await page.click("text=Podcast · Themen zum Anhören");
+await page.waitForTimeout(400);
+const resumeText = (await page.locator('[class*="resumeTitle"]').first().textContent().catch(() => "")) || "";
+check("Podcast: Weiterhören zeigt die zuletzt gehörte Stelle",
+  resumeText.includes("Kapitel 5"), resumeText.trim());
+
+/* ── Quiz per Tastatur durchspielen (Ziffer wählt, Enter blättert) ── */
+await page.click("text=Quiz-Verzeichnis");
+await page.waitForTimeout(400);
+await page.locator('[class*="dirRow"]').first().click();
+await page.waitForTimeout(600);
+const stepBefore = (await page.locator('[class*="stepMeta"]').first().textContent()) || "";
+await page.keyboard.press("2");
+await page.waitForTimeout(300);
+const marked = await page.locator('[class*="optionCorrect"], [class*="optionWrong"]').count();
+check("Quiz-Tastatur: Ziffer wählt eine Antwort", marked >= 1, `${marked} markiert`);
+await page.keyboard.press("Enter");
+await page.waitForTimeout(300);
+const stepAfter = (await page.locator('[class*="stepMeta"]').first().textContent()) || "";
+check("Quiz-Tastatur: Enter blättert weiter (schließt nicht das Quiz)",
+  stepBefore.includes("Frage 1") && stepAfter.includes("Frage 2"),
+  `${stepBefore.trim()} → ${stepAfter.trim()}`);
+await page.locator('[class*="dirRow"]').first().click(); // Quiz wieder zuklappen
+await page.waitForTimeout(300);
+
+/* ── Glossar: Suche verzeiht fehlende Umlaute ── */
+await page.click('a[href="#/glossar"]');
+await page.waitForSelector('input[type="search"], input[placeholder*="Such"]', { timeout: 8000 });
+const searchBox = page.locator('input[type="search"], input[placeholder*="Such"]').first();
+await searchBox.fill("okonom");
+await page.waitForTimeout(500);
+const foundNoUmlaut = await page.locator('[class*="entryRow"]').count();
+check("Glossar: okonom findet Begriffe mit Ö", foundNoUmlaut > 0, `${foundNoUmlaut} Treffer`);
+await searchBox.fill("oekonom");
+await page.waitForTimeout(500);
+const foundSpelled = await page.locator('[class*="entryRow"]').count();
+check("Glossar: oekonom findet dieselben Begriffe", foundSpelled > 0, `${foundSpelled} Treffer`);
+await searchBox.fill("");
+await page.waitForTimeout(300);
+
+await page.click('a[href="#/plan"]');
+await page.waitForSelector("text=Dein Fahrplan", { timeout: 8000 });
+
 /* ── Formeln & Rechner: Rechner rechnet live ── */
 await page.click("text=Formeln & Rechner");
 await page.waitForTimeout(300);
@@ -272,6 +319,30 @@ await page.click('button:has-text("Hell")');
 await page.waitForTimeout(300);
 check("Theme-Wechsel auf Hell", (await page.evaluate(() => document.documentElement.dataset.theme)) === "light");
 await page.click('button:has-text("Auto")');
+
+/* ── Speicher-Warnung: voller Speicher darf nicht still scheitern ── */
+await page.click('a[href="#/plan"]');
+await page.waitForSelector("text=Dein Fahrplan", { timeout: 8000 });
+await page.evaluate(() => {
+  const orig = Storage.prototype.setItem;
+  window.__restoreStorage = () => { Storage.prototype.setItem = orig; };
+  Storage.prototype.setItem = () => {
+    const e = new Error("voll");
+    e.name = "QuotaExceededError";
+    throw e;
+  };
+});
+await page.locator('[role="checkbox"][aria-label*="Tag 3 "]').first().click();
+await page.waitForTimeout(500);
+const warnText = (await page.locator('[role="alert"]').first().textContent().catch(() => "")) || "";
+check("Voller Speicher wird sichtbar gemeldet (nicht still verschluckt)",
+  warnText.includes("Speicher voll"), warnText.slice(0, 60).trim());
+
+await page.evaluate(() => window.__restoreStorage());
+await page.locator('[role="checkbox"][aria-label*="Tag 4 "]').first().click();
+await page.waitForTimeout(500);
+check("Warnung verschwindet, sobald wieder gespeichert werden kann",
+  (await page.locator('[role="alert"]').count()) === 0);
 
 /* ── Konsole sauber? ── */
 if (errors.length) {

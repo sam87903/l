@@ -5,6 +5,7 @@ import { PLAN } from "../data/plan.js";
 import { computeStreak, computeXp, levelInfo } from "../utils/xp.js";
 import { addDaysISO, todayISO } from "../utils/dates.js";
 import { reviewMistake, splitMistakes } from "../utils/mistakes.js";
+import { isBetterScore } from "../utils/scores.js";
 import { pushAutoBackup, readAutoBackups } from "../services/autoBackup.js";
 
 const ProgressContext = createContext(null);
@@ -42,15 +43,16 @@ export function ProgressProvider({ children }) {
     [setActivity]
   );
 
+  // Der Aktivitäts-Eintrag entsteht bewusst außerhalb des State-Updaters:
+  // Updater müssen frei von Seiteneffekten sein, sonst werden die Minuten
+  // doppelt gutgeschrieben, sobald React den Updater erneut ausführt.
   const toggleDay = useCallback(
     (nr) => {
-      setDoneDays((d) => {
-        const nowDone = !d[nr];
-        if (nowDone) logActivity(XP_RULES.minutesPerDay);
-        return { ...d, [nr]: nowDone };
-      });
+      const nowDone = !doneDays[nr];
+      setDoneDays((d) => ({ ...d, [nr]: !d[nr] }));
+      if (nowDone) logActivity(XP_RULES.minutesPerDay);
     },
-    [setDoneDays, logActivity]
+    [doneDays, setDoneDays, logActivity]
   );
 
   const toggleChainDone = useCallback(
@@ -81,11 +83,9 @@ export function ProgressProvider({ children }) {
 
   const saveQuizResult = useCallback(
     (modId, correct, totalQ) => {
-      setQuizBest((q) => {
-        const prev = q[modId];
-        if (prev && prev.c >= correct) return q;
-        return { ...q, [modId]: { c: correct, t: totalQ } };
-      });
+      setQuizBest((q) =>
+        isBetterScore(q[modId], correct, totalQ) ? { ...q, [modId]: { c: correct, t: totalQ } } : q
+      );
       logActivity(2);
     },
     [setQuizBest, logActivity]
@@ -139,27 +139,42 @@ export function ProgressProvider({ children }) {
    * Box 1 (sofort fällig), richtige heben sie eine Box mit Wartezeit –
    * wer die oberste Stufe besteht, hat die Frage gemeistert.
    */
+  // Immer der neueste Stand der Fehler-Kartei – auch zwischen zwei Renders.
+  // Ohne ihn würden zwei schnell nacheinander beantwortete Fragen denselben
+  // Ausgangsstand lesen, und die erste Antwort ginge verloren.
+  const poolRef = useRef(wrongPool);
+  poolRef.current = wrongPool;
+
+  const writePool = useCallback(
+    (next) => {
+      poolRef.current = next;
+      setWrongPool(next);
+    },
+    [setWrongPool]
+  );
+
   const recordAnswer = useCallback(
     (modId, questionIndex, wasCorrect, questionPayload) => {
       const key = `${modId}#${questionIndex}`;
-      const current = wrongPool[key];
+      const pool = poolRef.current;
+      const current = pool[key];
       if (wasCorrect) {
         if (!current) return;
         const result = reviewMistake(current, true);
         if (result.mastered) {
-          const next = { ...wrongPool };
+          const next = { ...pool };
           delete next[key];
-          setWrongPool(next);
+          writePool(next);
           setMastered((m) => m + 1);
           logActivity(1);
         } else {
           const { streak: _legacy, ...entry } = current;
-          setWrongPool({ ...wrongPool, [key]: { ...entry, box: result.box, due: result.due } });
+          writePool({ ...pool, [key]: { ...entry, box: result.box, due: result.due } });
         }
       } else {
         const { box, due } = reviewMistake(current, false);
         const next = {
-          ...wrongPool,
+          ...pool,
           [key]: {
             modId,
             qi: questionIndex,
@@ -186,10 +201,10 @@ export function ProgressProvider({ children }) {
           }
           if (dropKey) delete next[dropKey];
         }
-        setWrongPool(next);
+        writePool(next);
       }
     },
-    [wrongPool, setWrongPool, setMastered, logActivity]
+    [writePool, setMastered, logActivity]
   );
 
   /** Altklausuren speichern/entfernen (für die Muster-Analyse). */

@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ChevronDown, ChevronUp, Headphones, Loader, Pause, Play, Square } from "lucide-react";
 import GlassCard from "../ui/GlassCard.jsx";
 import Collapse from "../ui/Collapse.jsx";
@@ -7,6 +7,7 @@ import { PODCASTS, podcastMinutes } from "../../data/podcast.js";
 import { useSpeech } from "../../hooks/useSpeech.js";
 import { useNeuralPlayer } from "../../hooks/useNeuralPlayer.js";
 import { ACCENT } from "../../constants/theme.js";
+import { STORAGE_KEYS } from "../../constants/config.js";
 import { cx, kb } from "../../utils/misc.js";
 import { storage } from "../../services/storage.js";
 import cardStyles from "../cards/cards.module.css";
@@ -162,7 +163,11 @@ const PodcastPlayer = memo(function PodcastPlayer() {
   const { push } = useToast();
   const speech = useSpeech();
 
-  // Zuletzt gewählte Stimmen-Art + Auto-Weiter-Einstellung wiederherstellen.
+  // Zuletzt gehörte Stelle: {id, seg}. Bei 9 Folgen mit zusammen 159 Kapiteln
+  // ist das Wiederfinden sonst mühsam – erst recht in Etappen unterwegs.
+  const [resume, setResume] = useState(null);
+
+  // Zuletzt gewählte Stimmen-Art, Auto-Weiter und Hörposition wiederherstellen.
   useEffect(() => {
     let cancelled = false;
     Promise.resolve(storage.get(NEURAL_KEY)).then((v) => {
@@ -170,6 +175,15 @@ const PodcastPlayer = memo(function PodcastPlayer() {
     });
     Promise.resolve(storage.get(AUTO_KEY)).then((v) => {
       if (!cancelled && v === "0") setAutoNext(false);
+    });
+    Promise.resolve(storage.get(STORAGE_KEYS.podcastPos)).then((v) => {
+      if (cancelled || !v) return;
+      try {
+        const saved = JSON.parse(v);
+        if (saved?.id && PODCASTS.some((e) => e.id === saved.id)) setResume(saved);
+      } catch {
+        /* kaputter Eintrag – ohne Weiterhören-Vorschlag weitermachen */
+      }
     });
     return () => {
       cancelled = true;
@@ -199,10 +213,9 @@ const PodcastPlayer = memo(function PodcastPlayer() {
   const toggleSection = useCallback(() => setOpen((v) => !v), []);
 
   const toggleAutoNext = () => {
-    setAutoNext((v) => {
-      storage.set(AUTO_KEY, v ? "0" : "1");
-      return !v;
-    });
+    const next = !autoNext;
+    setAutoNext(next);
+    storage.set(AUTO_KEY, next ? "1" : "0");
   };
 
   // Eine Folge abspielen; endet sie und Auto-Weiter ist an, startet die
@@ -227,6 +240,21 @@ const PodcastPlayer = memo(function PodcastPlayer() {
     [engine]
   );
   playRef.current = playEpisode;
+
+  // Hörposition mitschreiben, solange etwas läuft. engine.index ist das
+  // gerade gesprochene Kapitel; -1 heißt „nichts aktiv" und wird ignoriert,
+  // damit ein Stopp die Marke nicht auf den Anfang zurücksetzt.
+  useEffect(() => {
+    if (!activeId || engine.index < 0) return;
+    const mark = { id: activeId, seg: engine.index };
+    setResume(mark);
+    storage.set(STORAGE_KEYS.podcastPos, JSON.stringify(mark));
+  }, [activeId, engine.index]);
+
+  const resumeEpisode = useMemo(
+    () => (resume ? PODCASTS.find((e) => e.id === resume.id) : null),
+    [resume]
+  );
 
   const switchMode = (toNeural) => {
     engine.stop?.();
@@ -266,6 +294,23 @@ const PodcastPlayer = memo(function PodcastPlayer() {
             gesprochenen Kapiteln zusammen. Tippe auf eine Folge, drücke <strong>Podcast starten</strong> –
             und lass dir den Stoff vorlesen. Das Skript läuft zum Mitlesen mit.
           </p>
+
+          {/* Da weitermachen, wo zuletzt aufgehört wurde */}
+          {resumeEpisode && !engine.speaking && (
+            <button
+              className={cx(styles.resumeRow, "hover-pop")}
+              onClick={() => playEpisode(resumeEpisode, resume.seg)}
+              disabled={!canPlay}
+            >
+              <Play size={14} aria-hidden="true" />
+              <span className={styles.resumeBody}>
+                <span className={styles.resumeKicker}>Weiterhören</span>
+                <span className={styles.resumeTitle}>
+                  {resumeEpisode.title} · Kapitel {resume.seg + 1} von {resumeEpisode.segments.length}
+                </span>
+              </span>
+            </button>
+          )}
 
           {/* Engine-Auswahl: Gerätestimme (offline) oder KI-Stimme (Beta, online) */}
           <div className={styles.engineRow} role="group" aria-label="Stimmen-Art">
