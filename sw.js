@@ -9,10 +9,10 @@
  *   Cache zuerst mit Nachladen – nach dem ersten Nutzen funktioniert die
  *   KI-Stimme auch offline (das Stimmmodell selbst liegt in IndexedDB).
  *
- * 8849d6a657ae wird beim Deploy durch den Commit-Stand ersetzt; dadurch ändert
+ * 515860b3db6c wird beim Deploy durch den Commit-Stand ersetzt; dadurch ändert
  * sich sw.js bei jedem Release und der Browser rotiert den Cache sauber.
  */
-const VERSION = "8849d6a657ae";
+const VERSION = "515860b3db6c";
 const CACHE = `mrk-app-${VERSION}`;
 const CDN_CACHE = "mrk-cdn-v1"; // versionsstabil – Bibliothek ändert sich selten
 const PRECACHE = ["./", "./index.html", "./manifest.webmanifest", "./icon.svg", "./icon-180.png", "./icon-192.png", "./icon-512.png"];
