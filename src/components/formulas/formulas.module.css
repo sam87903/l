@@ -34,28 +34,46 @@
   padding: 0 var(--s-2) var(--s-2);
   display: flex;
   flex-direction: column;
-  gap: var(--s-2);
+  /* Deutlicher Abstand: vorher standen die Formelkarten so dicht, dass sie
+     wie ein einziger Block wirkten und man nicht sah, was zu was gehört. */
+  gap: var(--s-4);
 }
 
 /* ── Formel-Karte ── */
 .card {
   padding: var(--s-3);
-  border-radius: var(--r-sm);
-  border: 1px solid var(--glass-border);
-  background: color-mix(in srgb, var(--surface) 55%, transparent);
+  border-radius: var(--r-md);
+  border: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
+  background: color-mix(in srgb, var(--surface) 85%, transparent);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 6%);
 }
 
 .cardHead {
   display: flex;
   align-items: center;
   gap: var(--s-2);
-  margin-bottom: var(--s-1);
+  margin-bottom: var(--s-2);
+  padding-bottom: var(--s-2);
+  border-bottom: 1px solid color-mix(in srgb, var(--text) 10%, transparent);
 }
 
+/* Farbiger Balken vor dem Namen: markiert den Anfang einer neuen Formel. */
 .cardName {
   flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
   font-size: var(--fs-sm);
   font-weight: 800;
+}
+
+.cardName::before {
+  content: "";
+  flex-shrink: 0;
+  width: 3px;
+  height: 0.95em;
+  border-radius: 2px;
+  background: var(--blue);
 }
 
 .semChip {
@@ -69,32 +87,66 @@
 }
 
 .formula {
-  display: block;
-  padding: var(--s-2);
-  margin-bottom: var(--s-2);
-  border-radius: var(--r-xs, 8px);
-  background: color-mix(in srgb, var(--blue) 9%, transparent);
-  border: 1px solid color-mix(in srgb, var(--blue) 20%, transparent);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: var(--s-3) var(--s-2);
+  margin-bottom: var(--s-3);
+  border-radius: var(--r-sm);
+  background: color-mix(in srgb, var(--blue) 11%, transparent);
+  border: 1px solid color-mix(in srgb, var(--blue) 28%, transparent);
   font-family: ui-monospace, "SF Mono", Menlo, monospace;
-  font-size: 0.74rem;
+  /* Etwas größer als vorher: Formeln sind der Kern der Karte, nicht Beiwerk. */
+  font-size: 0.8rem;
   line-height: 1.5;
-  color: color-mix(in srgb, var(--blue) 82%, var(--text));
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
+  color: color-mix(in srgb, var(--blue) 88%, var(--text));
+}
+
+/* Umbruch nur zwischen Wörtern – „Bezugskosten" darf nicht mitten
+   im Wort zerrissen werden. */
+.formulaLine {
+  display: block;
+  overflow-wrap: break-word;
+}
+
+/* Mehrstufige Formeln: Folgestufen eingerückt, damit die Leiter sichtbar ist. */
+.formulaSteps .formulaLine + .formulaLine {
+  padding-left: var(--s-2);
 }
 
 .desc {
-  margin: 0 0 var(--s-2);
+  margin: 0 0 var(--s-3);
   font-size: 0.72rem;
-  line-height: 1.55;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+/* ── Rechner-Bereich, klar vom Nachschlage-Teil abgesetzt ── */
+.calc {
+  padding-top: var(--s-2);
+  border-top: 1px dashed color-mix(in srgb, var(--text) 16%, transparent);
+}
+
+.calcKicker {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-bottom: var(--s-2);
+  font-size: 0.56rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
   color: var(--muted);
 }
 
 .inputs {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--s-1) var(--s-2);
+  gap: var(--s-2);
   margin-bottom: var(--s-2);
+  /* Felder unten bündig: So bleiben die Eingaben auf einer Linie, auch wenn
+     eine Beschriftung zweizeilig ist – ohne Leerraum unter kurzen Labels. */
+  align-items: end;
 }
 
 .field {
@@ -109,13 +161,19 @@
   grid-column: 1 / -1;
 }
 
+/* Zwei Zeilen erlaubt: „Bestellkosten/Bestellung (€)" wurde einzeilig
+   abgeschnitten, und dann wusste man nicht, was einzutragen ist. */
 .fieldLabel {
   font-size: 0.6rem;
   font-weight: 600;
+  line-height: 1.3;
   color: var(--muted);
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow-wrap: anywhere;
 }
 
 .input {
@@ -140,7 +198,18 @@
   gap: 3px;
   padding: var(--s-2);
   border-radius: var(--r-sm);
-  background: color-mix(in srgb, var(--blue) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--blue) 30%, transparent);
+  background: color-mix(in srgb, var(--blue) 14%, transparent);
+}
+
+.resultsHint {
+  margin: 0;
+  padding: var(--s-2);
+  border-radius: var(--r-sm);
+  border: 1px dashed color-mix(in srgb, var(--text) 16%, transparent);
+  font-size: 0.62rem;
+  color: var(--muted);
+  text-align: center;
 }
 
 .resultRow {

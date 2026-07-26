@@ -4,6 +4,7 @@ import GlassCard from "../ui/GlassCard.jsx";
 import Collapse from "../ui/Collapse.jsx";
 import FormulaTrainer from "./FormulaTrainer.jsx";
 import { FORMULAS, FORMULA_CATS } from "../../data/formulas.js";
+import { formulaLines } from "../../utils/formulaFormat.js";
 import { ACCENT } from "../../constants/theme.js";
 import { cx, kb } from "../../utils/misc.js";
 import cardStyles from "../cards/cards.module.css";
@@ -28,46 +29,64 @@ function FormulaCard({ f }) {
 
   const rows = Array.isArray(result) ? result : result != null ? [{ label: f.out.label, value: result, unit: f.out.unit, dec: f.out.dec }] : [];
 
+  const lines = formulaLines(f.formula);
+
   return (
     <div className={styles.card}>
       <div className={styles.cardHead}>
         <span className={styles.cardName}>{f.name}</span>
         <span className={styles.semChip}>Sem. {f.sem}</span>
       </div>
-      <code className={styles.formula}>{f.formula}</code>
+
+      {/* Jede Stufe einer mehrstufigen Formel auf eigener Zeile – sonst
+          bricht der Text an beliebiger Stelle und die Struktur geht verloren. */}
+      <code className={cx(styles.formula, lines.length > 1 && styles.formulaSteps)}>
+        {lines.map((line, i) => (
+          <span key={i} className={styles.formulaLine}>{line}</span>
+        ))}
+      </code>
+
       <p className={styles.desc}>{f.desc}</p>
 
       {f.inputs && (
-        <div className={styles.inputs}>
-          {f.inputs.map((i) => (
-            <label key={i.k} className={styles.field}>
-              <span className={styles.fieldLabel}>
-                {i.label}{i.unit ? ` (${i.unit})` : ""}
-              </span>
-              <input
-                className={styles.input}
-                type={i.free ? "text" : "text"}
-                inputMode={i.free ? "text" : "decimal"}
-                value={vals[i.k]}
-                onChange={(e) => setVals((s) => ({ ...s, [i.k]: e.target.value }))}
-                placeholder={i.free ? "12; 15; 9" : "0"}
-                aria-label={i.label}
-              />
-            </label>
-          ))}
-        </div>
-      )}
+        <div className={styles.calc}>
+          <div className={styles.calcKicker}>
+            <Calculator size={11} aria-hidden="true" /> Rechner
+          </div>
+          <div className={styles.inputs}>
+            {f.inputs.map((i) => (
+              <label key={i.k} className={styles.field}>
+                <span className={styles.fieldLabel} title={i.label}>
+                  {i.label}{i.unit ? ` (${i.unit})` : ""}
+                </span>
+                <input
+                  className={styles.input}
+                  type="text"
+                  inputMode={i.free ? "text" : "decimal"}
+                  value={vals[i.k]}
+                  onChange={(e) => setVals((s) => ({ ...s, [i.k]: e.target.value }))}
+                  placeholder={i.free ? "12; 15; 9" : "0"}
+                  aria-label={i.label}
+                />
+              </label>
+            ))}
+          </div>
 
-      {rows.length > 0 && (
-        <div className={styles.results}>
-          {rows.map((r, i) => (
-            <div key={i} className={cx(styles.resultRow, r.strong && styles.resultStrong)}>
-              <span className={styles.resultLabel}>{r.label}</span>
-              <span className={styles.resultValue}>
-                {fmt(r.value, r.dec ?? 2)}{r.unit ? ` ${r.unit}` : ""}
-              </span>
+          {rows.length > 0 ? (
+            <div className={styles.results}>
+              {rows.map((r, i) => (
+                <div key={i} className={cx(styles.resultRow, r.strong && styles.resultStrong)}>
+                  <span className={styles.resultLabel}>{r.label}</span>
+                  <span className={styles.resultValue}>
+                    {fmt(r.value, r.dec ?? 2)}{r.unit ? ` ${r.unit}` : ""}
+                  </span>
+                </div>
+              ))}
             </div>
-          ))}
+          ) : (
+            // Ohne diesen Hinweis endet die Karte abrupt hinter den leeren Feldern.
+            <p className={styles.resultsHint}>Werte eintragen – das Ergebnis erscheint sofort.</p>
+          )}
         </div>
       )}
     </div>

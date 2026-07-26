@@ -279,6 +279,26 @@ await page.waitForTimeout(300);
 const crOut = (await crCard.locator('[class*="resultValue"]').first().textContent()).trim();
 check("Formel-Rechner: Conversion 5/200 = 2,50 %", crOut.startsWith("2,5"), crOut);
 
+/* ── Formel-Darstellung: Stufen erkennbar, Karten getrennt ── */
+await page.locator('[class*="catHead"]:has-text("Handel & Kalkulation")').first().click();
+await page.waitForTimeout(400);
+const ladder = page.locator('[class*="formulaSteps"]').first();
+const ladderLines = await ladder.locator('[class*="formulaLine"]').allTextContents();
+check("Mehrstufige Formel steht Stufe für Stufe untereinander",
+  ladderLines.length === 3 && ladderLines[1].trim().startsWith("→"),
+  `${ladderLines.length} Zeilen`);
+// Formelkarten dürfen nicht aneinanderkleben
+const cardGap = await page.evaluate(() => {
+  const cards = [...document.querySelectorAll('[class*="_card_"]')].filter((c) => c.querySelector('[class*="formulaLine"]'));
+  if (cards.length < 2) return null;
+  const a = cards[0].getBoundingClientRect();
+  const b = cards[1].getBoundingClientRect();
+  return Math.round(b.top - a.bottom);
+});
+check("Formelkarten haben sichtbaren Abstand", cardGap !== null && cardGap >= 12, `${cardGap}px`);
+const hasCalcKicker = await page.locator('[class*="calcKicker"]').first().isVisible();
+check("Rechner-Bereich ist als solcher beschriftet", hasCalcKicker);
+
 /* ── Modul-Notiz speichern & wiederfinden ── */
 await page.click('a[href="#/semester"]');
 await page.waitForSelector('[class*="pagerBtn"]', { timeout: 5000 });
