@@ -23,13 +23,20 @@ const page = await ctx.newPage();
 const errs=[]; page.on("pageerror",e=>errs.push(String(e)));
 let fail=0; const check=(n,ok,d="")=>{console.log(`${ok?"✅":"❌"} ${n}${d?` – ${d}`:""}`); if(!ok)fail++;};
 const shell = () => page.waitForSelector('nav', {timeout:15000}).then(()=>true).catch(()=>false);
+/** Eingeklappten Tagesplan öffnen und auf die Tageskarten warten. */
+const openPlan = async () => {
+  await page.click("#tagesplan [aria-expanded]");
+  await page.waitForSelector('[role="checkbox"][aria-label*="Tag 1 "]', {timeout:10000});
+};
 
 // ── ONLINE einrichten ──
 await page.goto("http://localhost:8643/");
 await page.waitForSelector("text=Salam, bereit zu lernen?", {timeout:20000});
 await page.evaluate(async()=>{ await navigator.serviceWorker.ready; });
 await page.waitForTimeout(1500);
-await page.click('a[href="#/plan"]'); await page.waitForSelector("text=Dein Fahrplan");
+await page.click('a[href="#/plan"]'); await page.waitForSelector("text=Üben, wiederholen, abfragen");
+// Tagesplan liegt eingeklappt – aufklappen, dann abhaken.
+await openPlan();
 await page.locator('[role="checkbox"][aria-label*="Tag 1 "]').first().click();
 await page.waitForTimeout(400);
 
@@ -43,13 +50,15 @@ check("Offline-Hinweis im Header", await page.locator("text=Offline").first().is
 await page.goto("http://localhost:8643/#/semester", {waitUntil:"domcontentloaded"});
 check("Deep-Link /semester offline", await page.waitForSelector('[class*="pagerBtn"]',{timeout:12000}).then(()=>true).catch(()=>false));
 // C) Fortschritt erhalten
-await page.click('a[href="#/plan"]'); await page.waitForSelector("text=Dein Fahrplan",{timeout:10000});
+await page.click('a[href="#/plan"]'); await page.waitForSelector("text=Üben, wiederholen, abfragen",{timeout:10000});
+await openPlan();
 check("Fortschritt offline erhalten", (await page.locator('[role="checkbox"][aria-label*="Tag 1 "]').first().getAttribute("aria-checked"))==="true");
 // D) Offline weiterlernen + Neustart
 await page.locator('[role="checkbox"][aria-label*="Tag 2 "]').first().click();
 await page.waitForTimeout(400);
 await page.goto("http://localhost:8643/#/plan", {waitUntil:"domcontentloaded"});
-await shell(); await page.waitForSelector("text=Dein Fahrplan",{timeout:12000});
+await shell(); await page.waitForSelector("text=Üben, wiederholen, abfragen",{timeout:12000});
+await openPlan();
 check("Offline Gelerntes übersteht Neustart", (await page.locator('[role="checkbox"][aria-label*="Tag 2 "]').first().getAttribute("aria-checked"))==="true");
 // E) Quiz offline spielen
 await page.click("text=Quiz-Verzeichnis"); await page.waitForTimeout(600);

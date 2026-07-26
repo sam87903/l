@@ -182,9 +182,34 @@ const jumped = await page
   .catch(() => false);
 check(`Alpha-Sprung erreicht Gruppe ${lastLetter} trotz Lazy-Rendering`, jumped);
 
+/* ── Plan: Tagesplan liegt eingeklappt, Deep-Link öffnet ihn trotzdem ── */
+await page.click('a[href="#/plan"]');
+await page.waitForSelector("text=Üben, wiederholen, abfragen", { timeout: 8000 });
+await page.waitForTimeout(400);
+const daysVisible = await page.locator('[role="checkbox"][aria-label*="Tag "]').count();
+check("Tagesplan ist beim Öffnen eingeklappt", daysVisible === 0, `${daysVisible} Tageskarten`);
+const planHead = (await page.locator("#tagesplan [aria-expanded]").innerText()).replace(/\s+/g, " ");
+check("Eingeklappter Kopf zeigt Fortschritt und heutigen Tag",
+  /21-TAGE-PLAN/i.test(planHead) && /\d+\/21/.test(planHead), planHead.trim());
+
+// „Heute dran → Öffnen" muss den eingeklappten Plan aufklappen und hinspringen
+await page.click('a[href="#/"]');
+await page.waitForSelector("text=Salam, bereit zu lernen?", { timeout: 8000 });
+await page.click("text=Öffnen");
+await page.waitForTimeout(1600);
+const openedDays = await page.locator('[role="checkbox"][aria-label*="Tag "]').count();
+const todayInView = await page.evaluate(() => {
+  const el = [...document.querySelectorAll('[id^="day-"]')].find((e) => e.getBoundingClientRect().height > 120);
+  if (!el) return false;
+  const r = el.getBoundingClientRect();
+  return r.top > -120 && r.top < window.innerHeight;
+});
+check("Deep-Link vom Dashboard klappt den Plan auf und springt zum Tag",
+  openedDays === 21 && todayInView, `${openedDays} Tage · im Blick: ${todayInView}`);
+
 /* ── Plan: Podcast-Sektion (Sprachausgabe der Themen) ── */
 await page.click('a[href="#/plan"]');
-await page.waitForSelector("text=Dein Fahrplan", { timeout: 8000 });
+await page.waitForSelector("text=Üben, wiederholen, abfragen", { timeout: 8000 });
 await page.click("text=Podcast · Themen zum Anhören");
 await page.waitForTimeout(400);
 const epCount = await page.locator('[class*="epHead"]').count();
@@ -204,7 +229,7 @@ check("Podcast: Auto-Weiter-Schalter vorhanden", await page.locator('[role="swit
 // Weiterhören: gespeicherte Hörposition wird als Sprungmarke angeboten
 await page.evaluate(() => localStorage.setItem("mrk7-podpos", JSON.stringify({ id: "pod-handel", seg: 4 })));
 await page.reload();
-await page.waitForSelector("text=Dein Fahrplan", { timeout: 8000 });
+await page.waitForSelector("text=Üben, wiederholen, abfragen", { timeout: 8000 });
 await page.click("text=Podcast · Themen zum Anhören");
 await page.waitForTimeout(400);
 const resumeText = (await page.locator('[class*="resumeTitle"]').first().textContent().catch(() => "")) || "";
@@ -246,7 +271,7 @@ await searchBox.fill("");
 await page.waitForTimeout(300);
 
 await page.click('a[href="#/plan"]');
-await page.waitForSelector("text=Dein Fahrplan", { timeout: 8000 });
+await page.waitForSelector("text=Üben, wiederholen, abfragen", { timeout: 8000 });
 
 /* ── Formeln & Rechner: Rechner rechnet live ── */
 await page.click("text=Formeln & Rechner");
@@ -389,7 +414,10 @@ await page.click('button:has-text("Auto")');
 
 /* ── Speicher-Warnung: voller Speicher darf nicht still scheitern ── */
 await page.click('a[href="#/plan"]');
-await page.waitForSelector("text=Dein Fahrplan", { timeout: 8000 });
+await page.waitForSelector("text=Üben, wiederholen, abfragen", { timeout: 8000 });
+// Tage stehen im eingeklappten Tagesplan – erst aufklappen.
+await page.click("#tagesplan [aria-expanded]");
+await page.waitForSelector('[role="checkbox"][aria-label*="Tag 3 "]', { timeout: 8000 });
 await page.evaluate(() => {
   const orig = Storage.prototype.setItem;
   window.__restoreStorage = () => { Storage.prototype.setItem = orig; };

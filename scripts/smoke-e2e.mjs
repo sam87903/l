@@ -34,6 +34,9 @@ for (const [label, marker] of [
 }
 
 await page.click("nav >> text=Plan");
+// Der Tagesplan liegt eingeklappt – erst aufklappen, dann abhaken.
+await page.click("#tagesplan [aria-expanded]");
+await page.waitForSelector('[aria-label="Tag 1 als erledigt markieren"]', { timeout: 8000 });
 await page.click('[aria-label="Tag 1 als erledigt markieren"]');
 await page.click("nav >> text=Start");
 await page.waitForSelector("text=1/21", { timeout: 5000 });
