@@ -12,8 +12,9 @@
  * Zerlegt eine Formel in Zeilen:
  * - Jede Stufe einer Kalkulationsleiter (→) beginnt eine neue Zeile, der
  *   Pfeil bleibt als Marker am Zeilenanfang stehen.
- * - Mehrere eigenständige Gleichungen in einer Formel (durch weite
- *   Abstände getrennt) bekommen je eine eigene Zeile.
+ * - Mehrere eigenständige Gleichungen in einer Formel bekommen je eine
+ *   eigene Zeile. Getrennt werden sie beim Schreiben durch weiten Abstand,
+ *   entweder um ein „·" oder nach einem Komma.
  *
  * @param {string} formula
  * @returns {string[]} mindestens eine Zeile
@@ -22,8 +23,9 @@ export function formulaLines(formula) {
   const text = String(formula ?? "").trim();
   if (!text) return [];
 
-  // Eigenständige Gleichungen: „A = 1   ·   B = 2" (weiter Abstand ums ·)
-  const parts = text.split(/\s{2,}·\s{2,}/);
+  // Eigenständige Gleichungen: „A = 1   ·   B = 2" oder „A = 1,   B = 2".
+  // Das Dezimalkomma („1,19") bleibt unberührt – dort folgt kein Leerraum.
+  const parts = text.split(/(?:\s{2,}·\s{2,}|,\s{2,})/);
 
   const lines = [];
   for (const part of parts) {

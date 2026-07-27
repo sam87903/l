@@ -292,3 +292,29 @@
   background: color-mix(in srgb, var(--c) 18%, transparent);
   color: var(--text);
 }
+
+/* ── Trefferliste der Formelsuche ──
+   Bewusst nicht „.results" – so heisst schon der Ergebnisblock im Rechner,
+   und beide Regeln wuerden sich sonst vermischen. */
+.hitList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  margin-top: var(--s-3);
+}
+
+.hitCount {
+  margin: 0;
+  font-size: var(--fs-xs);
+  color: var(--muted);
+}
+
+/* Herkunft des Treffers: In der flachen Liste fehlt sonst der Zusammenhang. */
+.hitCat {
+  margin-bottom: var(--s-1);
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--muted);
+}

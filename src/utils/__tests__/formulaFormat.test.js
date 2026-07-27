@@ -24,6 +24,18 @@ describe("formulaLines", () => {
     ]);
   });
 
+  it("trennt auch nach einem Komma mit weitem Abstand", () => {
+    expect(formulaLines("y = a + b · x,   b = Sxy / Sxx,   a = ȳ − b · x̄")).toEqual([
+      "y = a + b · x",
+      "b = Sxy / Sxx",
+      "a = ȳ − b · x̄",
+    ]);
+  });
+
+  it("lässt das Dezimalkomma unangetastet", () => {
+    expect(formulaLines("Netto = Brutto / 1,19")).toEqual(["Netto = Brutto / 1,19"]);
+  });
+
   it("lässt ein einzelnes Mal-Zeichen in Ruhe", () => {
     // Nur weite Abstände trennen – „a · b" bleibt eine Gleichung.
     expect(formulaLines("CLV = Ø Bestellwert · Kauffrequenz · Lebensdauer")).toHaveLength(1);

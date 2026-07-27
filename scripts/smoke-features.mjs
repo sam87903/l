@@ -304,6 +304,23 @@ await page.waitForTimeout(300);
 const crOut = (await crCard.locator('[class*="resultValue"]').first().textContent()).trim();
 check("Formel-Rechner: Conversion 5/200 = 2,50 %", crOut.startsWith("2,5"), crOut);
 
+/* ── Formel-Suche: findet quer über alle Kategorien ── */
+const fBox = page.locator('input[aria-label="Formeln durchsuchen"]');
+await fBox.fill("median");
+await page.waitForTimeout(400);
+const medianHit = (await page.locator('[class*="cardName"]').first().textContent().catch(() => "")) || "";
+check("Formel-Suche findet quer über die Kategorien", medianHit.includes("Median"), medianHit.trim());
+await fBox.fill("liquiditat");
+await page.waitForTimeout(400);
+const umlautHits = await page.locator('[class*="hitCat"]').count();
+check("Formel-Suche verzeiht fehlende Umlaute", umlautHits >= 2, `${umlautHits} Treffer für "liquiditat"`);
+await fBox.fill("gibtesnicht");
+await page.waitForTimeout(400);
+check("Formel-Suche meldet ehrlich, wenn nichts passt",
+  (await page.locator("text=Kein Treffer").isVisible().catch(() => false)));
+await fBox.fill("");
+await page.waitForTimeout(400);
+
 /* ── Formel-Darstellung: Stufen erkennbar, Karten getrennt ── */
 await page.locator('[class*="catHead"]:has-text("Handel & Kalkulation")').first().click();
 await page.waitForTimeout(400);

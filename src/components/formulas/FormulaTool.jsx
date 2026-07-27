@@ -2,9 +2,11 @@ import { memo, useMemo, useState } from "react";
 import { ChevronDown, ChevronUp, Calculator } from "lucide-react";
 import GlassCard from "../ui/GlassCard.jsx";
 import Collapse from "../ui/Collapse.jsx";
+import SearchInput from "../ui/SearchInput.jsx";
 import FormulaTrainer from "./FormulaTrainer.jsx";
 import { FORMULAS, FORMULA_CATS } from "../../data/formulas.js";
 import { formulaLines } from "../../utils/formulaFormat.js";
+import { matches } from "../../utils/text.js";
 import { ACCENT } from "../../constants/theme.js";
 import { cx, kb } from "../../utils/misc.js";
 import cardStyles from "../cards/cards.module.css";
@@ -122,11 +124,24 @@ function Category({ cat, formulas, open, onToggle }) {
 const FormulaTool = memo(function FormulaTool() {
   const [open, setOpen] = useState(false);
   const [openCat, setOpenCat] = useState(null);
+  const [query, setQuery] = useState("");
 
   const byCat = useMemo(
     () => FORMULA_CATS.map((c) => ({ cat: c, list: FORMULAS.filter((f) => f.cat === c.id) })).filter((g) => g.list.length),
     []
   );
+
+  // Suche über Name, Formel und Erklärung – umlaut-tolerant, damit
+  // „liquiditat" auch „Liquidität" findet.
+  const catLabel = useMemo(
+    () => Object.fromEntries(FORMULA_CATS.map((c) => [c.id, `${c.icon} ${c.label}`])),
+    []
+  );
+  const hits = useMemo(() => {
+    const q = query.trim();
+    if (!q) return null;
+    return FORMULAS.filter((f) => matches(f.name, q) || matches(f.formula, q) || matches(f.desc, q));
+  }, [query]);
 
   return (
     <GlassCard tint={ACCENT.blue} id="formeln" style={{ marginBottom: "var(--s-4)", overflow: "hidden" }}>
@@ -149,15 +164,40 @@ const FormulaTool = memo(function FormulaTool() {
           {/* Abfrage vor der Liste: Wer nur blättert, merkt sich wenig. */}
           <FormulaTrainer />
 
-          {byCat.map(({ cat, list }) => (
-            <Category
-              key={cat.id}
-              cat={cat}
-              formulas={list}
-              open={openCat === cat.id}
-              onToggle={() => setOpenCat((p) => (p === cat.id ? null : cat.id))}
-            />
-          ))}
+          <SearchInput
+            value={query}
+            onChange={setQuery}
+            placeholder="Formel suchen, z. B. Deckungsbeitrag"
+            label="Formeln durchsuchen"
+          />
+
+          {hits ? (
+            <div className={styles.hitList}>
+              <p className={styles.hitCount}>
+                {hits.length === 0
+                  ? "Kein Treffer – versuch es mit einem anderen Begriff."
+                  : `${hits.length} ${hits.length === 1 ? "Formel" : "Formeln"} gefunden`}
+              </p>
+              {/* Trefferliste quer über alle Kategorien, jede Karte mit
+                  Herkunftsangabe – sonst weiß man nicht, wo sie herkommt. */}
+              {hits.map((f) => (
+                <div key={f.id}>
+                  <div className={styles.hitCat}>{catLabel[f.cat]}</div>
+                  <FormulaCard f={f} />
+                </div>
+              ))}
+            </div>
+          ) : (
+            byCat.map(({ cat, list }) => (
+              <Category
+                key={cat.id}
+                cat={cat}
+                formulas={list}
+                open={openCat === cat.id}
+                onToggle={() => setOpenCat((p) => (p === cat.id ? null : cat.id))}
+              />
+            ))
+          )}
         </div>
       </Collapse>
     </GlassCard>
