@@ -448,6 +448,19 @@ check("Formeln zeigen : statt / als Geteiltzeichen",
   mitSchraeg.length === 0 && formelTexte.some((t) => t.includes(" : ")),
   mitSchraeg.length ? mitSchraeg[0] : `${formelTexte.length} Zeilen geprüft`);
 
+// Formeln stehen in einer Reihe – kein Umbruch mitten im Ausdruck
+const umbruch = await page.evaluate(() => {
+  const schlecht = [];
+  for (const el of document.querySelectorAll('[class*="formulaLine"]')) {
+    const fs = parseFloat(getComputedStyle(el.parentElement).fontSize);
+    const lh = parseFloat(getComputedStyle(el).lineHeight) || fs * 1.5;
+    if (el.getBoundingClientRect().height > lh * 1.4) schlecht.push(el.textContent.slice(0, 40));
+  }
+  return schlecht;
+});
+check("Keine Formel bricht mitten im Ausdruck um", umbruch.length === 0,
+  umbruch.length ? umbruch[0] : "alle Zeilen einreihig");
+
 const hasCalcKicker = await page.locator('[class*="calcKicker"]').first().isVisible();
 check("Rechner-Bereich ist als solcher beschriftet", hasCalcKicker);
 

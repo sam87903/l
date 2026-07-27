@@ -90,23 +90,41 @@
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
-  padding: var(--s-3) var(--s-2);
-  margin-bottom: var(--s-3);
+  /* Schmalerer Innenabstand und ein Stück über die Kartenränder hinaus:
+     Jeder gewonnene Millimeter erlaubt eine grössere Schrift, bevor die
+     Formel seitlich geschoben werden muss. */
+  padding: var(--s-3) var(--s-1);
+  margin: 0 calc(var(--s-2) * -1) var(--s-3);
   border-radius: var(--r-sm);
   background: color-mix(in srgb, var(--blue) 11%, transparent);
   border: 1px solid color-mix(in srgb, var(--blue) 28%, transparent);
   font-family: ui-monospace, "SF Mono", Menlo, monospace;
-  /* Etwas größer als vorher: Formeln sind der Kern der Karte, nicht Beiwerk. */
+  /* Die Schriftgroesse setzt useFitText, damit jede Formel in eine Reihe
+     passt. Der Wert hier greift nur, bis die Messung durch ist. */
   font-size: 0.8rem;
   line-height: 1.5;
   color: color-mix(in srgb, var(--blue) 88%, var(--text));
+  /* Wenn selbst die kleinste Schrift nicht reicht (die laengste Formel hat
+     80 Zeichen), lieber seitlich schieben als den Ausdruck zerreissen. */
+  overflow-x: auto;
+  scrollbar-width: none;
 }
 
-/* Umbruch nur zwischen Wörtern – „Bezugskosten" darf nicht mitten
-   im Wort zerrissen werden. */
+.formula::-webkit-scrollbar {
+  display: none;
+}
+
+/* Zu lang für jede lesbare Schriftgrösse: Ein weicher Rand rechts zeigt,
+   dass es seitenwärts weitergeht – sonst wirkt die Formel abgeschnitten. */
+.formulaScroll {
+  -webkit-mask-image: linear-gradient(to right, #000 88%, transparent 100%);
+  mask-image: linear-gradient(to right, #000 88%, transparent 100%);
+}
+
+/* Eine Formel bleibt eine Reihe – kein Umbruch mitten im Ausdruck. */
 .formulaLine {
   display: block;
-  overflow-wrap: break-word;
+  white-space: nowrap;
 }
 
 /* Mehrstufige Formeln: Folgestufen eingerückt, damit die Leiter sichtbar ist. */
@@ -173,7 +191,10 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   line-clamp: 2;
-  overflow-wrap: anywhere;
+  /* Silbentrennung statt Bruch mitten im Wort: „Lagerhaltungskosten-satz"
+     liest sich besser als „Lagerhaltungskostensat / z". */
+  hyphens: auto;
+  overflow-wrap: break-word;
 }
 
 .input {

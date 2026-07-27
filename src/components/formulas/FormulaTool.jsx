@@ -7,6 +7,7 @@ import FormulaTrainer from "./FormulaTrainer.jsx";
 import { FORMULAS, FORMULA_CATS } from "../../data/formulas.js";
 import { formulaLines } from "../../utils/formulaFormat.js";
 import { matches } from "../../utils/text.js";
+import { useFitText } from "../../hooks/useFitText.js";
 import { ACCENT } from "../../constants/theme.js";
 import { cx, kb } from "../../utils/misc.js";
 import cardStyles from "../cards/cards.module.css";
@@ -32,6 +33,10 @@ function FormulaCard({ f }) {
   const rows = Array.isArray(result) ? result : result != null ? [{ label: f.out.label, value: result, unit: f.out.unit, dec: f.out.dec }] : [];
 
   const lines = formulaLines(f.formula);
+  // Längste Zeile bestimmt die Schriftgröße: So steht jede Formel in einer
+  // Reihe, statt mitten im Ausdruck umzubrechen.
+  const maxChars = Math.max(...lines.map((l) => l.length), 1);
+  const [fitRef, fitSize, scrollt] = useFitText(maxChars);
 
   return (
     <div className={styles.card}>
@@ -42,7 +47,11 @@ function FormulaCard({ f }) {
 
       {/* Jede Stufe einer mehrstufigen Formel auf eigener Zeile – sonst
           bricht der Text an beliebiger Stelle und die Struktur geht verloren. */}
-      <code className={cx(styles.formula, lines.length > 1 && styles.formulaSteps)}>
+      <code
+        ref={fitRef}
+        className={cx(styles.formula, lines.length > 1 && styles.formulaSteps, scrollt && styles.formulaScroll)}
+        style={{ fontSize: `${fitSize.toFixed(2)}px` }}
+      >
         {lines.map((line, i) => (
           <span key={i} className={styles.formulaLine}>{line}</span>
         ))}
