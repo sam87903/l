@@ -256,6 +256,60 @@ check("Schwache Stimme wird benannt statt beschönigt",
   schwach.status.includes("Kompakt") && schwach.status.includes("Premium-Stimme"), schwach.status.slice(0, 60));
 check("Ohne gute Stimme erscheint die iPhone-Anleitung", schwach.tipp.includes("iPhone"));
 
+/* ── Sprachausgabe: kein Überlappen, Pause hält wirklich an ──
+   Mit nachgebauter Sprach-Engine, die sich wie echte Browser verhält:
+   cancel() feuert onend, und der Pausen-Zustand wird nicht gemeldet (wie iOS). */
+{
+  const seite = await browser.newPage({ viewport: { width: 390, height: 900 } });
+  await seite.addInitScript(() => {
+    const log = [];
+    window.__log = log;
+    let current = null, timer = null;
+    const fake = {
+      get speaking() { return !!current; },
+      get paused() { return false; },          // iOS meldet die Pause nicht
+      getVoices: () => [],
+      addEventListener() {}, removeEventListener() {},
+      speak(u) {
+        if (current) log.push("ueberlappung");
+        log.push("speak");
+        current = u;
+        clearTimeout(timer);
+        timer = setTimeout(() => { const c = current; current = null; c?.onend?.(); }, 250);
+      },
+      cancel() { clearTimeout(timer); const c = current; current = null; c?.onend?.(); },
+      pause() { log.push("pause"); clearTimeout(timer); },
+      resume() { log.push("resume"); },
+    };
+    Object.defineProperty(window, "speechSynthesis", { value: fake, configurable: true });
+  });
+  await seite.goto(APP);
+  await seite.waitForSelector("text=Salam, bereit zu lernen?", { timeout: 20000 });
+  await seite.click('a[href="#/plan"]');
+  await seite.waitForSelector("text=Üben, wiederholen, abfragen");
+  await seite.click("text=Podcast · Themen zum Anhören");
+  await seite.waitForTimeout(400);
+  await seite.locator('[class*="epHead"]').first().click();
+  await seite.waitForTimeout(300);
+  await seite.locator('button:has-text("Podcast starten")').first().click();
+  await seite.waitForTimeout(600);
+  await seite.locator('[class*="epHead"]').nth(1).click();
+  await seite.waitForTimeout(300);
+  await seite.locator('button:has-text("Podcast starten")').first().click();
+  await seite.waitForTimeout(1200);
+  const nachStart = await seite.evaluate(() => window.__log.slice());
+  check("Neue Folge überlappt die alte nicht",
+    !nachStart.includes("ueberlappung"), `${nachStart.filter((x) => x === "speak").length}× gesprochen`);
+
+  await seite.evaluate(() => { window.__log.length = 0; });
+  await seite.locator('button:has-text("Pause")').first().click();
+  await seite.waitForTimeout(7000); // länger als der 5-Sekunden-Ticker
+  const nachPause = await seite.evaluate(() => window.__log.slice());
+  check("Pause hält an und startet nicht von allein wieder",
+    !nachPause.includes("resume"), JSON.stringify(nachPause));
+  await seite.close();
+}
+
 // Selbsttest der KI-Stimme benennt den scheiternden Schritt.
 // Er ruft bewusst fremde CDNs auf; in dieser Umgebung sind die gesperrt.
 // Die dabei entstehenden Netzfehler sind erwartet und kein App-Fehler,
@@ -387,6 +441,13 @@ const cardGap = await page.evaluate(() => {
   return Math.round(b.top - a.bottom);
 });
 check("Formelkarten haben sichtbaren Abstand", cardGap !== null && cardGap >= 12, `${cardGap}px`);
+// Deutsche Schulschreibweise: geteilt als Doppelpunkt, nicht als Schrägstrich
+const formelTexte = await page.locator('[class*="formulaLine"]').allTextContents();
+const mitSchraeg = formelTexte.filter((t) => / \/ /.test(t));
+check("Formeln zeigen : statt / als Geteiltzeichen",
+  mitSchraeg.length === 0 && formelTexte.some((t) => t.includes(" : ")),
+  mitSchraeg.length ? mitSchraeg[0] : `${formelTexte.length} Zeilen geprüft`);
+
 const hasCalcKicker = await page.locator('[class*="calcKicker"]').first().isVisible();
 check("Rechner-Bereich ist als solcher beschriftet", hasCalcKicker);
 

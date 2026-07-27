@@ -33,7 +33,7 @@ describe("formulaLines", () => {
   });
 
   it("lässt das Dezimalkomma unangetastet", () => {
-    expect(formulaLines("Netto = Brutto / 1,19")).toEqual(["Netto = Brutto / 1,19"]);
+    expect(formulaLines("Netto = Brutto : 1,19")).toEqual(["Netto = Brutto : 1,19"]);
   });
 
   it("lässt ein einzelnes Mal-Zeichen in Ruhe", () => {

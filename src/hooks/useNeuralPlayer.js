@@ -10,8 +10,15 @@ const SILENT_WAV =
  * Podcast-Wiedergabe mit neuronaler Stimme. Bietet dieselbe Schnittstelle wie
  * useSpeech (speaking, paused, index, start, pause, resume, stop), damit der
  * Player die Engine transparent tauschen kann. Synthese läuft abschnittsweise:
- * ganze Absätze werden nacheinander erzeugt und abgespielt. Fehler werden über
- * onError gemeldet, damit der Aufrufer auf die Gerätestimme zurückfallen kann.
+ * ganze Absätze werden nacheinander erzeugt und abgespielt.
+ *
+ * Zentral ist die Generationsnummer `genRef`: Jeder Start und jeder Stopp
+ * erhöht sie. Weil das Erzeugen eines Abschnitts Sekunden dauert, können
+ * mehrere Ketten gleichzeitig unterwegs sein – etwa wenn die nächste Folge
+ * startet, während die alte noch rechnet. Jede Fortsetzung prüft ihre
+ * Generation und bricht ab, wenn sie überholt wurde. Ohne das liefen zwei
+ * Ketten parallel: Sie überschrieben sich gegenseitig die Wiedergabe und
+ * zählten den Kapitelzeiger doppelt hoch.
  */
 export function useNeuralPlayer({ onError } = {}) {
   const [speaking, setSpeaking] = useState(false);
@@ -30,7 +37,10 @@ export function useNeuralPlayer({ onError } = {}) {
   const audioRef = useRef(null);
   const segsRef = useRef([]);
   const posRef = useRef(0);
-  const cancelRef = useRef(false);
+  const genRef = useRef(0);
+  // Pausiert der Nutzer, während ein Abschnitt noch erzeugt wird, darf das
+  // fertige Ergebnis nicht einfach losspielen – sonst „reagiert Pause nicht".
+  const pausedRef = useRef(false);
   const urlRef = useRef(null);
   const doneRef = useRef(null);
   const onErrorRef = useRef(onError);
@@ -47,8 +57,18 @@ export function useNeuralPlayer({ onError } = {}) {
     }
   };
 
+  /** Laufende Wiedergabe entwerten und das Audio-Element stilllegen. */
+  const halt = useCallback(() => {
+    genRef.current += 1;
+    const a = audioRef.current;
+    if (a) {
+      a.onended = null;
+      a.pause();
+    }
+  }, []);
+
   const playNext = useCallback(async () => {
-    if (cancelRef.current) return;
+    const gen = genRef.current;
     const segs = segsRef.current;
     const i = posRef.current;
     if (i >= segs.length) {
@@ -62,20 +82,25 @@ export function useNeuralPlayer({ onError } = {}) {
     setIndex(segs[i].si);
     try {
       const url = await synthNeural(segs[i].t);
-      if (cancelRef.current) {
+      // Überholt? Dann gehört das Ergebnis zu einer abgelösten Wiedergabe.
+      if (gen !== genRef.current) {
         URL.revokeObjectURL(url);
         return;
       }
       revoke();
       urlRef.current = url;
       const a = ensureAudio();
+      a.onended = null;
       a.src = url;
       a.onended = () => {
+        if (gen !== genRef.current) return;
         posRef.current += 1;
         playNext();
       };
-      await a.play();
+      // Während der Synthese pausiert: Abschnitt bereitlegen, aber warten.
+      if (!pausedRef.current) await a.play().catch(() => {});
     } catch (err) {
+      if (gen !== genRef.current) return;
       setSpeaking(false);
       setLoading(false);
       onErrorRef.current?.(err);
@@ -113,7 +138,11 @@ export function useNeuralPlayer({ onError } = {}) {
 
   const start = useCallback(
     async (segments, opts = {}) => {
-      cancelRef.current = false;
+      // Erst die vorherige Kette entwerten, dann die neue aufsetzen.
+      halt();
+      const gen = genRef.current;
+      pausedRef.current = false;
+
       // Audio innerhalb der Geste entsperren (iOS).
       const a = ensureAudio();
       a.src = SILENT_WAV;
@@ -132,49 +161,52 @@ export function useNeuralPlayer({ onError } = {}) {
         await ensureNeuralVoice(NEURAL_VOICE, setProgress);
         setReady(true);
       } catch (err) {
+        if (gen !== genRef.current) return;
         setSpeaking(false);
         setLoading(false);
         onErrorRef.current?.(err);
         return;
       }
-      if (cancelRef.current) return;
+      if (gen !== genRef.current) return;
       setLoading(false);
       playNext();
     },
-    [playNext, ready]
+    [halt, playNext, ready]
   );
 
   const pause = useCallback(() => {
+    pausedRef.current = true;
     audioRef.current?.pause();
     setPaused(true);
   }, []);
 
   const resume = useCallback(() => {
+    pausedRef.current = false;
+    // Wurde während der Pause ein Abschnitt fertig, liegt er bereits als
+    // Quelle im Element und startet hier.
     audioRef.current?.play().catch(() => {});
     setPaused(false);
   }, []);
 
   const stop = useCallback(() => {
-    cancelRef.current = true;
+    halt();
+    pausedRef.current = false;
     doneRef.current = null;
     const a = audioRef.current;
-    if (a) {
-      a.pause();
-      a.onended = null;
-      a.removeAttribute("src");
-    }
+    if (a) a.removeAttribute("src");
     revoke();
     setSpeaking(false);
     setPaused(false);
     setIndex(-1);
     setLoading(false);
-  }, []);
+  }, [halt]);
 
   useEffect(
     () => () => {
-      cancelRef.current = true;
+      genRef.current += 1;
       const a = audioRef.current;
       if (a) {
+        a.onended = null;
         a.pause();
         a.removeAttribute("src");
       }

@@ -67,6 +67,10 @@ export function useSpeech() {
   voiceUriRef.current = voiceURI;
   const doneRef = useRef(null);
   const keepAliveRef = useRef(null);
+  // Generationszähler: entwertet Rückrufe abgelöster Wiedergaben.
+  const genRef = useRef(0);
+  // Eigener Pausen-Zustand – `synth.paused` ist browserübergreifend unzuverlässig.
+  const pausedRef = useRef(false);
 
   // Stimmen laden (kommen asynchron nach) und nach Natürlichkeit sortieren.
   useEffect(() => {
@@ -103,6 +107,7 @@ export function useSpeech() {
   };
 
   const speakNext = useCallback(() => {
+    const gen = genRef.current;
     const units = unitsRef.current;
     const i = posRef.current;
     if (i >= units.length) {
@@ -122,20 +127,27 @@ export function useSpeech() {
     u.pitch = 1;
     const v = resolveVoice();
     if (v) u.voice = v;
-    u.onend = () => {
+    /*
+     * Wichtig: synth.cancel() löst in den meisten Browsern noch ein `onend`
+     * für die laufende Äußerung aus. Ohne den Generationsvergleich läuft die
+     * alte Kette danach weiter – und spricht gleichzeitig mit der neuen.
+     * Genau das klang wie zwei sich überlagernde Stimmen.
+     */
+    const weiter = () => {
+      if (gen !== genRef.current) return;
       posRef.current += 1;
       speakNext();
     };
-    u.onerror = () => {
-      posRef.current += 1;
-      speakNext();
-    };
+    u.onend = weiter;
+    u.onerror = weiter;
     synth.speak(u);
   }, [resolveVoice]);
 
   const start = useCallback(
     (segments, opts = {}) => {
       if (!SUPPORTED) return;
+      genRef.current += 1; // laufende Kette entwerten, bevor abgebrochen wird
+      pausedRef.current = false;
       synth.cancel();
       const units = [];
       segments.forEach((seg, si) => {
@@ -154,7 +166,15 @@ export function useSpeech() {
       setSpeaking(true);
       setPaused(false);
       stopKeepAlive();
+      /*
+       * Chrome pausiert lange Äußerungen von selbst; der Ticker weckt sie
+       * wieder auf. Er muss aber den eigenen Pausen-Zustand kennen: Auf
+       * `synth.paused` ist kein Verlass, und ohne diese Abfrage startete die
+       * Wiedergabe nach spätestens fünf Sekunden von allein wieder – der
+       * Pause-Knopf wirkte dann wirkungslos.
+       */
       keepAliveRef.current = setInterval(() => {
+        if (pausedRef.current) return;
         if (synth.speaking && !synth.paused) synth.resume();
       }, 5000);
       speakNext();
@@ -164,18 +184,22 @@ export function useSpeech() {
 
   const pause = useCallback(() => {
     if (!SUPPORTED) return;
+    pausedRef.current = true;
     synth.pause();
     setPaused(true);
   }, []);
 
   const resume = useCallback(() => {
     if (!SUPPORTED) return;
+    pausedRef.current = false;
     synth.resume();
     setPaused(false);
   }, []);
 
   const stop = useCallback(() => {
     if (!SUPPORTED) return;
+    genRef.current += 1; // verhindert, dass cancel() die Kette weiterlaufen lässt
+    pausedRef.current = false;
     stopKeepAlive();
     doneRef.current = null;
     synth.cancel();
@@ -187,6 +211,7 @@ export function useSpeech() {
   useEffect(
     () => () => {
       if (!SUPPORTED) return;
+      genRef.current += 1;
       stopKeepAlive();
       synth.cancel();
     },
