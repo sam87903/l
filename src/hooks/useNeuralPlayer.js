@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ensureNeuralVoice, isNeuralVoiceStored, synthNeural, NEURAL_VOICE } from "../services/neuralTts.js";
+import {
+  ensureNeuralVoice,
+  isNeuralVoiceStored,
+  neuralVoiceProven,
+  synthNeural,
+  NEURAL_VOICE,
+} from "../services/neuralTts.js";
 
 // Kurzes stilles WAV – entsperrt das Audio-Element innerhalb der Nutzergeste
 // (iOS erlaubt spätere programmatische Wiedergabe nur nach einer solchen Geste).
@@ -30,6 +36,9 @@ export function useNeuralPlayer({ onError } = {}) {
   // gecacht, damit die Wiedergabe später sofort startet. Liegt es aus einer
   // früheren Sitzung schon vor, gilt es sofort als bereit – ohne Ladeanzeige.
   const [ready, setReady] = useState(() => isNeuralVoiceStored());
+  // „Modell liegt da" und „Stimme spricht wirklich" sind zwei verschiedene
+  // Dinge – nur Letzteres darf die Oberfläche als gesichert ausgeben.
+  const [proven, setProven] = useState(() => neuralVoiceProven());
   const [preloading, setPreloading] = useState(false);
   const [preloadError, setPreloadError] = useState(false);
   const preloadStartedRef = useRef(false);
@@ -80,6 +89,10 @@ export function useNeuralPlayer({ onError } = {}) {
       return;
     }
     setIndex(segs[i].si);
+    // Solange gerechnet wird, ist noch nichts zu hören. Ohne diese Anzeige
+    // stand im Skript „▶ läuft", während es still blieb – das las sich wie
+    // ein kaputter Player, obwohl nur die Synthese noch lief.
+    setLoading(true);
     try {
       const url = await synthNeural(segs[i].t);
       // Überholt? Dann gehört das Ergebnis zu einer abgelösten Wiedergabe.
@@ -87,6 +100,8 @@ export function useNeuralPlayer({ onError } = {}) {
         URL.revokeObjectURL(url);
         return;
       }
+      setLoading(false);
+      setProven(true);
       revoke();
       urlRef.current = url;
       const a = ensureAudio();
@@ -215,5 +230,8 @@ export function useNeuralPlayer({ onError } = {}) {
     []
   );
 
-  return { speaking, paused, index, loading, progress, ready, preloading, preloadError, preload, start, pause, resume, stop };
+  return {
+    speaking, paused, index, loading, progress, ready, proven,
+    preloading, preloadError, preload, start, pause, resume, stop,
+  };
 }

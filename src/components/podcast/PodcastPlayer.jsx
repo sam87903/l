@@ -53,8 +53,11 @@ function Episode({ ep, open, onToggle, engine, canPlay, neuralMode, rate, setRat
     else startFrom(0);
   };
 
+  // Zwei verschiedene Wartezeiten, und der Unterschied ist wichtig: Erst wird
+  // das Modell geladen (mit Prozentzahl), danach rechnet die Stimme jeden
+  // Abschnitt einzeln. Ein gemeinsames „lädt… 100 %" wirkte wie ein Hänger.
   const primaryLabel = isLoading
-    ? `KI-Stimme lädt… ${engine.progress || 0}%`
+    ? (engine.progress >= 100 ? "Stimme rechnet…" : `KI-Stimme lädt… ${engine.progress || 0}%`)
     : isPlaying && !isPaused
       ? "Pause"
       : isPaused
@@ -142,7 +145,11 @@ function Episode({ ep, open, onToggle, engine, canPlay, neuralMode, rate, setRat
                   <div className={styles.segHead}>
                     <span className={styles.segNum}>{i + 1}</span>
                     {seg.heading}
-                    {current && <span className={styles.segLive} aria-hidden="true">▶ läuft</span>}
+                    {current && (
+                      <span className={styles.segLive} aria-hidden="true">
+                        {isLoading ? "⏳ rechnet" : "▶ läuft"}
+                      </span>
+                    )}
                   </div>
                   <p className={styles.segText}>{seg.text}</p>
                 </div>
@@ -201,11 +208,30 @@ const PodcastPlayer = memo(function PodcastPlayer() {
   const autoNextRef = useRef(autoNext);
   autoNextRef.current = autoNext;
 
-  const handleNeuralError = useCallback(() => {
-    setNeuralMode(false);
-    storage.set(NEURAL_KEY, "0");
-    push("KI-Stimme nicht verfügbar (Internet nötig) – zurück zur Gerätestimme.", "🔇");
-  }, [push]);
+  // Wo gerade gehört wird – als Ref, damit der Fehler-Rückfall die Stelle
+  // kennt, ohne dass er von Render-Zuständen abhängt.
+  const stelleRef = useRef({ id: null, seg: 0 });
+
+  // Grund mitgeben statt nur „geht nicht": Ohne den Klartext lässt sich nicht
+  // unterscheiden, ob das Netz fehlt oder die Bibliothek gescheitert ist.
+  // Und wichtiger noch: Die Folge läuft mit der Gerätestimme einfach weiter –
+  // vorher blieb an dieser Stelle schlicht Stille.
+  const handleNeuralError = useCallback(
+    (err) => {
+      setNeuralMode(false);
+      storage.set(NEURAL_KEY, "0");
+      const grund = String(err?.message || "").slice(0, 90);
+      const { id, seg } = stelleRef.current;
+      const ep = id ? PODCASTS.find((e) => e.id === id) : null;
+      if (ep && speech.supported) {
+        speech.start(ep.segments.map((s) => s.text), { fromSegment: Math.max(0, seg) });
+        push(`KI-Stimme klappt nicht${grund ? ` (${grund})` : ""} – läuft mit der Gerätestimme weiter.`, "🔊");
+      } else {
+        push(`KI-Stimme klappt nicht${grund ? ` (${grund})` : ""} – zurück zur Gerätestimme.`, "🔇");
+      }
+    },
+    [push, speech.start, speech.supported]
+  );
 
   const neural = useNeuralPlayer({ onError: handleNeuralError });
 
@@ -233,6 +259,7 @@ const PodcastPlayer = memo(function PodcastPlayer() {
     (ep, fromSegment = 0) => {
       setActiveId(ep.id);
       setOpenId(ep.id);
+      stelleRef.current = { id: ep.id, seg: fromSegment };
       const idx = PODCASTS.findIndex((e) => e.id === ep.id);
       const next = PODCASTS[idx + 1];
       engine.start(
@@ -255,6 +282,7 @@ const PodcastPlayer = memo(function PodcastPlayer() {
   useEffect(() => {
     if (!activeId || engine.index < 0) return;
     const mark = { id: activeId, seg: engine.index };
+    stelleRef.current = mark;
     setResume(mark);
     storage.set(STORAGE_KEYS.podcastPos, JSON.stringify(mark));
   }, [activeId, engine.index]);
@@ -272,7 +300,8 @@ const PodcastPlayer = memo(function PodcastPlayer() {
     setDiagSteps(null);
     try {
       const { diagnoseNeuralVoice } = await import("../../services/neuralTts.js");
-      setDiagSteps(await diagnoseNeuralVoice());
+      // Zwischenstände sofort zeigen – der Modell-Download dauert Minuten.
+      setDiagSteps(await diagnoseNeuralVoice(undefined, setDiagSteps));
     } catch (err) {
       setDiagSteps([{ name: "Selbsttest", ok: false, info: String(err?.message || err) }]);
     }
@@ -372,9 +401,17 @@ const PodcastPlayer = memo(function PodcastPlayer() {
                 ✨ <strong>Neuronale KI-Stimme (Kerstin, weiblich)</strong> – klingt deutlich menschlicher und rechnet
                 direkt in deinem Browser, ohne dass Daten das Gerät verlassen.
               </p>
-              {neural.ready ? (
+              {/* Ehrlich getrennt: Ein heruntergeladenes Modell ist noch keine
+                  funktionierende Stimme. Genau diese Verwechslung ließ hier
+                  „startet sofort" stehen, während nichts zu hören war. */}
+              {neural.proven ? (
                 <p className={cx(styles.voiceStatus, styles.voiceStatusOk)}>
-                  ✅ Stimme geladen &amp; gespeichert – startet sofort, auch offline.
+                  ✅ Stimme erprobt &amp; gespeichert – startet sofort, auch offline.
+                </p>
+              ) : neural.ready ? (
+                <p className={styles.voiceStatus}>
+                  ⬇️ Stimmmodell liegt auf dem Gerät. Ob es hier auch spricht, zeigt sich beim ersten
+                  Start – am schnellsten über den Selbsttest unten.
                 </p>
               ) : neural.preloading ? (
                 <div className={styles.voiceStatus}>
@@ -393,7 +430,7 @@ const PodcastPlayer = memo(function PodcastPlayer() {
               {/* Selbsttest: Ohne benannten Fehler lässt sich aus der Ferne
                   nicht klären, woran die KI-Stimme scheitert. */}
               <button className={cx(styles.diagBtn, "hover-pop")} onClick={runDiagnose} disabled={diagBusy}>
-                {diagBusy ? "Prüfe …" : "🔍 Selbsttest der KI-Stimme"}
+                {diagBusy ? "Prüfe … (kann einige Minuten dauern)" : "🔍 Selbsttest der KI-Stimme"}
               </button>
               {diagSteps && (
                 <ul className={styles.diagList}>
@@ -408,6 +445,12 @@ const PodcastPlayer = memo(function PodcastPlayer() {
                       </span>
                     </li>
                   ))}
+                  {diagBusy && (
+                    <li className={styles.diagRow}>
+                      <span aria-hidden="true">⏳</span>
+                      <span>weiter am Prüfen …</span>
+                    </li>
+                  )}
                 </ul>
               )}
             </div>
@@ -468,9 +511,10 @@ const PodcastPlayer = memo(function PodcastPlayer() {
           ))}
 
           <p className={styles.footnote}>
-            🔊 Gerätestimme funktioniert immer offline; auf iPhone und iPad werden ganze Absätze am
-            Stück gelesen. Die KI-Stimme braucht beim ersten Laden Internet – danach ist sie auf dem
-            Gerät gespeichert und funktioniert ebenfalls offline.
+            🔊 Die <strong>Gerätestimme funktioniert immer</strong> – offline, sofort, auf jedem Gerät; auf
+            iPhone und iPad werden ganze Absätze am Stück gelesen. Sie ist der verlässliche Weg für
+            Marokko. Die KI-Stimme ist ein Zusatz und braucht beim ersten Mal Internet sowie einen
+            großen Download; klappt das nicht, schaltet die App automatisch zurück.
           </p>
         </div>
       </Collapse>

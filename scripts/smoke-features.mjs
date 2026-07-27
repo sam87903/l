@@ -329,6 +329,42 @@ await page.click('button:has-text("Gerätestimme")');
 await page.waitForTimeout(300);
 errors.length = fehlerVorSelbsttest;
 
+/* ── Ehrlichkeit der Stimm-Statusanzeige ──
+   Ein heruntergeladenes Modell ist keine funktionierende Stimme. Die App
+   behauptete genau das („startet sofort"), während nichts zu hören war –
+   deshalb werden beide Merker hier getrennt geprüft. */
+const stimmStatusText = async () => {
+  await page.reload();
+  await page.waitForSelector("text=Üben, wiederholen, abfragen", { timeout: 8000 });
+  await page.click("text=Podcast · Themen zum Anhören");
+  await page.waitForTimeout(400);
+  if (await page.locator('button:has-text("KI-Stimme")[aria-pressed="false"]').count()) {
+    await page.click('button:has-text("KI-Stimme")');
+    await page.waitForTimeout(400);
+  }
+  return ((await page.locator('[class*="voiceStatus"]').first().textContent().catch(() => "")) || "")
+    .replace(/\s+/g, " ")
+    .trim();
+};
+
+await page.evaluate(() => {
+  localStorage.setItem("mrk7-voice-ready", "de_DE-kerstin-low");
+  localStorage.removeItem("mrk7-voice-works");
+});
+const nurGeladen = await stimmStatusText();
+check("Geladenes Modell wird nicht als erprobte Stimme ausgegeben",
+  !/startet sofort/.test(nurGeladen) && /liegt auf dem Gerät/.test(nurGeladen), nurGeladen.slice(0, 80));
+
+await page.evaluate(() => localStorage.setItem("mrk7-voice-works", "1"));
+const erprobt = await stimmStatusText();
+check("Erprobte Stimme wird als erprobt gemeldet", /erprobt/.test(erprobt), erprobt.slice(0, 80));
+
+await page.evaluate(() => {
+  localStorage.removeItem("mrk7-voice-ready");
+  localStorage.removeItem("mrk7-voice-works");
+  localStorage.setItem("mrk7-neural", "0");
+});
+
 // Weiterhören: gespeicherte Hörposition wird als Sprungmarke angeboten
 await page.evaluate(() => localStorage.setItem("mrk7-podpos", JSON.stringify({ id: "pod-handel", seg: 4 })));
 await page.reload();

@@ -12,7 +12,7 @@ import {
   isServiceWorkerActive,
   requestPersistentStorage,
 } from "../../services/offlineReady.js";
-import { ensureNeuralVoice, isNeuralVoiceStored, NEURAL_VOICE } from "../../services/neuralTts.js";
+import { ensureNeuralVoice, isNeuralVoiceStored, neuralVoiceProven, NEURAL_VOICE } from "../../services/neuralTts.js";
 import { ACCENT } from "../../constants/theme.js";
 import { cx } from "../../utils/misc.js";
 import styles from "./offline.module.css";
@@ -51,7 +51,7 @@ const OfflineReady = memo(function OfflineReady() {
     ]);
     // Stimm-Status kommt aus einem lokalen Merker – bewusst ohne Netzzugriff,
     // damit der Reise-Check auch im Flugmodus fehlerfrei durchläuft.
-    setState({ cached, sw, persisted, est, voice: isNeuralVoiceStored() });
+    setState({ cached, sw, persisted, est, voice: isNeuralVoiceStored(), voiceProven: neuralVoiceProven() });
   }, []);
 
   useEffect(() => {
@@ -78,9 +78,9 @@ const OfflineReady = memo(function OfflineReady() {
     setVoiceProgress(0);
     try {
       await ensureNeuralVoice(NEURAL_VOICE, setVoiceProgress);
-      push("KI-Stimme gespeichert – klappt jetzt auch offline.", "🎙️");
-    } catch {
-      push("KI-Stimme konnte nicht geladen werden (Internet nötig).", "⚠️");
+      push("Stimmmodell gespeichert. Ob es hier auch spricht, zeigt der Podcast-Selbsttest.", "🎙️");
+    } catch (err) {
+      push(`KI-Stimme nicht ladbar: ${String(err?.message || "unbekannter Fehler").slice(0, 80)}`, "⚠️");
     }
     setVoiceBusy(false);
     refresh();
@@ -128,16 +128,21 @@ const OfflineReady = memo(function OfflineReady() {
                 : "Ohne diesen Schutz darf das Gerät die Daten löschen – unbedingt aktivieren."
             }
           />
+          {/* Bewusst zurückhaltend formuliert: Ein geladenes Modell heißt noch
+              nicht, dass die Stimme auf diesem Gerät auch spricht. Der Haken
+              steht erst, wenn sie es nachweislich getan hat. */}
           <Row
-            ok={state.voice}
+            ok={state.voiceProven}
             pending={voiceBusy}
-            title="KI-Stimme für Podcasts"
+            title="KI-Stimme für Podcasts (optional)"
             desc={
               voiceBusy
                 ? `Wird geladen … ${voiceProgress}%`
-                : state.voice
-                  ? "Gespeichert – Podcasts laufen offline mit KI-Stimme."
-                  : "Optional: ohne sie liest die Gerätestimme vor (funktioniert immer offline)."
+                : state.voiceProven
+                  ? "Erprobt und gespeichert – läuft offline."
+                  : state.voice
+                    ? "Modell liegt da, hat hier aber noch nicht gesprochen. Test im Podcast-Bereich."
+                    : "Ohne sie liest die Gerätestimme vor – die funktioniert immer offline."
             }
           />
 
