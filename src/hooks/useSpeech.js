@@ -195,6 +195,10 @@ export function useSpeech() {
 
   // Steht überhaupt eine natürlich klingende Stimme bereit?
   const premiumAvailable = voices.some(isNaturalVoice);
+  // Welche Stimme spricht gerade wirklich? Bei „Automatisch" ist das die
+  // bestbewertete – ohne diese Angabe sieht man nicht, ob eine gute Stimme
+  // aktiv ist oder die kompakte Notlösung.
+  const activeVoice = voices.find((v) => v.voiceURI === voiceURI) || voices[0] || null;
 
   return {
     supported: SUPPORTED,
@@ -207,6 +211,8 @@ export function useSpeech() {
     voiceURI,
     setVoiceURI,
     premiumAvailable,
+    activeVoice,
+    activeIsNatural: isNaturalVoice(activeVoice),
     start,
     pause,
     resume,

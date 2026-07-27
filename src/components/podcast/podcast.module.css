@@ -462,3 +462,46 @@
   font-weight: 600;
   line-height: 1.35;
 }
+
+/* ── Selbsttest der KI-Stimme ──
+   Macht aus „geht nicht" eine benannte Ursache. */
+.diagBtn {
+  width: 100%;
+  margin-top: var(--s-2);
+  min-height: 34px;
+  padding: 0 var(--s-2);
+  border-radius: var(--r-full);
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.62rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.diagBtn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.diagList {
+  list-style: none;
+  margin: var(--s-2) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.diagRow {
+  display: flex;
+  gap: 0.4rem;
+  font-size: 0.62rem;
+  line-height: 1.45;
+  color: var(--text);
+}
+
+.diagInfo {
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}

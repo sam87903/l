@@ -21,11 +21,19 @@ const RATES = [
   { v: 1.1, label: "zügig" },
 ];
 
-/** Stimm-Namen für die Auswahl kürzen (Sprachkürzel entfernen). */
+/**
+ * Stimm-Namen für die Auswahl kürzen: Sprachkürzel raus, Qualitätsangabe rein.
+ * Ohne die Qualität hießen „Anna (Premium)" und „Anna (Kompakt)" beide nur
+ * „Anna" – man könnte die gute Stimme nicht von der robotischen unterscheiden.
+ */
+const QUALITY = /premium|enhanced|kompakt|compact|erweitert/i;
+
 const voiceLabel = (v) => {
-  const nice = v.name.replace(/\s*\(.*?\)\s*/g, " ").replace(/de[-_]DE/gi, "").trim();
+  const quality = v.name.match(/\(([^)]*)\)/)?.[1];
+  const nice = v.name.replace(/\s*\(.*?\)\s*/g, " ").replace(/de[-_]DE/gi, "").trim() || v.name;
   const premium = /premium|enhanced|neural|natural|siri/i.test(`${v.name} ${v.voiceURI}`);
-  return `${nice || v.name}${premium ? " ✨" : ""}`;
+  const zusatz = quality && QUALITY.test(quality) ? ` (${quality})` : "";
+  return `${nice}${zusatz}${premium ? " ✨" : ""}`;
 };
 
 /** Eine Podcast-Episode: aufklappbares Skript + Sprachausgabe-Steuerung. */
@@ -256,6 +264,21 @@ const PodcastPlayer = memo(function PodcastPlayer() {
     [resume]
   );
 
+  // Selbsttest der KI-Stimme: benennt den ersten Schritt, der scheitert.
+  const [diagSteps, setDiagSteps] = useState(null);
+  const [diagBusy, setDiagBusy] = useState(false);
+  const runDiagnose = async () => {
+    setDiagBusy(true);
+    setDiagSteps(null);
+    try {
+      const { diagnoseNeuralVoice } = await import("../../services/neuralTts.js");
+      setDiagSteps(await diagnoseNeuralVoice());
+    } catch (err) {
+      setDiagSteps([{ name: "Selbsttest", ok: false, info: String(err?.message || err) }]);
+    }
+    setDiagBusy(false);
+  };
+
   const switchMode = (toNeural) => {
     engine.stop?.();
     setNeuralMode(toNeural);
@@ -363,9 +386,30 @@ const PodcastPlayer = memo(function PodcastPlayer() {
                 </div>
               ) : neural.preloadError ? (
                 <p className={cx(styles.voiceStatus, styles.voiceStatusWarn)}>
-                  ⚠️ Konnte nicht geladen werden (Internet nötig). Beim Abspielen wird sonst die Gerätestimme genutzt.
+                  ⚠️ Konnte nicht geladen werden. Beim Abspielen wird die Gerätestimme genutzt.
                 </p>
               ) : null}
+
+              {/* Selbsttest: Ohne benannten Fehler lässt sich aus der Ferne
+                  nicht klären, woran die KI-Stimme scheitert. */}
+              <button className={cx(styles.diagBtn, "hover-pop")} onClick={runDiagnose} disabled={diagBusy}>
+                {diagBusy ? "Prüfe …" : "🔍 Selbsttest der KI-Stimme"}
+              </button>
+              {diagSteps && (
+                <ul className={styles.diagList}>
+                  {diagSteps.map((s) => (
+                    <li key={s.name} className={styles.diagRow}>
+                      <span aria-hidden="true">
+                        {s.level === "info" ? "ℹ️" : s.ok ? "✅" : "❌"}
+                      </span>
+                      <span>
+                        {s.name}
+                        {s.info ? <span className={styles.diagInfo}> — {s.info}</span> : null}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           ) : (
             speech.supported && speech.voices.length > 0 && (
@@ -386,12 +430,21 @@ const PodcastPlayer = memo(function PodcastPlayer() {
                     ))}
                   </select>
                 </label>
+                {/* Zeigen, welche Stimme tatsächlich spricht – sonst bleibt
+                    unklar, ob gerade eine gute oder die kompakte Notlösung läuft. */}
+                {speech.activeVoice && (
+                  <p className={cx(styles.voiceStatus, speech.activeIsNatural && styles.voiceStatusOk)}>
+                    {speech.activeIsNatural ? "✅" : "ℹ️"} Aktiv: <strong>{voiceLabel(speech.activeVoice)}</strong>
+                    {speech.activeIsNatural ? " – klingt natürlich." : " – eine Premium-Stimme klingt deutlich besser."}
+                  </p>
+                )}
                 {!speech.premiumAvailable && (
                   <p className={styles.voiceTip}>
-                    💡 Klingt die Gerätestimme roboterhaft? Dann probiere die <strong>KI-Stimme</strong> oben –
-                    oder lade auf dem iPhone unter
-                    <strong> Einstellungen › Bedienungshilfen › Gesprochene Inhalte › Stimmen › Deutsch </strong>
-                    eine <strong>Premium-</strong> oder <strong>Siri-Stimme</strong> herunter.
+                    💡 <strong>Die beste Stimme steckt schon in deinem iPhone</strong> – sie muss nur einmal
+                    geladen werden: <strong>Einstellungen › Bedienungshilfen › Gesprochene Inhalte › Stimmen ›
+                    Deutsch</strong>, dort eine <strong>Siri-</strong> oder <strong>Premium-Stimme</strong> laden.
+                    Danach hier „Automatisch" wählen – sie klingt so gut wie jede KI-Stimme, läuft komplett
+                    offline und kostet nichts.
                   </p>
                 )}
               </div>

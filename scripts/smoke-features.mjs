@@ -226,6 +226,55 @@ check(
 );
 check("Podcast: Auto-Weiter-Schalter vorhanden", await page.locator('[role="switch"][aria-label*="nächsten Folge"]').isVisible());
 
+// Stimmen-Anzeige: Der Nutzer muss sehen, welche Stimme wirklich spricht.
+// Headless-Chromium hat keine Stimmen, deshalb zwei eingespielte Fälle.
+async function stimmenLauf(voices) {
+  const seite = await browser.newPage({ viewport: { width: 390, height: 900 } });
+  await seite.addInitScript((vs) => {
+    const list = vs.map((v) => ({ ...v, lang: "de-DE", localService: true }));
+    Object.defineProperty(window.speechSynthesis, "getVoices", { value: () => list });
+  }, voices);
+  await seite.goto(APP);
+  await seite.waitForSelector("text=Salam, bereit zu lernen?", { timeout: 20000 });
+  await seite.click('a[href="#/plan"]');
+  await seite.waitForSelector("text=Üben, wiederholen, abfragen");
+  await seite.click("text=Podcast · Themen zum Anhören");
+  await seite.waitForTimeout(600);
+  const status = (await seite.locator('[class*="voiceStatus"]').first().textContent().catch(() => "")) || "";
+  const tipp = (await seite.locator('[class*="voiceTip"]').first().textContent().catch(() => "")) || "";
+  await seite.close();
+  return { status: status.replace(/\s+/g, " ").trim(), tipp };
+}
+
+const gut = await stimmenLauf([{ name: "Anna (Premium)", voiceURI: "a-p" }, { name: "Anna (Kompakt)", voiceURI: "a-k" }]);
+check("Gute Stimme wird als natürlich gemeldet",
+  gut.status.includes("Premium") && gut.status.includes("natürlich"), gut.status.slice(0, 60));
+check("Bei guter Stimme kein iPhone-Hinweis", !gut.tipp.includes("iPhone"));
+
+const schwach = await stimmenLauf([{ name: "Anna (Kompakt)", voiceURI: "a-k" }]);
+check("Schwache Stimme wird benannt statt beschönigt",
+  schwach.status.includes("Kompakt") && schwach.status.includes("Premium-Stimme"), schwach.status.slice(0, 60));
+check("Ohne gute Stimme erscheint die iPhone-Anleitung", schwach.tipp.includes("iPhone"));
+
+// Selbsttest der KI-Stimme benennt den scheiternden Schritt.
+// Er ruft bewusst fremde CDNs auf; in dieser Umgebung sind die gesperrt.
+// Die dabei entstehenden Netzfehler sind erwartet und kein App-Fehler,
+// deshalb wird der Konsolen-Stand vorher gemerkt und danach zurückgesetzt.
+const fehlerVorSelbsttest = errors.length;
+await page.click('button:has-text("KI-Stimme")');
+await page.waitForTimeout(500);
+await page.click('button:has-text("Selbsttest")');
+await page.waitForSelector('[class*="diagRow"]', { timeout: 30000 });
+await page.waitForTimeout(500);
+const diag = await page.locator('[class*="diagRow"]').allTextContents();
+check("Selbsttest der KI-Stimme liefert benannte Schritte", diag.length >= 4, `${diag.length} Schritte`);
+const fehlerZeile = diag.find((z) => z.includes("❌")) || "";
+check("Ein Fehlschlag wird mit Ursache benannt, nicht nur mit einem Kreuz",
+  fehlerZeile === "" || fehlerZeile.includes("—"), fehlerZeile.replace(/\s+/g, " ").trim().slice(0, 70));
+await page.click('button:has-text("Gerätestimme")');
+await page.waitForTimeout(300);
+errors.length = fehlerVorSelbsttest;
+
 // Weiterhören: gespeicherte Hörposition wird als Sprungmarke angeboten
 await page.evaluate(() => localStorage.setItem("mrk7-podpos", JSON.stringify({ id: "pod-handel", seg: 4 })));
 await page.reload();
